@@ -2,8 +2,8 @@ TARGET		:= vitaQuakeIII
 TITLE		:= QUAK00003
 GIT_VERSION := $(shell git describe --abbrev=6 --dirty --always --tags)
 
-SOURCES  := code/rendercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2
-INCLUDES := code/rendercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2
+SOURCES  := code/renderercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2
+INCLUDES := code/renderercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2 code/sys
 EXTRA_FILES := code/sys/con_log.c
 
 LIBS = -lvitaGL -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
@@ -31,7 +31,7 @@ CFLAGS  = $(INCLUDE) -D__PSP2__ -D__FLOAT_WORD_ORDER=1 -D__GNU__ \
         -mword-relocations -fno-unwind-tables -fno-optimize-sibling-calls \
         -mvectorize-with-neon-quad -funsafe-math-optimizations \
         -mlittle-endian -munaligned-access \
-        -fsingle-precision-constant \
+        -fsingle-precision-constant -Wl,-q \
         -fno-strict-aliasing -Wimplicit -Wstrict-prototypes -pipe \
         -Wformat=2 -Wno-format-zero-length -Wformat-security -Wno-format-nonliteral -Wstrict-aliasing=2 \
         -Wmissing-format-attribute -Wdisabled-optimization -Werror-implicit-function-declaration \

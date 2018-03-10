@@ -901,15 +901,15 @@ image_t *R_CreateImage( const char *name, byte *pic, int width, int height,
 		glWrapClampMode = GL_REPEAT;
 
 	// lightmaps are always allocated on TMU 1
-	if ( qglActiveTextureARB && isLightmap ) {
-		image->TMU = 1;
-	} else {
+	//->if ( qglActiveTextureARB && isLightmap ) {
+	//->	image->TMU = 1;
+	//->} else {
 		image->TMU = 0;
-	}
+	//->}
 
-	if ( qglActiveTextureARB ) {
-		GL_SelectTexture( image->TMU );
-	}
+	//->if ( qglActiveTextureARB ) {
+	//->	GL_SelectTexture( image->TMU );
+	//->}
 
 	GL_Bind(image);
 
@@ -1401,14 +1401,14 @@ void R_DeleteTextures( void ) {
 	tr.numImages = 0;
 
 	Com_Memset( glState.currenttextures, 0, sizeof( glState.currenttextures ) );
-	if ( qglActiveTextureARB ) {
-		GL_SelectTexture( 1 );
+	//->if ( qglActiveTextureARB ) {
+	//->	GL_SelectTexture( 1 );
+	//->	qglBindTexture( GL_TEXTURE_2D, 0 );
+	//->	GL_SelectTexture( 0 );
+	//->	qglBindTexture( GL_TEXTURE_2D, 0 );
+	//->} else {
 		qglBindTexture( GL_TEXTURE_2D, 0 );
-		GL_SelectTexture( 0 );
-		qglBindTexture( GL_TEXTURE_2D, 0 );
-	} else {
-		qglBindTexture( GL_TEXTURE_2D, 0 );
-	}
+	//->}
 }
 
 /*

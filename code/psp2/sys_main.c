@@ -37,8 +37,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #	include "SDL_cpuinfo.h"
 #else
 
-#	include <SDL.h>
-#	include <SDL_cpuinfo.h>
+//#	include <SDL.h>
+//#	include <SDL_cpuinfo.h>
 #include <vitasdk.h>
 
 #endif
@@ -141,7 +141,7 @@ char *Sys_GetClipboardData(void) {
     char *data = NULL;
     char *cliptext;
 
-    if ((cliptext = SDL_GetClipboardText()) != NULL) {
+   /* if ((cliptext = SDL_GetClipboardText()) != NULL) {
         if (cliptext[0] != '\0') {
             size_t bufsize = strlen(cliptext) + 1;
 
@@ -152,7 +152,7 @@ char *Sys_GetClipboardData(void) {
             strtok(data, "\n\r\b");
         }
         SDL_free(cliptext);
-    }
+    }*/
     return data;
 #endif
 }
@@ -171,7 +171,7 @@ Single exit point (regular exit or in case of error)
 static __attribute__ ((noreturn)) void Sys_Exit(int exitCode) {
     CON_Shutdown();
 
-    SDL_Quit();
+    //SDL_Quit();
 
     NET_Shutdown();
 
@@ -385,12 +385,12 @@ int main(int argc, char **argv) {
     // SDL version check
 
     // Compile time
-#	if !SDL_VERSION_ATLEAST(MINSDL_MAJOR, MINSDL_MINOR, MINSDL_PATCH)
+/*#	if !SDL_VERSION_ATLEAST(MINSDL_MAJOR, MINSDL_MINOR, MINSDL_PATCH)
 #		error A more recent version of SDL is required
-#	endif
+#	endif*/
 
     // Run time
-    SDL_version ver;
+    /*SDL_version ver;
     SDL_GetVersion(&ver);
 
 #define MINSDL_VERSION \
@@ -406,7 +406,7 @@ int main(int argc, char **argv) {
                    "SDL Library Too Old");
 
         Sys_Exit(1);
-    }
+    }*/
 #endif
 
     Sys_PlatformInit();

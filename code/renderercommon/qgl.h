@@ -86,8 +86,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define qglStencilOp glStencilOp
 
 //#define qglDrawBuffer glDrawBuffer
-//#define qglColorMask glColorMask
+#define qglColorMask glColorMask
 
+#define qglPopMatrix glPopMatrix
+#define qglPushMatrix glPushMatrix
+#define qglDeleteTextures glDeleteTextures
+#define qglDrawElements glDrawElements
+#define qglVertexPointer glVertexPointer
+#define qglColorPointer glColorPointer
+#define qglTexCoordPointer glTexCoordPointer
+#define qglPolygonOffset glPolygonOffset
+#define qglArrayElement glArrayElement
+#define qglTranslatef glTranslatef
+#define qglVertex3f glVertex3f
 
 #else
 #ifdef USE_LOCAL_HEADERS

@@ -42,12 +42,12 @@ This is just for OpenGL conformance testing, it should never be the fastest
 */
 static void APIENTRY R_ArrayElementDiscrete( GLint index ) {
 	qglColor4ubv( tess.svars.colors[ index ] );
-	if ( glState.currenttmu ) {
-		qglMultiTexCoord2fARB( 0, tess.svars.texcoords[ 0 ][ index ][0], tess.svars.texcoords[ 0 ][ index ][1] );
-		qglMultiTexCoord2fARB( 1, tess.svars.texcoords[ 1 ][ index ][0], tess.svars.texcoords[ 1 ][ index ][1] );
-	} else {
+	//->if ( glState.currenttmu ) {
+	//->	qglMultiTexCoord2fARB( 0, tess.svars.texcoords[ 0 ][ index ][0], tess.svars.texcoords[ 0 ][ index ][1] );
+	//->	qglMultiTexCoord2fARB( 1, tess.svars.texcoords[ 1 ][ index ][0], tess.svars.texcoords[ 1 ][ index ][1] );
+	//->} else {
 		qglTexCoord2fv( tess.svars.texcoords[ 0 ][ index ] );
-	}
+	//->}
 	qglVertex3fv( tess.xyz[ index ] );
 }
 
@@ -170,11 +170,11 @@ static void R_DrawElements( int numIndexes, const glIndex_t *indexes ) {
 
 	// default is to use triangles if compiled vertex arrays are present
 	if ( primitives == 0 ) {
-		if ( qglLockArraysEXT ) {
-			primitives = 2;
-		} else {
+		//->if ( qglLockArraysEXT ) {
+		//->	primitives = 2;
+		//->} else {
 			primitives = 1;
-		}
+		//->}
 	}
 
 
@@ -268,17 +268,17 @@ static void DrawTris (shaderCommands_t *input) {
 
 	qglVertexPointer (3, GL_FLOAT, 16, input->xyz);	// padded for SIMD
 
-	if (qglLockArraysEXT) {
-		qglLockArraysEXT(0, input->numVertexes);
-		GLimp_LogComment( "glLockArraysEXT\n" );
-	}
+	//->if (qglLockArraysEXT) {
+	//->	qglLockArraysEXT(0, input->numVertexes);
+	//->	GLimp_LogComment( "glLockArraysEXT\n" );
+	//->}
 
 	R_DrawElements( input->numIndexes, input->indexes );
 
-	if (qglUnlockArraysEXT) {
-		qglUnlockArraysEXT();
-		GLimp_LogComment( "glUnlockArraysEXT\n" );
-	}
+	//->if (qglUnlockArraysEXT) {
+	//->	qglUnlockArraysEXT();
+	//->	GLimp_LogComment( "glUnlockArraysEXT\n" );
+	//->}
 	qglDepthRange( 0, 1 );
 }
 
@@ -1230,11 +1230,11 @@ void RB_StageIteratorGeneric( void )
 	// lock XYZ
 	//
 	qglVertexPointer (3, GL_FLOAT, 16, input->xyz);	// padded for SIMD
-	if (qglLockArraysEXT)
-	{
-		qglLockArraysEXT(0, input->numVertexes);
-		GLimp_LogComment( "glLockArraysEXT\n" );
-	}
+	//->if (qglLockArraysEXT)
+	//->{
+	//->	qglLockArraysEXT(0, input->numVertexes);
+	//->	GLimp_LogComment( "glLockArraysEXT\n" );
+	//->}
 
 	//
 	// enable color and texcoord arrays after the lock if necessary
@@ -1268,11 +1268,11 @@ void RB_StageIteratorGeneric( void )
 	// 
 	// unlock arrays
 	//
-	if (qglUnlockArraysEXT) 
-	{
-		qglUnlockArraysEXT();
-		GLimp_LogComment( "glUnlockArraysEXT\n" );
-	}
+	//->if (qglUnlockArraysEXT) 
+	//->{
+	//->	qglUnlockArraysEXT();
+	//->	GLimp_LogComment( "glUnlockArraysEXT\n" );
+	//->}
 
 	//
 	// reset polygon offset
@@ -1325,11 +1325,11 @@ void RB_StageIteratorVertexLitTexture( void )
 	qglTexCoordPointer( 2, GL_FLOAT, 16, tess.texCoords[0][0] );
 	qglVertexPointer (3, GL_FLOAT, 16, input->xyz);
 
-	if ( qglLockArraysEXT )
-	{
-		qglLockArraysEXT(0, input->numVertexes);
-		GLimp_LogComment( "glLockArraysEXT\n" );
-	}
+	//->if ( qglLockArraysEXT )
+	//->{
+	//->	qglLockArraysEXT(0, input->numVertexes);
+	//->	GLimp_LogComment( "glLockArraysEXT\n" );
+	//->}
 
 	//
 	// call special shade routine
@@ -1355,11 +1355,11 @@ void RB_StageIteratorVertexLitTexture( void )
 	// 
 	// unlock arrays
 	//
-	if (qglUnlockArraysEXT) 
-	{
-		qglUnlockArraysEXT();
-		GLimp_LogComment( "glUnlockArraysEXT\n" );
-	}
+	//->if (qglUnlockArraysEXT) 
+	//->{
+	//->	qglUnlockArraysEXT();
+	//->	GLimp_LogComment( "glUnlockArraysEXT\n" );
+	//->}
 }
 
 //define	REPLACE_MODE
@@ -1426,10 +1426,10 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	//
 	// lock arrays
 	//
-	if ( qglLockArraysEXT ) {
-		qglLockArraysEXT(0, input->numVertexes);
-		GLimp_LogComment( "glLockArraysEXT\n" );
-	}
+	//->if ( qglLockArraysEXT ) {
+	//->	qglLockArraysEXT(0, input->numVertexes);
+	//->	GLimp_LogComment( "glLockArraysEXT\n" );
+	//->}
 
 	R_DrawElements( input->numIndexes, input->indexes );
 
@@ -1462,10 +1462,10 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	//
 	// unlock arrays
 	//
-	if ( qglUnlockArraysEXT ) {
-		qglUnlockArraysEXT();
-		GLimp_LogComment( "glUnlockArraysEXT\n" );
-	}
+	//->if ( qglUnlockArraysEXT ) {
+	//->	qglUnlockArraysEXT();
+	//->	GLimp_LogComment( "glUnlockArraysEXT\n" );
+	//->}
 }
 
 /*
