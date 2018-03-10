@@ -72,8 +72,22 @@ This routine is responsible for initializing the OS specific portions
 of OpenGL
 ===============
 */
+uint16_t* indices;
+float *gVertexBuffer;
+float *gColorBuffer;
+float *gTexCoordBuffer;
 void GLimp_Init( qboolean coreContext)
 {
+	vglInit(0x800000);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	gVertexBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
+	gColorBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
+	gTexCoordBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
+	int i;
+	indices = (uint16_t*)malloc(sizeof(uint16_t*)*MAX_INDICES);
+	for (i=0;i<MAX_INDICES;i++){
+		indices[i] = i;
+	}
 }
 
 
@@ -86,4 +100,5 @@ Responsible for doing a swapbuffers
 */
 void GLimp_EndFrame( void )
 {
+	vglStopRendering();
 }

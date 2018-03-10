@@ -28,6 +28,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #ifdef __PSP2__
 
+#define MAX_INDICES 4096
+#define VERTEXARRAYSIZE 18360
+extern float *gVertexBuffer;
+extern float *gColorBuffer;
+extern float *gTexCoordBuffer;
+extern uint16_t *indices;
+
 #include "vitaGL.h"
 
 #define APIENTRY
@@ -62,6 +69,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define qglBindTexture glBindTexture
 #define qglTexEnvf glTexEnvf
+#define qglTexEnvi glTexEnvi
 #define qglBlendFunc glBlendFunc
 #define qglAlphaFunc glAlphaFunc
 #define qglClearColor glClearColor
@@ -75,6 +83,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define qglOrtho glOrtho
 #define qglTexImage2D glTexImage2D
 #define qglTexParameterf glTexParameterf
+#define qglTexParameteri glTexParameteri
 #define qglTexSubImage2D glTexSubImage2D
 #define qglBegin glBegin
 #define qglTexCoord2f glTexCoord2f
