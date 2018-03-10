@@ -4,6 +4,7 @@ GIT_VERSION := $(shell git describe --abbrev=6 --dirty --always --tags)
 
 SOURCES  := code/rendercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2
 INCLUDES := code/rendercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2
+EXTRA_FILES := code/sys/con_log.c
 
 LIBS = -lvitaGL -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
 	-lc -lSceCommonDialog_stub -lSceAudio_stub -lSceLibKernel_stub \
@@ -11,7 +12,7 @@ LIBS = -lvitaGL -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
 	-lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -lSceAppMgr_stub \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub	
 
-CFILES   := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c))
+CFILES   := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c)) $(EXTRA_FILES)
 CPPFILES   := $(foreach dir,$(CPPSOURCES), $(wildcard $(dir)/*.cpp))
 BINFILES := $(foreach dir,$(DATA), $(wildcard $(dir)/*.bin))
 OBJS     := $(addsuffix .o,$(BINFILES)) $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
@@ -22,7 +23,7 @@ PREFIX  = arm-vita-eabi
 CC      = $(PREFIX)-gcc
 CXX      = $(PREFIX)-g++
 CFLAGS  = $(INCLUDE) -D__PSP2__ -D__FLOAT_WORD_ORDER=1 -D__GNU__ \
-        -DUSE_ICON -DARCH_STRING=\"arm\" \
+        -DUSE_ICON -DARCH_STRING=\"arm\" -DBOTLIB -DUSE_CODEC_VORBIS \
         -DNO_VM_COMPILED -DDEFAULT_BASEDIR=\"ux0:/data/ioq3\" \
         -DPRODUCT_VERSION=\"1.36_GIT_ba68b99c-2018-01-23\" \
         -mfpu=neon -mcpu=cortex-a9 -march=armv7-a -mfloat-abi=hard -ffast-math \
