@@ -42,7 +42,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <psp2/kernel/clib.h>
 
-#define printf sceClibPrintf
+void log2file(const char *format, ...) {
+	__gnuc_va_list arg;
+	int done;
+	va_start(arg, format);
+	char msg[512];
+	done = vsprintf(msg, format, arg);
+	va_end(arg);
+	int i;
+	sprintf(msg, "%s\n", msg);
+	CON_Print(msg);
+}
+
+#define printf log2file
 
 qboolean stdinIsATTY;
 
