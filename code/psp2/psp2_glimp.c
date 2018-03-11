@@ -88,6 +88,23 @@ void GLimp_Init( qboolean coreContext)
 	for (i=0;i<MAX_INDICES;i++){
 		indices[i] = i;
 	}
+	
+	glConfig.vidWidth = 960;
+	glConfig.vidHeight = 544;
+	glConfig.colorBits = 32;
+	glConfig.depthBits = 24;
+	glConfig.stencilBits = 8;
+	glConfig.displayFrequency = 60;
+	glConfig.stereoEnabled = qfalse;
+	
+	glConfig.driverType = GLDRV_ICD;
+	glConfig.hardwareType = GLHW_GENERIC;
+	glConfig.deviceSupportsGamma = qfalse;
+
+	strncpy(glConfig.vendor_string, glGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
+	strncpy(glConfig.renderer_string, glGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
+	strncpy(glConfig.version_string, glGetString(GL_VERSION), sizeof(glConfig.version_string));
+	strncpy(glConfig.extensions_string, glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
 }
 
 
