@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #	include <sys/types.h>
 #	include <sys/time.h>
 #	include <unistd.h>
+#	include <fcntl.h>
+#	include <vitasdk.h>
 
 typedef int SOCKET;
 #	define INVALID_SOCKET		-1
@@ -238,52 +240,20 @@ Sys_StringToSockaddr
 */
 static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int sadr_len, sa_family_t family)
 {
-	struct addrinfo hints;
-	struct addrinfo *res = NULL;
-	struct addrinfo *search = NULL;
-	struct addrinfo *hintsp;
-	int retval;
-
 	memset(sadr, '\0', sizeof(*sadr));
-	memset(&hints, '\0', sizeof(hints));
 
-	hintsp = &hints;
-	hintsp->ai_family = family;
-	hintsp->ai_socktype = SOCK_DGRAM;
+	struct sockaddr_in *addr = (struct sockaddr_in*)sadr;
+	int ha1, ha2, ha3, ha4, hp;
+	int ipaddr;
 
-	retval = getaddrinfo(s, NULL, hintsp, &res);
+	sscanf(s, "%d.%d.%d.%d:%d", &ha1, &ha2, &ha3, &ha4, &hp);
+	ipaddr = (ha1 << 24) | (ha2 << 16) | (ha3 << 8) | ha4;
 
-	if(!retval)
-	{
-		if(family == AF_UNSPEC)
-		{
-			// Decide here and now which protocol family to use
-			if(net_enabled->integer & NET_ENABLEV4)
-				search = SearchAddrInfo(res, AF_INET);
-		}
-		else
-			search = SearchAddrInfo(res, family);
+	addr->sin_family = AF_INET;
+	addr->sin_addr.s_addr = sceNetHtonl(ipaddr);
+	addr->sin_port = sceNetHtons(hp);
 
-		if(search)
-		{
-			if(search->ai_addrlen > sadr_len)
-				search->ai_addrlen = sadr_len;
-
-			memcpy(sadr, search->ai_addr, search->ai_addrlen);
-			freeaddrinfo(res);
-
-			return qtrue;
-		}
-		else
-			Com_Printf("Sys_StringToSockaddr: Error resolving %s: No address of required type found.\n", s);
-	}
-	else
-		Com_Printf("Sys_StringToSockaddr: Error resolving %s: %s\n", s, gai_strerror(retval));
-
-	if(res)
-		freeaddrinfo(res);
-
-	return qfalse;
+	return qtrue;
 }
 
 /*
@@ -293,12 +263,10 @@ Sys_SockaddrToString
 */
 static void Sys_SockaddrToString(char *dest, int destlen, struct sockaddr *input)
 {
-	socklen_t inputlen;
+	int haddr = sceNetNtohl(((struct sockaddr_in *)input)->sin_addr.s_addr);
 
-	inputlen = sizeof(struct sockaddr_in);
+	sprintf(dest, "%d.%d.%d.%d:%d", (haddr >> 24) & 0xff, (haddr >> 16) & 0xff, (haddr >> 8) & 0xff, haddr & 0xff, sceNetNtohs(((struct sockaddr_in *)input)->sin_port));
 
-	if(getnameinfo(input, inputlen, dest, destlen, NULL, 0, NI_NUMERICHOST) && destlen > 0)
-		*dest = '\0';
 }
 
 /*
@@ -689,22 +657,7 @@ SOCKET NET_IPSocket( char *net_interface, int port, int *err ) {
 		return newsocket;
 	}
 	// make it non-blocking
-	/*
-	if( ioctlsocket( newsocket, FIONBIO, &_true ) == SOCKET_ERROR ) {
-		Com_Printf( "WARNING: NET_IPSocket: ioctl FIONBIO: %s\n", NET_ErrorString() );
-		*err = socketError;
-		closesocket(newsocket);
-		return INVALID_SOCKET;
-	}
-	*/
-	int res = sceNetSetsockopt(newsocket, SCE_NET_SOL_SOCKET, SCE_NET_SO_NBIO, &_true, sizeof(uint32_t)) < 0;
-	if (res != 0)
-	{
-		Com_Printf( "WARNING: NET_IPSocket: ioctl FIONBIO: %s\n", NET_ErrorString() );
-		*err = res;
-		closesocket(newsocket);
-		return INVALID_SOCKET;
-	}
+	fcntl(newsocket, F_SETFL, O_NONBLOCK);
 
 	// make it broadcast capable
 	if( setsockopt( newsocket, SOL_SOCKET, SO_BROADCAST, (char *) &i, sizeof(i) ) == SOCKET_ERROR ) {
@@ -945,6 +898,7 @@ static void NET_AddLocalAddress(char *ifname, struct sockaddr *addr, struct sock
 	}
 }
 
+static unsigned long myAddr;
 static void NET_GetLocalAddress( void ) {
 	char				hostname[256];
 	struct addrinfo	hint;
@@ -952,22 +906,27 @@ static void NET_GetLocalAddress( void ) {
 
 	numIP = 0;
 
-	//if(gethostname( hostname, 256 ) == SOCKET_ERROR)
-	//	return;
-	// TODO: PSP2
+	SceNetCtlInfo info;
+	sceNetCtlInetGetInfo(SCE_NETCTL_INFO_GET_IP_ADDRESS, &info);
+	sceNetInetPton(SCE_NET_AF_INET, info.ip_address, &myAddr);
 
-	Com_Printf( "Hostname: %s\n", hostname );
+	//->Com_Printf( "Hostname: %s\n", hostname );
 
 	memset(&hint, 0, sizeof(hint));
 
 	hint.ai_family = AF_UNSPEC;
 	hint.ai_socktype = SOCK_DGRAM;
 
+	
+	
 	if(!getaddrinfo(hostname, NULL, &hint, &res))
 	{
 		struct sockaddr_in mask4;
-		struct addrinfo *search;
-
+		struct sockaddr_in addr;
+		addr.sin_family = AF_INET;
+		addr.sin_port = 5000;
+		addr.sin_addr.s_addr = myAddr;
+		
 		/* On operating systems where it's more difficult to find out the configured interfaces, we'll just assume a
 		 * netmask with all bits set. */
 
@@ -976,11 +935,7 @@ static void NET_GetLocalAddress( void ) {
 		memset(&mask4.sin_addr.s_addr, 0xFF, sizeof(mask4.sin_addr.s_addr));
 
 		// add all IPs from returned list.
-		for(search = res; search; search = search->ai_next)
-		{
-			if(search->ai_family == AF_INET)
-				NET_AddLocalAddress("", search->ai_addr, (struct sockaddr *) &mask4);
-		}
+		NET_AddLocalAddress("", (struct sockaddr*)&addr, (struct sockaddr *) &mask4);
 
 		Sys_ShowIP();
 	}
@@ -1161,8 +1116,29 @@ void NET_Config( qboolean enableNetworking ) {
 NET_Init
 ====================
 */
+static void *net_memory = NULL;
+#define NET_INIT_SIZE 1*1024*1024
 void NET_Init( void ) {
+	
+	sceSysmoduleLoadModule(SCE_SYSMODULE_NET);
+	SceNetInitParam initparam;
+	int ret = sceNetShowNetstat();
+	if (ret == SCE_NET_ERROR_ENOTINIT) {
+		net_memory = malloc(NET_INIT_SIZE);
 
+		initparam.memory = net_memory;
+		initparam.size = NET_INIT_SIZE;
+		initparam.flags = 0;
+
+		ret = sceNetInit(&initparam);
+		
+	} 
+	ret = sceNetCtlInit();
+	if (ret < 0){
+		sceNetTerm();
+		free(net_memory);
+	}
+	
 	NET_Config( qtrue );
 
 	Cmd_AddCommand ("net_restart", NET_Restart_f);
@@ -1180,6 +1156,11 @@ void NET_Shutdown( void ) {
 	}
 
 	NET_Config( qfalse );
+	
+	sceNetCtlTerm();
+	sceNetTerm();
+	free(net_memory);
+	sceSysmoduleUnloadModule(SCE_SYSMODULE_NET);
 }
 
 /*
