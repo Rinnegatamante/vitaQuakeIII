@@ -92,7 +92,7 @@ void GLimp_Init( qboolean coreContext)
 	glConfig.vidWidth = 960;
 	glConfig.vidHeight = 544;
 	glConfig.colorBits = 32;
-	glConfig.depthBits = 24;
+	glConfig.depthBits = 32;
 	glConfig.stencilBits = 8;
 	glConfig.displayFrequency = 60;
 	glConfig.stereoEnabled = qfalse;
