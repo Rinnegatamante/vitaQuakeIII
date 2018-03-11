@@ -369,13 +369,8 @@ void Sys_SigHandler(int signal) {
         Sys_Exit(2);
 }
 
-/*
-=================
-main
-=================
-*/
-int main(int argc, char **argv) {
-    int i;
+int quake_main (unsigned int argc, char** argv){
+	 int i;
     char commandLine[MAX_STRING_CHARS] = {0};
 
     //extern void Sys_LaunchAutoupdater(int argc, char **argv);
@@ -437,15 +432,25 @@ int main(int argc, char **argv) {
     Com_Init(commandLine);
     NET_Init();
 
-    signal(SIGILL, Sys_SigHandler);
-    signal(SIGFPE, Sys_SigHandler);
-    signal(SIGSEGV, Sys_SigHandler);
-    signal(SIGTERM, Sys_SigHandler);
-    signal(SIGINT, Sys_SigHandler);
-
-    while (1) {
+	while (1) {
         Com_Frame();
     }
+
+    return 0;
+}
+
+/*
+=================
+main
+=================
+*/
+int main(int argc, char **argv) {
+	
+	SceUID main_thread = sceKernelCreateThread("Quake III", quake_main, 0x40, 0x800000, 0, 0, NULL);
+	if (main_thread >= 0){
+		sceKernelStartThread(main_thread, 0, NULL);
+		sceKernelWaitThreadEnd(main_thread, NULL, NULL);
+	}
 
     return 0;
 }
