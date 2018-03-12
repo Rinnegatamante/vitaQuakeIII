@@ -115,7 +115,6 @@ static void DrawTris (shaderCommands_t *input) {
 	for (i=0;i<input->numIndexes;i++){
 		memcpy(vertices, input->xyz[input->indexes[i]], sizeof(vec3_t));
 		vertices += 3;
-		
 	}
 	vglVertexPointer(3, GL_FLOAT, 0, input->numIndexes, gVertexBuffer);
 	
@@ -458,7 +457,7 @@ static void RB_FogPass( void ) {
 		colorbuf[1] = (float)(tess.svars.colors[tess.indexes[i]][1]) / 255.0f;
 		colorbuf[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
 		colorbuf[3] = (float)(tess.svars.colors[tess.indexes[i]][3]) / 255.0f;
-		memcpy(texcoord, tess.svars.texcoords[tess.indexes[i]], sizeof(vec2_t));
+		memcpy(texcoord, tess.svars.texcoords[0][tess.indexes[i]], sizeof(vec2_t));
 		texcoord += 2;
 		colorbuf += 4;
 	}
@@ -850,7 +849,7 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input )
 				float *texcoord = gTexCoordBuffer;
 				int i;
 				for (i = 0 ; i < input->numIndexes ; i++) {
-					memcpy(texcoord, input->svars.texcoords[input->indexes[i]], sizeof(vec2_t));
+					memcpy(texcoord, input->svars.texcoords[0][input->indexes[i]], sizeof(vec2_t));
 					texcoord += 2;
 				}
 				vglTexCoordPointer( 2, GL_FLOAT, 0, input->numIndexes, gTexCoordBuffer);
@@ -927,7 +926,8 @@ void RB_StageIteratorGeneric( void )
 	else
 	{
 		setArraysOnce = qtrue;
-		
+		qglEnableClientState( GL_COLOR_ARRAY);
+		qglEnableClientState( GL_TEXTURE_COORD_ARRAY);
 		float *colorbuf = gColorBuffer;
 		float *texcoord = gTexCoordBuffer;
 		int i;
@@ -1055,7 +1055,7 @@ void RB_StageIteratorVertexLitTexture( void )
 		colorbuf[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
 		colorbuf[3] = (float)(tess.svars.colors[tess.indexes[i]][3]) / 255.0f;
 		colorbuf += 4;
-		memcpy(texcoord, tess.texCoords[tess.indexes[i]], sizeof(vec2_t));
+		memcpy(texcoord, tess.texCoords[tess.indexes[i]][0], sizeof(vec2_t));
 		texcoord += 2;
 	}
 	for (i = 0 ; i < input->numIndexes ; i++) {
@@ -1165,7 +1165,7 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	
 	float *texcoord = gTexCoordBuffer;
 	for (i = 0 ; i < tess.numIndexes ; i++) {
-		memcpy(texcoord, tess.texCoords[tess.indexes[i]], sizeof(vec2_t));
+		memcpy(texcoord, tess.texCoords[tess.indexes[i]][0], sizeof(vec2_t));
 		texcoord += 2;
 	}
 	vglTexCoordPointer(2, GL_FLOAT, 0, tess.numIndexes, gTexCoordBuffer);

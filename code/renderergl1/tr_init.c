@@ -274,7 +274,7 @@ vidmode_t r_vidModes[] =
 	{ "Mode  0: 320x240",		320,	240,	1 },
 	{ "Mode  1: 400x300",		400,	300,	1 },
 	{ "Mode  2: 512x384",		512,	384,	1 },
-	{ "Mode  3: 640x480",		640,	480,	1 },
+	{ "Mode  3: 960x544",		960,	544,	1 },
 	{ "Mode  4: 800x600",		800,	600,	1 },
 	{ "Mode  5: 960x720",		960,	720,	1 },
 	{ "Mode  6: 1024x768",		1024,	768,	1 },
@@ -1050,7 +1050,7 @@ void R_Register( void )
 			"0", CVAR_ARCHIVE | CVAR_LATCH );
 	r_ext_max_anisotropy = ri.Cvar_Get( "r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH );
 
-	r_picmip = ri.Cvar_Get ("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH );
+	r_picmip = ri.Cvar_Get ("r_picmip", "0", CVAR_ARCHIVE | CVAR_LATCH );
 	r_roundImagesDown = ri.Cvar_Get ("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH );
 	r_colorMipLevels = ri.Cvar_Get ("r_colorMipLevels", "0", CVAR_LATCH );
 	ri.Cvar_CheckRange( r_picmip, 0, 16, qtrue );
