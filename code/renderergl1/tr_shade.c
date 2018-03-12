@@ -220,26 +220,33 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	//
 	// base
 	//
-	GL_SelectTexture( 0 );
-	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
+	//->GL_SelectTexture( 0 );
+	float *texcoord = gTexCoordBuffer;
+	int i;
+	for (i = 0 ; i < input->numIndexes ; i++) {
+		memcpy(texcoord, input->svars.texcoords[0][input->indexes[i]], sizeof(vec2_t));
+		texcoord += 2;
+	}
+	vglTexCoordPointer( 2, GL_FLOAT, 0, input->numIndexes, gTexCoordBuffer );
+
 	R_BindAnimatedImage( &pStage->bundle[0] );
 
 	//
 	// lightmap/secondary pass
 	//
-	GL_SelectTexture( 1 );
-	qglEnable( GL_TEXTURE_2D );
-	qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	//->GL_SelectTexture( 1 );
+	//->qglEnable( GL_TEXTURE_2D );
+	//->qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
-	if ( r_lightmap->integer ) {
-		GL_TexEnv( GL_REPLACE );
-	} else {
-		GL_TexEnv( tess.shader->multitextureEnv );
-	}
+	//->if ( r_lightmap->integer ) {
+	//->	GL_TexEnv( GL_REPLACE );
+	//->} else {
+	//->	GL_TexEnv( tess.shader->multitextureEnv );
+	//->}
 
-	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[1] );
+	//->qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[1] );
 
-	R_BindAnimatedImage( &pStage->bundle[1] );
+	//->R_BindAnimatedImage( &pStage->bundle[1] );
 
 	R_DrawElements( input->numIndexes, input->indexes );
 
@@ -247,9 +254,9 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	// disable texturing on TEXTURE1, then select TEXTURE0
 	//
 	//qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
-	qglDisable( GL_TEXTURE_2D );
+	//->qglDisable( GL_TEXTURE_2D );
 
-	GL_SelectTexture( 0 );
+	//->GL_SelectTexture( 0 );
 }
 
 
@@ -829,7 +836,7 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input )
 		//
 		if ( pStage->bundle[1].image[0] != 0 )
 		{
-			//->DrawMultitextured( input, stage );
+			DrawMultitextured( input, stage );
 		}
 		else
 		{
@@ -1186,7 +1193,7 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	// disable texturing on TEXTURE1, then select TEXTURE0
 	//
 	//->qglDisable( GL_TEXTURE_2D );
-	qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	//->qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
 
 	//->GL_SelectTexture( 0 );
 #ifdef REPLACE_MODE
