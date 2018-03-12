@@ -37,10 +37,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <fcntl.h>
 #include <sys/wait.h>
 
-#include <psp2/kernel/threadmgr.h>
+#include <vitasdk.h>
 #include <sys/select.h>
-
-#include <psp2/kernel/clib.h>
 
 void log2file(const char *format, ...) {
 	__gnuc_va_list arg;
@@ -137,28 +135,17 @@ char *Sys_GogPath(void) {
 Sys_Milliseconds
 ================
 */
-/* base time in seconds, that's our origin
-   timeval:tv_sec is an int:
-   assuming this wraps every 0x7fffffff - ~68 years since the Epoch (1970) - we're safe till 2038 */
-unsigned long sys_timeBase = 0;
-/* current time in ms, using sys_timeBase as origin
-   NOTE: sys_timeBase*1000 + curtime -> ms since the Epoch
-     0x7fffffff ms - ~24 days
-   although timeval:tv_usec is an int, I'm not sure wether it is actually used as an unsigned int
-     (which would affect the wrap period) */
 int curtime;
-
 int Sys_Milliseconds(void) {
-    struct timeval tp;
+    static uint64_t	base;
 
-    gettimeofday(&tp, NULL);
-
-    if (!sys_timeBase) {
-        sys_timeBase = tp.tv_sec;
-        return tp.tv_usec / 1000;
+	uint64_t time = sceKernelGetProcessTimeWide() / 1000;
+	
+    if (!base) {
+		base = time;
     }
 
-    curtime = (tp.tv_sec - sys_timeBase) * 1000 + tp.tv_usec / 1000;
+    curtime = (int)(time - base);
 
     return curtime;
 }
