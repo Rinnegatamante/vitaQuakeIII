@@ -178,8 +178,15 @@ qboolean Sys_RandomBytes(byte *string, int len) {
 Sys_GetCurrentUser
 ==================
 */
+char nick[SCE_SYSTEM_PARAM_USERNAME_MAXSIZE];
 char *Sys_GetCurrentUser(void) {
-    return "player";
+	SceAppUtilInitParam init_param;
+	SceAppUtilBootParam boot_param;
+	memset(&init_param, 0, sizeof(SceAppUtilInitParam));
+	memset(&boot_param, 0, sizeof(SceAppUtilBootParam));
+	sceAppUtilInit(&init_param, &boot_param);
+	sceAppUtilSystemParamGetString(SCE_SYSTEM_PARAM_ID_USERNAME, nick, SCE_SYSTEM_PARAM_USERNAME_MAXSIZE);
+    return nick;
 }
 
 #define MEM_THRESHOLD 96*1024*1024
