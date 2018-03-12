@@ -987,6 +987,9 @@ void GfxInfo_f( void )
 				primitives = 1;
 			//->}
 		}
+		#ifdef __PSP2__
+			ri.Printf( PRINT_ALL, "vglDrawObjects\n");
+		#else
 		if ( primitives == -1 ) {
 			ri.Printf( PRINT_ALL, "none\n" );
 		} else if ( primitives == 2 ) {
@@ -996,6 +999,7 @@ void GfxInfo_f( void )
 		} else if ( primitives == 3 ) {
 			ri.Printf( PRINT_ALL, "multiple glColor4ubv + glTexCoord2fv + glVertex3fv\n" );
 		}
+		#endif
 	}
 
 	ri.Printf( PRINT_ALL, "texturemode: %s\n", r_textureMode->string );
@@ -1101,7 +1105,7 @@ void R_Register( void )
 	r_dynamiclight = ri.Cvar_Get( "r_dynamiclight", "1", CVAR_ARCHIVE );
 	r_dlightBacks = ri.Cvar_Get( "r_dlightBacks", "1", CVAR_ARCHIVE );
 	r_finish = ri.Cvar_Get ("r_finish", "0", CVAR_ARCHIVE);
-	r_textureMode = ri.Cvar_Get( "r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE );
+	r_textureMode = ri.Cvar_Get( "r_textureMode", "GL_LINEAR", CVAR_ARCHIVE );
 	r_swapInterval = ri.Cvar_Get( "r_swapInterval", "0",
 					CVAR_ARCHIVE | CVAR_LATCH );
 	r_gamma = ri.Cvar_Get( "r_gamma", "1", CVAR_ARCHIVE );

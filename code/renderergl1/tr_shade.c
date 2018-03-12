@@ -22,9 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // tr_shade.c
 
 #include "tr_local.h" 
-#if idppc_altivec && !defined(__APPLE__)
-#include <altivec.h>
-#endif
 
 /*
 
@@ -922,13 +919,13 @@ void RB_StageIteratorGeneric( void )
 		float *colorbuf = gColorBuffer;
 		float *texcoord = gTexCoordBuffer;
 		int i;
-		for (i = 0 ; i < tess.numIndexes ; i++) {
+		for (i = 0 ; i < input->numIndexes ; i++) {
 			colorbuf[0] = (float)(tess.svars.colors[tess.indexes[i]][0]) / 255.0f;
 			colorbuf[1] = (float)(tess.svars.colors[tess.indexes[i]][1]) / 255.0f;
 			colorbuf[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
 			colorbuf[3] = (float)(tess.svars.colors[tess.indexes[i]][3]) / 255.0f;
 			colorbuf += 4;
-			memcpy(texcoord, tess.svars.texcoords[tess.indexes[i]], sizeof(vec2_t));
+			memcpy(texcoord, tess.svars.texcoords[0][tess.indexes[i]], sizeof(vec2_t));
 			texcoord += 2;
 		}
 		vglColorPointer( 4, GL_FLOAT, 0, tess.numIndexes, gColorBuffer);
@@ -1046,7 +1043,7 @@ void RB_StageIteratorVertexLitTexture( void )
 		colorbuf[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
 		colorbuf[3] = (float)(tess.svars.colors[tess.indexes[i]][3]) / 255.0f;
 		colorbuf += 4;
-		memcpy(texcoord, tess.svars.texcoords[tess.indexes[i]*8], sizeof(vec2_t));
+		memcpy(texcoord, tess.texCoords[tess.indexes[i]*8], sizeof(vec2_t));
 		texcoord += 2;
 	}
 	for (i = 0 ; i < input->numIndexes ; i++) {
@@ -1156,7 +1153,7 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	
 	float *texcoord = gTexCoordBuffer;
 	for (i = 0 ; i < tess.numIndexes ; i++) {
-		memcpy(texcoord, tess.svars.texcoords[tess.indexes[i]*8], sizeof(vec2_t));
+		memcpy(texcoord, tess.texCoords[tess.indexes[i]*8], sizeof(vec2_t));
 		texcoord += 2;
 	}
 	vglTexCoordPointer(2, GL_FLOAT, 0, tess.numIndexes, gTexCoordBuffer);

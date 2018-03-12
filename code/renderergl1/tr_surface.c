@@ -21,9 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 // tr_surf.c
 #include "tr_local.h"
-#if idppc_altivec && !defined(__APPLE__)
-#include <altivec.h>
-#endif
 
 /*
 
@@ -327,13 +324,16 @@ static void RB_SurfaceBeam( void )
 	GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
 
 	qglColor3f( 1, 0, 0 );
-
-	qglBegin( GL_TRIANGLE_STRIP );
+	
+	float *pPos = gVertexBuffer;
 	for ( i = 0; i <= NUM_BEAM_SEGS; i++ ) {
-		qglVertex3fv( start_points[ i % NUM_BEAM_SEGS] );
-		qglVertex3fv( end_points[ i % NUM_BEAM_SEGS] );
+		memcpy(pPos, start_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
+		pPos+=3;
+		memcpy(pPos, end_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
+		pPos+=3;
 	}
-	qglEnd();
+	vglVertexPointer(0, 3, GL_FLOAT, 0, (NUM_BEAM_SEGS + 1) * 2, gVertexBuffer);
+	vglDrawObjects(GL_TRIANGLE_STRIP, (NUM_BEAM_SEGS + 1) * 2, GL_TRUE);
 }
 
 //================================================================================
@@ -1162,17 +1162,27 @@ static void RB_SurfaceAxis( void ) {
 	GL_Bind( tr.whiteImage );
 	GL_State( GLS_DEFAULT );
 	//->qglLineWidth( 3 );
-	qglBegin( GL_LINES );
-	qglColor3f( 1,0,0 );
-	qglVertex3f( 0,0,0 );
-	qglVertex3f( 16,0,0 );
-	qglColor3f( 0,1,0 );
-	qglVertex3f( 0,0,0 );
-	qglVertex3f( 0,16,0 );
-	qglColor3f( 0,0,1 );
-	qglVertex3f( 0,0,0 );
-	qglVertex3f( 0,0,16 );
-	qglEnd();
+	float clrs[] = {
+		1, 0, 0, 0,
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0
+		0, 0, 1, 0
+	}
+	float verts[] = {
+		0, 0, 0,
+		16, 0, 0,
+		0, 0, 0,
+		0, 16, 0
+		0, 0, 0,
+		0, 0, 16
+	}
+	glEnableClientState(GL_COLOR_ARRAY);
+	vglVertexPointer(3, GL_FLOAT, 0, 6, verts);
+	vglColorPointer(4, GL_FLOAT, 0, 6, clrs);
+	vglDrawObjects(GL_LINES, 6, GL_TRUE);
+	glDisableClientState(GL_COLOR_ARRAY);
 	//->qglLineWidth( 1 );
 }
 
