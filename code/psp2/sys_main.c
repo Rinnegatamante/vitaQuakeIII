@@ -208,7 +208,7 @@ void Sys_Init(void) {
     Cvar_Set("arch", OS_STRING " " ARCH_STRING);
     Cvar_Set("username", Sys_GetCurrentUser());
 
-    Cvar_Set("r_mode", "-1");
+    Cvar_Set("r_mode", "3");
     Cvar_Set("r_customheight", "544");
     Cvar_Set("r_customwidth", "960");
 }
@@ -240,25 +240,6 @@ void Sys_Error(const char *error, ...) {
 
     Sys_Exit(3);
 }
-
-#if 0
-/*
-=================
-Sys_Warn
-=================
-*/
-static __attribute__ ((format (printf, 1, 2))) void Sys_Warn( char *warning, ... )
-{
-    va_list argptr;
-    char    string[1024];
-
-    va_start (argptr,warning);
-    Q_vsnprintf (string, sizeof(string), warning, argptr);
-    va_end (argptr);
-
-    CON_Print( va( "Warning: %s", string ) );
-}
-#endif
 
 /*
 ============
@@ -369,8 +350,14 @@ void Sys_SigHandler(int signal) {
         Sys_Exit(2);
 }
 
-int quake_main (unsigned int argc, char** argv){
-	 int i;
+/*
+=================
+main
+=================
+*/
+int main(int argc, char **argv) {
+	
+	int i;
     char commandLine[MAX_STRING_CHARS] = {0};
 
     //extern void Sys_LaunchAutoupdater(int argc, char **argv);
@@ -435,22 +422,6 @@ int quake_main (unsigned int argc, char** argv){
 	while (1) {
         Com_Frame();
     }
-
-    return 0;
-}
-
-/*
-=================
-main
-=================
-*/
-int main(int argc, char **argv) {
-	
-	SceUID main_thread = sceKernelCreateThread("Quake III", quake_main, 0x40, 0x800000, 0, 0, NULL);
-	if (main_thread >= 0){
-		sceKernelStartThread(main_thread, 0, NULL);
-		sceKernelWaitThreadEnd(main_thread, NULL, NULL);
-	}
 
     return 0;
 }
