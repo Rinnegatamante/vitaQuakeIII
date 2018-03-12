@@ -332,7 +332,7 @@ static void RB_SurfaceBeam( void )
 		memcpy(pPos, end_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
 		pPos+=3;
 	}
-	vglVertexPointer(0, 3, GL_FLOAT, 0, (NUM_BEAM_SEGS + 1) * 2, gVertexBuffer);
+	vglVertexPointer(3, GL_FLOAT, 0, (NUM_BEAM_SEGS + 1) * 2, gVertexBuffer);
 	vglDrawObjects(GL_TRIANGLE_STRIP, (NUM_BEAM_SEGS + 1) * 2, GL_TRUE);
 }
 
@@ -1167,17 +1167,17 @@ static void RB_SurfaceAxis( void ) {
 		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 1, 0, 0,
+		0, 0, 1, 0,
 		0, 0, 1, 0
-		0, 0, 1, 0
-	}
+	};
 	float verts[] = {
 		0, 0, 0,
 		16, 0, 0,
 		0, 0, 0,
-		0, 16, 0
+		0, 16, 0,
 		0, 0, 0,
 		0, 0, 16
-	}
+	};
 	glEnableClientState(GL_COLOR_ARRAY);
 	vglVertexPointer(3, GL_FLOAT, 0, 6, verts);
 	vglColorPointer(4, GL_FLOAT, 0, 6, clrs);

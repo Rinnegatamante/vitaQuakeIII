@@ -100,7 +100,11 @@ void GLimp_Init( qboolean coreContext)
 	glConfig.driverType = GLDRV_ICD;
 	glConfig.hardwareType = GLHW_GENERIC;
 	glConfig.deviceSupportsGamma = qfalse;
-
+	glConfig.textureCompression = TC_NONE;
+	glConfig.textureEnvAddAvailable = qfalse;
+	glConfig.windowAspect = 960.0f / 544.0f;
+	glConfig.isFullscreen = qtrue;
+	
 	strncpy(glConfig.vendor_string, glGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
 	strncpy(glConfig.renderer_string, glGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
 	strncpy(glConfig.version_string, glGetString(GL_VERSION), sizeof(glConfig.version_string));
