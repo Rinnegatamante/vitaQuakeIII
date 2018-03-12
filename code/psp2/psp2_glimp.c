@@ -79,15 +79,17 @@ float *gTexCoordBuffer;
 void GLimp_Init( qboolean coreContext)
 {
 	vglInit(0x800000);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	gVertexBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
-	gColorBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
-	gTexCoordBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
+	vglStartRendering();
 	int i;
 	indices = (uint16_t*)malloc(sizeof(uint16_t*)*MAX_INDICES);
 	for (i=0;i<MAX_INDICES;i++){
 		indices[i] = i;
 	}
+	vglIndexPointer(GL_SHORT, 0, MAX_INDICES, indices);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	gVertexBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
+	gColorBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
+	gTexCoordBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
 	
 	glConfig.vidWidth = 960;
 	glConfig.vidHeight = 544;
@@ -109,6 +111,10 @@ void GLimp_Init( qboolean coreContext)
 	strncpy(glConfig.renderer_string, glGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
 	strncpy(glConfig.version_string, glGetString(GL_VERSION), sizeof(glConfig.version_string));
 	strncpy(glConfig.extensions_string, glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
+	
+	qglClearColor( 0, 0, 0, 1 );
+	qglClear( GL_COLOR_BUFFER_BIT );
+	
 }
 
 
@@ -122,4 +128,6 @@ Responsible for doing a swapbuffers
 void GLimp_EndFrame( void )
 {
 	vglStopRendering();
+	vglStartRendering();
+	vglIndexPointer(GL_SHORT, 0, MAX_INDICES, indices);
 }
