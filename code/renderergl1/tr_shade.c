@@ -230,7 +230,8 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	vglTexCoordPointer( 2, GL_FLOAT, 0, input->numIndexes, gTexCoordBuffer );
 
 	R_BindAnimatedImage( &pStage->bundle[0] );
-
+	R_DrawElements( input->numIndexes, input->indexes );
+	
 	//
 	// lightmap/secondary pass
 	//
@@ -245,9 +246,13 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	//->}
 
 	//->qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[1] );
-
-	//->R_BindAnimatedImage( &pStage->bundle[1] );
-
+	texcoord = gTexCoordBuffer;
+	for (i = 0 ; i < input->numIndexes ; i++) {
+		memcpy(texcoord, input->svars.texcoords[1][input->indexes[i]], sizeof(vec2_t));
+		texcoord += 2;
+	}
+	vglTexCoordPointer( 2, GL_FLOAT, 0, input->numIndexes, gTexCoordBuffer );
+	R_BindAnimatedImage( &pStage->bundle[1] );
 	R_DrawElements( input->numIndexes, input->indexes );
 
 	//
@@ -1050,7 +1055,7 @@ void RB_StageIteratorVertexLitTexture( void )
 		colorbuf[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
 		colorbuf[3] = (float)(tess.svars.colors[tess.indexes[i]][3]) / 255.0f;
 		colorbuf += 4;
-		memcpy(texcoord, tess.texCoords[tess.indexes[i]*8], sizeof(vec2_t));
+		memcpy(texcoord, tess.texCoords[tess.indexes[i]], sizeof(vec2_t));
 		texcoord += 2;
 	}
 	for (i = 0 ; i < input->numIndexes ; i++) {
@@ -1160,7 +1165,7 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	
 	float *texcoord = gTexCoordBuffer;
 	for (i = 0 ; i < tess.numIndexes ; i++) {
-		memcpy(texcoord, tess.texCoords[tess.indexes[i]*8], sizeof(vec2_t));
+		memcpy(texcoord, tess.texCoords[tess.indexes[i]], sizeof(vec2_t));
 		texcoord += 2;
 	}
 	vglTexCoordPointer(2, GL_FLOAT, 0, tess.numIndexes, gTexCoordBuffer);
