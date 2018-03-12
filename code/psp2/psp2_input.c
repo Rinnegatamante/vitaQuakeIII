@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <vitasdk.h>
 
 #include "../client/client.h"
 #include "../sys/sys_local.h"
@@ -32,8 +33,45 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 IN_Frame
 ===============
 */
+uint32_t oldkeys;
+void Key_Event(int key, int value, int time){
+	Com_QueueEvent(time, SE_KEY, key, value, 0, NULL);
+}
+
+void Sys_SetKeys(uint32_t keys){
+	if((keys & SCE_CTRL_START) != (oldkeys & SCE_CTRL_START))
+		Key_Event(K_ESCAPE, (keys & SCE_CTRL_START) == SCE_CTRL_START, Sys_Milliseconds());
+	if((keys & SCE_CTRL_SELECT) != (oldkeys & SCE_CTRL_SELECT))
+		Key_Event(K_ENTER, (keys & SCE_CTRL_SELECT) == SCE_CTRL_SELECT, Sys_Milliseconds());
+	if((keys & SCE_CTRL_UP) != (oldkeys & SCE_CTRL_UP))
+		Key_Event(K_UPARROW, (keys & SCE_CTRL_UP) == SCE_CTRL_UP, Sys_Milliseconds());
+	if((keys & SCE_CTRL_DOWN) != (oldkeys & SCE_CTRL_DOWN))
+		Key_Event(K_DOWNARROW, (keys & SCE_CTRL_DOWN) == SCE_CTRL_DOWN, Sys_Milliseconds());
+	if((keys & SCE_CTRL_LEFT) != (oldkeys & SCE_CTRL_LEFT))
+		Key_Event(K_LEFTARROW, (keys & SCE_CTRL_LEFT) == SCE_CTRL_LEFT, Sys_Milliseconds());
+	if((keys & SCE_CTRL_RIGHT) != (oldkeys & SCE_CTRL_RIGHT))
+		Key_Event(K_RIGHTARROW, (keys & SCE_CTRL_RIGHT) == SCE_CTRL_RIGHT, Sys_Milliseconds());
+	if((keys & SCE_CTRL_TRIANGLE) != (oldkeys & SCE_CTRL_TRIANGLE))
+		Key_Event(K_AUX4, (keys & SCE_CTRL_TRIANGLE) == SCE_CTRL_TRIANGLE, Sys_Milliseconds());
+	if((keys & SCE_CTRL_SQUARE) != (oldkeys & SCE_CTRL_SQUARE))
+		Key_Event(K_AUX3, (keys & SCE_CTRL_SQUARE) == SCE_CTRL_SQUARE, Sys_Milliseconds());
+	if((keys & SCE_CTRL_CIRCLE) != (oldkeys & SCE_CTRL_CIRCLE))
+		Key_Event(K_AUX2, (keys & SCE_CTRL_CIRCLE) == SCE_CTRL_CIRCLE, Sys_Milliseconds());
+	if((keys & SCE_CTRL_CROSS) != (oldkeys & SCE_CTRL_CROSS))
+		Key_Event(K_AUX1, (keys & SCE_CTRL_CROSS) == SCE_CTRL_CROSS, Sys_Milliseconds());
+	if((keys & SCE_CTRL_LTRIGGER) != (oldkeys & SCE_CTRL_LTRIGGER))
+		Key_Event(K_AUX5, (keys & SCE_CTRL_LTRIGGER) == SCE_CTRL_LTRIGGER, Sys_Milliseconds());
+	if((keys & SCE_CTRL_RTRIGGER) != (oldkeys & SCE_CTRL_RTRIGGER))
+		Key_Event(K_AUX7, (keys & SCE_CTRL_RTRIGGER) == SCE_CTRL_RTRIGGER, Sys_Milliseconds());
+}
+
 void IN_Frame( void )
 {
+	SceCtrlData keys;
+	sceCtrlPeekBufferPositive(0, &keys, 1);
+	if(keys.buttons != oldkeys)
+		Sys_SetKeys(keys.buttons);
+	oldkeys = keys.buttons;
 }
 
 /*
@@ -43,6 +81,7 @@ IN_Init
 */
 void IN_Init( void *windowData )
 {
+	sceCtrlSetSamplingMode(SCE_CTRL_MODE_ANALOG_WIDE);
 }
 
 /*
