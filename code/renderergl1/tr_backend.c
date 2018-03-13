@@ -91,35 +91,6 @@ void GL_SelectTexture( int unit )
 	glState.currenttmu = unit;
 }
 
-
-/*
-** GL_BindMultitexture
-*/
-void GL_BindMultitexture( image_t *image0, GLuint env0, image_t *image1, GLuint env1 ) {
-	int		texnum0, texnum1;
-
-	texnum0 = image0->texnum;
-	texnum1 = image1->texnum;
-
-	if ( r_nobind->integer && tr.dlightImage ) {		// performance evaluation option
-		texnum0 = texnum1 = tr.dlightImage->texnum;
-	}
-
-	if ( glState.currenttextures[1] != texnum1 ) {
-		GL_SelectTexture( 1 );
-		image1->frameUsed = tr.frameCount;
-		glState.currenttextures[1] = texnum1;
-		qglBindTexture( GL_TEXTURE_2D, texnum1 );
-	}
-	if ( glState.currenttextures[0] != texnum0 ) {
-		GL_SelectTexture( 0 );
-		image0->frameUsed = tr.frameCount;
-		glState.currenttextures[0] = texnum0;
-		qglBindTexture( GL_TEXTURE_2D, texnum0 );
-	}
-}
-
-
 /*
 ** GL_Cull
 */
@@ -792,25 +763,24 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 	
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	
-	float texcoord[] = {
+	float texcoords[] = {
 		0.5f / cols,  0.5f / rows,
 		( cols - 0.5f ) / cols ,  0.5f / rows,
 		( cols - 0.5f ) / cols, ( rows - 0.5f ) / rows,
 		0.5f / cols, ( rows - 0.5f ) / rows
 	};
-	float vertex[] = {
-		x, y, 0.5f,
-		x+w, y, 0.5f,
-		x+w, y+h, 0.5f,
-		x, y+h, 0.5f
+	float vertices[] = {
+		x, y, 0.0f,
+		x+w, y, 0.0f,
+		x+w, y+h, 0.0f,
+		x, y+h, 0.0f
 	};
 	qglColor3f( tr.identityLight, tr.identityLight, tr.identityLight );
 	
-	vglVertexPointer(3, GL_FLOAT, 0, 4, vertex);
-	vglTexCoordPointer(2, GL_FLOAT, 0, 4, texcoord);
+	vglVertexPointer(3, GL_FLOAT, 0, 4, vertices);
+	vglTexCoordPointer(2, GL_FLOAT, 0, 4, texcoords);
 	vglDrawObjects(GL_TRIANGLE_FAN, 4, GL_TRUE);
 	
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void RE_UploadCinematic (int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty) {
@@ -1026,17 +996,15 @@ void RB_ShowImages( void ) {
 			0, 0, 1, 0, 1, 1, 0, 1
 		};
 		float vertex[] = {
-			x, y, 0.5f,
-			x+w, y, 0.5f,
-			x+w, y+h, 0.5f,
-			x, y+h, 0.5f
+			x, y, 0.0f,
+			x+w, y, 0.0f,
+			x+w, y+h, 0.0f,
+			x, y+h, 0.0f
 		};
 	
 		vglVertexPointer(3, GL_FLOAT, 0, 4, vertex);
 		vglTexCoordPointer(2, GL_FLOAT, 0, 4, texcoord);
 		vglDrawObjects(GL_TRIANGLE_FAN, 4, GL_TRUE);
-	
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		
 	}
 
@@ -1105,11 +1073,12 @@ const void	*RB_SwapBuffers( const void *data ) {
 
 	// we measure overdraw by reading back the stencil buffer and
 	// counting up the number of increments that have happened
+#ifndef __PSP2__
 	if ( r_measureOverdraw->integer ) {
 		int i;
 		long sum = 0;
 		unsigned char *stencilReadback;
-#ifndef __PSP2__
+
 		stencilReadback = ri.Hunk_AllocateTempMemory( glConfig.vidWidth * glConfig.vidHeight );
 		qglReadPixels( 0, 0, glConfig.vidWidth, glConfig.vidHeight, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, stencilReadback );
 
@@ -1119,9 +1088,8 @@ const void	*RB_SwapBuffers( const void *data ) {
 
 		backEnd.pc.c_overDraw += sum;
 		ri.Hunk_FreeTempMemory( stencilReadback );
-#endif
 	}
-
+#endif
 
 	if ( !glState.finishCalled ) {
 		qglFinish();
