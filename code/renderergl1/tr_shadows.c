@@ -62,35 +62,6 @@ void R_AddEdgeDef( int i1, int i2, int facing ) {
 void R_RenderShadowEdges( void ) {
 	int		i;
 
-#if 0
-	int		numTris;
-
-	// dumb way -- render every triangle's edges
-	numTris = tess.numIndexes / 3;
-
-	for ( i = 0 ; i < numTris ; i++ ) {
-		int		i1, i2, i3;
-
-		if ( !facing[i] ) {
-			continue;
-		}
-
-		i1 = tess.indexes[ i*3 + 0 ];
-		i2 = tess.indexes[ i*3 + 1 ];
-		i3 = tess.indexes[ i*3 + 2 ];
-
-		qglBegin( GL_TRIANGLE_STRIP );
-		qglVertex3fv( tess.xyz[ i1 ] );
-		qglVertex3fv( shadowXyz[ i1 ] );
-		qglVertex3fv( tess.xyz[ i2 ] );
-		qglVertex3fv( shadowXyz[ i2 ] );
-		qglVertex3fv( tess.xyz[ i3 ] );
-		qglVertex3fv( shadowXyz[ i3 ] );
-		qglVertex3fv( tess.xyz[ i1 ] );
-		qglVertex3fv( shadowXyz[ i1 ] );
-		qglEnd();
-	}
-#else
 	int		c, c2;
 	int		j, k;
 	int		i2;
@@ -125,19 +96,21 @@ void R_RenderShadowEdges( void ) {
 			// if it doesn't share the edge with another front facing
 			// triangle, it is a sil edge
 			if ( hit[ 1 ] == 0 ) {
-				qglBegin( GL_TRIANGLE_STRIP );
-				qglVertex3fv( tess.xyz[ i ] );
-				qglVertex3fv( shadowXyz[ i ] );
-				qglVertex3fv( tess.xyz[ i2 ] );
-				qglVertex3fv( shadowXyz[ i2 ] );
-				qglEnd();
+				float vertices[] = {
+					tess.xyz[i][0], tess.xyz[i][1], tess.xyz[i][2],
+					shadowXyz[i][0], shadowXyz[i][1], shadowXyz[i][2],
+					tess.xyz[i2][0], tess.xyz[i2][1], tess.xyz[i2][2],
+					shadowXyz[i2][0], shadowXyz[i2][1], shadowXyz[i2][2]
+				};
+				vglVertexPointer( 3, GL_FLOAT, 0, 4, vertices );
+				vglDrawObjects(GL_TRIANGLE_STRIP, 4, GL_TRUE);
 				c_edges++;
 			} else {
 				c_rejected++;
 			}
 		}
 	}
-#endif
+
 }
 
 /*
@@ -246,7 +219,6 @@ overlap and double darken.
 =================
 */
 void RB_ShadowFinish( void ) {
-#ifndef __PSP2__
 	if ( r_shadows->integer != 2 ) {
 		return;
 	}
@@ -256,7 +228,7 @@ void RB_ShadowFinish( void ) {
 	qglEnable( GL_STENCIL_TEST );
 	qglStencilFunc( GL_NOTEQUAL, 0, 255 );
 
-	qglDisable (GL_CLIP_PLANE0);
+	//->qglDisable (GL_CLIP_PLANE0);
 	GL_Cull( CT_TWO_SIDED );
 
 	GL_Bind( tr.whiteImage );
@@ -269,16 +241,17 @@ void RB_ShadowFinish( void ) {
 //	qglColor3f( 1, 0, 0 );
 //	GL_State( GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO );
 
-	qglBegin( GL_QUADS );
-	qglVertex3f( -100, 100, -10 );
-	qglVertex3f( 100, 100, -10 );
-	qglVertex3f( 100, -100, -10 );
-	qglVertex3f( -100, -100, -10 );
-	qglEnd ();
+	float vertices[] = {
+		-100,  100, -10,
+		 100,  100, -10,
+		 100, -100, -10,
+		-100, -100, -10
+	};
+	vglVertexPointer( 3, GL_FLOAT, 0, 4, vertices );
+	vglDrawObjects(GL_TRIANGLE_FAN, 4, GL_TRUE);
 
 	qglColor4f(1,1,1,1);
 	qglDisable( GL_STENCIL_TEST );
-#endif
 }
 
 

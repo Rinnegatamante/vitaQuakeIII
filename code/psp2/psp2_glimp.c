@@ -58,8 +58,12 @@ void GLimp_Minimize( void )
 GLimp_LogComment
 ===============
 */
+extern void log2file(const char *format, ...);
 void GLimp_LogComment( char *comment )
 {
+#ifndef RELEASE
+	log2file(comment);
+#endif
 }
 
 #define R_MODE_FALLBACK 3 // 640 * 480

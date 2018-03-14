@@ -52,7 +52,9 @@ void log2file(const char *format, ...) {
 	CON_Print(msg);
 }
 
-#define printf log2file
+#ifndef RELEASE
+# define printf log2file
+#endif
 
 qboolean stdinIsATTY;
 
