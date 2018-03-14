@@ -151,9 +151,9 @@ static void DrawNormals (shaderCommands_t *input) {
 
 	float *vertices = gVertexBuffer;
 	for (i = 0 ; i < input->numVertexes ; i++) {
-		memcpy(vertices, input->xyz[i], sizeof(float) * 3);
+		memcpy(vertices, input->xyz[input->indexes[i]], sizeof(vec3_t));
 		vertices += 3;
-		VectorMA (input->xyz[i], 2, input->normal[i], temp);
+		VectorMA (input->xyz[input->indexes[i]], 2, input->normal[input->indexes[i]], temp);
 		memcpy(vertices, temp, sizeof(vec3_t));
 		vertices += 3;
 	}
@@ -244,15 +244,14 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	//->	GL_TexEnv( tess.shader->multitextureEnv );
 	//->}
 
-	//->qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[1] );
-	texcoord = gTexCoordBuffer;
+	/*texcoord = gTexCoordBuffer;
 	for (i = 0 ; i < input->numIndexes ; i++) {
 		memcpy(texcoord, input->svars.texcoords[1][input->indexes[i]], sizeof(vec2_t));
 		texcoord += 2;
 	}
 	vglTexCoordPointer( 2, GL_FLOAT, 0, input->numIndexes, gTexCoordBuffer );
 	R_BindAnimatedImage( &pStage->bundle[1] );
-	R_DrawElements( input->numIndexes, input->indexes );
+	R_DrawElements( input->numIndexes, input->indexes );*/
 
 	//
 	// disable texturing on TEXTURE1, then select TEXTURE0
@@ -931,7 +930,7 @@ void RB_StageIteratorGeneric( void )
 		float *colorbuf = gColorBuffer;
 		float *texcoord = gTexCoordBuffer;
 		int i;
-		for (i = 0 ; i < input->numIndexes ; i++) {
+		for (i = 0 ; i < tess.numIndexes ; i++) {
 			colorbuf[0] = (float)(tess.svars.colors[tess.indexes[i]][0]) / 255.0f;
 			colorbuf[1] = (float)(tess.svars.colors[tess.indexes[i]][1]) / 255.0f;
 			colorbuf[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
@@ -1057,8 +1056,6 @@ void RB_StageIteratorVertexLitTexture( void )
 		colorbuf += 4;
 		memcpy(texcoord, tess.texCoords[tess.indexes[i]][0], sizeof(vec2_t));
 		texcoord += 2;
-	}
-	for (i = 0 ; i < input->numIndexes ; i++) {
 		memcpy(vertices, input->xyz[input->indexes[i]], sizeof(vec3_t));
 		vertices += 3;
 	}
