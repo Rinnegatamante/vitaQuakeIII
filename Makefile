@@ -22,20 +22,12 @@ export INCLUDE	:= $(foreach dir,$(INCLUDES),-I$(dir))
 PREFIX  = arm-vita-eabi
 CC      = $(PREFIX)-gcc
 CXX      = $(PREFIX)-g++
-CFLAGS  = $(INCLUDE) -D__PSP2__ -D__FLOAT_WORD_ORDER=1 -D__GNU__ \
+CFLAGS  = $(INCLUDE) -D__PSP2__ -D__FLOAT_WORD_ORDER=1 -D__GNU__ -DRELEASE \
         -DUSE_ICON -DARCH_STRING=\"arm\" -DBOTLIB -DUSE_CODEC_VORBIS \
         -DNO_VM_COMPILED -DDEFAULT_BASEDIR=\"ux0:/data/ioq3\" \
         -DPRODUCT_VERSION=\"1.36_GIT_ba68b99c-2018-01-23\" \
-        -mfpu=neon -mcpu=cortex-a9 -march=armv7-a -mfloat-abi=hard -ffast-math \
-        -fno-asynchronous-unwind-tables -funroll-loops \
-        -mword-relocations -fno-unwind-tables -fno-optimize-sibling-calls \
-        -mvectorize-with-neon-quad -funsafe-math-optimizations \
-        -mlittle-endian -munaligned-access \
-        -fsingle-precision-constant -Wl,-q \
-        -fno-strict-aliasing -Wimplicit -Wstrict-prototypes -pipe \
-        -Wformat=2 -Wno-format-zero-length -Wformat-security -Wno-format-nonliteral -Wstrict-aliasing=2 \
-        -Wmissing-format-attribute -Wdisabled-optimization -Werror-implicit-function-declaration \
-		 -Wno-unused-variable -Wno-unused-but-set-variable
+        -mfpu=neon -mcpu=cortex-a9 -fsigned-char \
+        -Wl,-q -O3 -g -ffast-math -fno-short-enums
 CXXFLAGS  = $(CFLAGS) -fno-exceptions -std=gnu++11
 ASFLAGS = $(CFLAGS)
 
