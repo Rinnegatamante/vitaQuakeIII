@@ -258,6 +258,10 @@ void R_ImageList_f( void ) {
 				estSize *= 2;
 				break;
 #endif
+			default:
+				format = "RGBA ";
+				estSize *= 4;
+				break;
 		}
 
 		// mipmap adds about 50%
@@ -814,7 +818,7 @@ image_t *R_CreateImage( const char *name, byte *pic, int width, int height,
 	}
 
 	image = tr.images[tr.numImages] = ri.Hunk_Alloc( sizeof( image_t ), h_low );
-	image->texnum = 1024 + tr.numImages;
+	qglGenTextures(1, &image->texnum);
 	tr.numImages++;
 
 	image->type = type;

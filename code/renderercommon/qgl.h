@@ -43,6 +43,7 @@ extern uint16_t *indices;
 #define GL_RGBA8 GL_RGBA
 #define GL_UNSIGNED_INT GL_UNSIGNED_BYTE
 
+#define qglGenTextures glGenTextures
 #define qglGetIntegerv glGetIntegerv
 #define qglGetError glGetError
 #define qglClearDepth glClearDepth
