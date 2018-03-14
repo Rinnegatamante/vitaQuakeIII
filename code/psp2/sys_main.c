@@ -399,6 +399,12 @@ int quake_main (unsigned int argc, void* argv){
 
 int main(int argc, char **argv) {
 	
+	// Setting maximum clocks
+	scePowerSetArmClockFrequency(444);
+	scePowerSetBusClockFrequency(222);
+	scePowerSetGpuClockFrequency(222);
+	scePowerSetGpuXbarClockFrequency(166);
+	
 	// We need a bigger stack to run Quake 3, so we create a new thread with a proper stack size
 	SceUID main_thread = sceKernelCreateThread("Quake III", quake_main, 0x40, 0x800000, 0, 0, NULL);
 	if (main_thread >= 0){
