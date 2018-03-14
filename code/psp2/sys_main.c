@@ -355,41 +355,12 @@ void Sys_SigHandler(int signal) {
 main
 =================
 */
-int main(int argc, char **argv) {
-	
+int quake_main (unsigned int argc, void* argv){
 	int i;
+	
+	char** argvv = (char**)argv;
+	
     char commandLine[MAX_STRING_CHARS] = {0};
-
-    //extern void Sys_LaunchAutoupdater(int argc, char **argv);
-    //Sys_LaunchAutoupdater(argc, argv);
-
-#ifndef DEDICATED
-    // SDL version check
-
-    // Compile time
-/*#	if !SDL_VERSION_ATLEAST(MINSDL_MAJOR, MINSDL_MINOR, MINSDL_PATCH)
-#		error A more recent version of SDL is required
-#	endif*/
-
-    // Run time
-    /*SDL_version ver;
-    SDL_GetVersion(&ver);
-
-#define MINSDL_VERSION \
-    XSTRING(MINSDL_MAJOR) "." \
-    XSTRING(MINSDL_MINOR) "." \
-    XSTRING(MINSDL_PATCH)
-
-    if (SDL_VERSIONNUM(ver.major, ver.minor, ver.patch) <
-        SDL_VERSIONNUM(MINSDL_MAJOR, MINSDL_MINOR, MINSDL_PATCH)) {
-        Sys_Dialog(DT_ERROR, va("SDL version " MINSDL_VERSION " or greater is required, "
-                                        "but only version %d.%d.%d was found. You may be able to obtain a more recent copy "
-                                        "from http://www.libsdl.org/.", ver.major, ver.minor, ver.patch),
-                   "SDL Library Too Old");
-
-        Sys_Exit(1);
-    }*/
-#endif
 
     Sys_PlatformInit();
 
@@ -403,11 +374,11 @@ int main(int argc, char **argv) {
 
     // Concatenate the command line for passing to Com_Init
     for (i = 1; i < argc; i++) {
-        const qboolean containsSpaces = strchr(argv[i], ' ') != NULL;
+        const qboolean containsSpaces = strchr(argvv[i], ' ') != NULL;
         if (containsSpaces)
             Q_strcat(commandLine, sizeof(commandLine), "\"");
 
-        Q_strcat(commandLine, sizeof(commandLine), argv[i]);
+        Q_strcat(commandLine, sizeof(commandLine), argvv[i]);
 
         if (containsSpaces)
             Q_strcat(commandLine, sizeof(commandLine), "\"");
@@ -424,5 +395,17 @@ int main(int argc, char **argv) {
     }
 
     return 0;
+}
+
+int main(int argc, char **argv) {
+	
+	// We need a bigger stack to run Quake 3, so we create a new thread with a proper stack size
+	SceUID main_thread = sceKernelCreateThread("Quake III", quake_main, 0x40, 0x800000, 0, 0, NULL);
+	if (main_thread >= 0){
+		sceKernelStartThread(main_thread, 0, NULL);
+		sceKernelWaitThreadEnd(main_thread, NULL, NULL);
+	}
+	return 0;
+	
 }
 
