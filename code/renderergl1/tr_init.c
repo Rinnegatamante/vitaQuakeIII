@@ -1205,10 +1205,8 @@ void R_Init( void ) {
 	Com_Memset( &backEnd, 0, sizeof( backEnd ) );
 	Com_Memset( &tess, 0, sizeof( tess ) );
 
-#ifndef __PSP2__
 	if(sizeof(glconfig_t) != 11332)
 		ri.Error( ERR_FATAL, "Mod ABI incompatible: sizeof(glconfig_t) == %u != 11332", (unsigned int) sizeof(glconfig_t));
-#endif
 //	Swap_Init();
 
 	if ( (intptr_t)tess.xyz & 15 ) {
