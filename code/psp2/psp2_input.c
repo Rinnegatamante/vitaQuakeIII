@@ -65,6 +65,24 @@ void Sys_SetKeys(uint32_t keys){
 		Key_Event(K_AUX7, (keys & SCE_CTRL_RTRIGGER) == SCE_CTRL_RTRIGGER, Sys_Milliseconds());
 }
 
+void IN_RescaleAnalog(int *x, int *y, int dead) {
+
+	float analogX = (float) *x;
+	float analogY = (float) *y;
+	float deadZone = (float) dead;
+	float maximum = 128.0f;
+	float magnitude = sqrt(analogX * analogX + analogY * analogY);
+	if (magnitude >= deadZone)
+	{
+		float scalingFactor = maximum / magnitude * (magnitude - deadZone) / (maximum - deadZone);
+		*x = (int) (analogX * scalingFactor);
+		*y = (int) (analogY * scalingFactor);
+	} else {
+		*x = 0;
+		*y = 0;
+	}
+}
+
 void IN_Frame( void )
 {
 	SceCtrlData keys;
@@ -72,6 +90,14 @@ void IN_Frame( void )
 	if(keys.buttons != oldkeys)
 		Sys_SetKeys(keys.buttons);
 	oldkeys = keys.buttons;
+	
+	// Emulating mouse with right analog
+	int right_x = keys.rx - 127;
+	int right_y = keys.ry - 127;
+	IN_RescaleAnalog(&right_x, &right_y, 30);
+	if (right_x != 0 || right_y != 0)
+		Com_QueueEvent(0, SE_MOUSE, right_x, right_y, 0, NULL);
+	
 }
 
 /*
