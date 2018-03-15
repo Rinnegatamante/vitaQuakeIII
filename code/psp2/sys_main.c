@@ -31,18 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ctype.h>
 #include <errno.h>
 
-#ifndef DEDICATED
-#ifdef USE_LOCAL_HEADERS
-#	include "SDL.h"
-#	include "SDL_cpuinfo.h"
-#else
-
-//#	include <SDL.h>
-//#	include <SDL_cpuinfo.h>
 #include <vitasdk.h>
-
-#endif
-#endif
 
 #include "sys_local.h"
 #include "sys_loadlib.h"
@@ -171,8 +160,6 @@ Single exit point (regular exit or in case of error)
 static __attribute__ ((noreturn)) void Sys_Exit(int exitCode) {
     CON_Shutdown();
 
-    //SDL_Quit();
-
     NET_Shutdown();
 
     Sys_PlatformExit();
@@ -219,7 +206,6 @@ Sys_Print
 =================
 */
 void Sys_Print(const char *msg) {
-    //CON_LogWrite(msg);
     CON_Print(msg);
 }
 
@@ -316,11 +302,7 @@ void Sys_ParseArgs(int argc, char **argv) {
 }
 
 #ifndef DEFAULT_BASEDIR
-#	ifdef __APPLE__
-#		define DEFAULT_BASEDIR Sys_StripAppBundle(Sys_BinaryPath())
-#	else
-#		define DEFAULT_BASEDIR Sys_BinaryPath()
-#	endif
+#	define DEFAULT_BASEDIR Sys_BinaryPath()
 #endif
 
 /*
@@ -411,7 +393,7 @@ int main(int argc, char **argv) {
 	IN_Init(NULL);
 	
 	// We need a bigger stack to run Quake 3, so we create a new thread with a proper stack size
-	SceUID main_thread = sceKernelCreateThread("Quake III", quake_main, 0x40, 0x800000, 0, 0, NULL);
+	SceUID main_thread = sceKernelCreateThread("Quake III", quake_main, 0x40, 0x200000, 0, 0, NULL);
 	if (main_thread >= 0){
 		sceKernelStartThread(main_thread, 0, NULL);
 		sceKernelWaitThreadEnd(main_thread, NULL, NULL);
