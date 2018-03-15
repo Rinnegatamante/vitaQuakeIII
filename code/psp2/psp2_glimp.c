@@ -83,6 +83,7 @@ float *gTexCoordBuffer;
 void GLimp_Init( qboolean coreContext)
 {
 	vglInit(0x800000);
+	vglUseVram(GL_TRUE);
 	vglStartRendering();
 	int i;
 	indices = (uint16_t*)malloc(sizeof(uint16_t*)*MAX_INDICES);
