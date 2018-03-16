@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "../sys/sys_local.h"
 
+static hires_x, hires_y;
 /*
 ===============
 IN_Frame
@@ -70,7 +71,7 @@ void IN_RescaleAnalog(int *x, int *y, int dead) {
 	float analogX = (float) *x;
 	float analogY = (float) *y;
 	float deadZone = (float) dead;
-	float maximum = 128.0f;
+	float maximum = 32768.0f;
 	float magnitude = sqrt(analogX * analogX + analogY * analogY);
 	if (magnitude >= deadZone)
 	{
@@ -93,12 +94,18 @@ void IN_Frame( void )
 	oldkeys = keys.buttons;
 	
 	// Emulating mouse with right analog
-	int right_x = keys.rx - 127;
-	int right_y = keys.ry - 127;
-	IN_RescaleAnalog(&right_x, &right_y, 30);
-	if (right_x != 0 || right_y != 0)
-		Com_QueueEvent(time, SE_MOUSE, right_x, right_y, 0, NULL);
-	
+	int right_x = (keys.rx - 127) * 256;
+	int right_y = (keys.ry - 127) * 256;
+	IN_RescaleAnalog(&right_x, &right_y, 7680);
+	hires_x += right_x;
+	hires_y += right_y;
+	if (hires_x != 0 || hires_y != 0) {
+		// increase slowdown variable to slow down aiming, could be made user-adjustable
+		int slowdown = 2048;
+		Com_QueueEvent(time, SE_MOUSE, hires_x / slowdown, hires_y / slowdown, 0, NULL);
+		hires_x %= slowdown;
+		hires_y %= slowdown;
+	}
 }
 
 /*
