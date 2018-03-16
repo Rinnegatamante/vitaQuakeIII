@@ -80,10 +80,14 @@ uint16_t* indices;
 float *gVertexBuffer;
 float *gColorBuffer;
 float *gTexCoordBuffer;
+uint8_t inited = 0;
 void GLimp_Init( qboolean coreContext)
 {
-	vglInit(0x800000);
-	vglUseVram(GL_TRUE);
+	if (!inited){
+		vglInit(0x800000);
+		vglUseVram(GL_TRUE);
+		inited = 1;
+	}
 	vglStartRendering();
 	int i;
 	indices = (uint16_t*)malloc(sizeof(uint16_t*)*MAX_INDICES);
