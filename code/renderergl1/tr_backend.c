@@ -678,7 +678,7 @@ void	RB_SetGL2D (void) {
 	qglScissor( 0, 0, glConfig.vidWidth, glConfig.vidHeight );
 	qglMatrixMode(GL_PROJECTION);
     qglLoadIdentity ();
-	qglOrtho (0, glConfig.vidWidth, glConfig.vidHeight, 0, -99999, 99999);
+	qglOrtho (0, glConfig.vidWidth, glConfig.vidHeight, 0, 0, 1);
 	qglMatrixMode(GL_MODELVIEW);
     qglLoadIdentity ();
 
@@ -770,10 +770,10 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 		0.5f / cols, ( rows - 0.5f ) / rows
 	};
 	float vertices[] = {
-		x, y, 0.5f,
-		x+w, y, 0.5f,
-		x+w, y+h, 0.5f,
-		x, y+h, 0.5f
+		x, y, 0.0f,
+		x+w, y, 0.0f,
+		x+w, y+h, 0.0f,
+		x, y+h, 0.0f
 	};
 	qglColor3f( tr.identityLight, tr.identityLight, tr.identityLight );
 	
@@ -996,10 +996,10 @@ void RB_ShowImages( void ) {
 			0, 0, 1, 0, 1, 1, 0, 1
 		};
 		float vertex[] = {
-			x, y, 0.5f,
-			x+w, y, 0.5f,
-			x+w, y+h, 0.5f,
-			x, y+h, 0.5f
+			x, y, 0.0f,
+			x+w, y, 0.0f,
+			x+w, y+h, 0.0f,
+			x, y+h, 0.0f
 		};
 	
 		vglVertexPointer(3, GL_FLOAT, 0, 4, vertex);
