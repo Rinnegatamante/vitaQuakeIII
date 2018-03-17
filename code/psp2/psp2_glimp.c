@@ -81,12 +81,45 @@ float *gVertexBuffer;
 float *gColorBuffer;
 float *gTexCoordBuffer;
 uint8_t inited = 0;
+
+typedef struct vidmode_s
+{
+	const char *description;
+	int width, height;
+	float pixelAspect;		// pixel width / height
+} vidmode_t;
+extern vidmode_t r_vidModes[];
+
+uint32_t cur_width;
+
 void GLimp_Init( qboolean coreContext)
 {
+	
+	if (r_mode->integer < 0) r_mode->integer = 3;
+	
+	glConfig.vidWidth = r_vidModes[r_mode->integer].width;
+	glConfig.vidHeight = r_vidModes[r_mode->integer].height;
+	glConfig.colorBits = 32;
+	glConfig.depthBits = 32;
+	glConfig.stencilBits = 8;
+	glConfig.displayFrequency = 60;
+	glConfig.stereoEnabled = qfalse;
+	
+	glConfig.driverType = GLDRV_ICD;
+	glConfig.hardwareType = GLHW_GENERIC;
+	glConfig.deviceSupportsGamma = qfalse;
+	glConfig.textureCompression = TC_NONE;
+	glConfig.textureEnvAddAvailable = qfalse;
+	glConfig.windowAspect = ((float)r_vidModes[r_mode->integer].width) / ((float)r_vidModes[r_mode->integer].height);
+	glConfig.isFullscreen = qtrue;
+	
 	if (!inited){
-		vglInit(0x800000);
+		vglInitExtended(0x800000, glConfig.vidWidth, glConfig.vidHeight);
 		vglUseVram(GL_TRUE);
 		inited = 1;
+		cur_width = glConfig.vidWidth;
+	}else if (glConfig.vidWidth != cur_width){ // Changed resolution in game, restarting the game
+		sceAppMgrLoadExec("app0:/eboot.bin", NULL, NULL);
 	}
 	vglStartRendering();
 	int i;
@@ -99,22 +132,6 @@ void GLimp_Init( qboolean coreContext)
 	gVertexBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
 	gColorBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
 	gTexCoordBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
-	
-	glConfig.vidWidth = 960;
-	glConfig.vidHeight = 544;
-	glConfig.colorBits = 32;
-	glConfig.depthBits = 32;
-	glConfig.stencilBits = 8;
-	glConfig.displayFrequency = 60;
-	glConfig.stereoEnabled = qfalse;
-	
-	glConfig.driverType = GLDRV_ICD;
-	glConfig.hardwareType = GLHW_GENERIC;
-	glConfig.deviceSupportsGamma = qfalse;
-	glConfig.textureCompression = TC_NONE;
-	glConfig.textureEnvAddAvailable = qfalse;
-	glConfig.windowAspect = 960.0f / 544.0f;
-	glConfig.isFullscreen = qtrue;
 	
 	strncpy(glConfig.vendor_string, glGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
 	strncpy(glConfig.renderer_string, glGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
