@@ -631,7 +631,6 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 	{
 		memblock = sceKernelAllocMemBlockForVM("code", ALIGN(ALIGN(vm->codeLength, 4 * 1024), 1 * 1024 * 1024));
 		sceKernelGetMemBlockBase(memblock, &vm->codeBase);
-		log2file("codelength: %d, ret: 0x%08X\n", vm->codeLength, memblock);
 		if(memblock < 0)
 			Com_Error(ERR_FATAL, "VM_CompileARM: can't mmap memory");
 		sceKernelOpenVMDomain();
