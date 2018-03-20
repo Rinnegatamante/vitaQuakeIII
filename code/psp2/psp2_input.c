@@ -34,7 +34,7 @@ static hires_x, hires_y;
 IN_Frame
 ===============
 */
-uint32_t oldkeys;
+uint32_t oldkeys, oldanalogs;
 void Key_Event(int key, int value, int time){
 	Com_QueueEvent(time, SE_KEY, key, value, 0, NULL);
 }
@@ -84,6 +84,12 @@ void IN_RescaleAnalog(int *x, int *y, int dead) {
 	}
 }
 
+// Left analog virtual values
+#define LANALOG_LEFT  0x01
+#define LANALOG_RIGHT 0x02
+#define LANALOG_UP    0x04
+#define LANALOG_DOWN  0x08
+
 void IN_Frame( void )
 {
 	SceCtrlData keys;
@@ -106,6 +112,25 @@ void IN_Frame( void )
 		hires_x %= slowdown;
 		hires_y %= slowdown;
 	}
+	
+	// Emulating keys with left analog (TODO: Replace this dirty hack with a serious implementation)
+	uint32_t virt_buttons = 0x00;
+	if (keys.lx < 80) virt_buttons += LANALOG_LEFT;
+	else if (keys.lx > 160) virt_buttons += LANALOG_RIGHT;
+	if (keys.ly < 80) virt_buttons += LANALOG_UP;
+	else if (keys.ly > 160) virt_buttons += LANALOG_DOWN;
+	if (virt_buttons != oldanalogs){
+		if((virt_buttons & LANALOG_LEFT) != (oldanalogs & LANALOG_LEFT))
+			Key_Event(K_AUX7, (virt_buttons & LANALOG_LEFT) == LANALOG_LEFT, time);
+		if((virt_buttons & LANALOG_RIGHT) != (oldanalogs & LANALOG_RIGHT))
+			Key_Event(K_AUX8, (virt_buttons & LANALOG_RIGHT) == LANALOG_RIGHT, time);
+		if((virt_buttons & LANALOG_UP) != (oldanalogs & LANALOG_UP))
+			Key_Event(K_AUX9, (virt_buttons & LANALOG_UP) == LANALOG_UP, time);
+		if((virt_buttons & LANALOG_DOWN) != (oldanalogs & LANALOG_DOWN))
+			Key_Event(K_AUX10, (virt_buttons & LANALOG_DOWN) == LANALOG_DOWN, time);
+	}
+	oldanalogs = virt_buttons;
+	
 }
 
 /*
