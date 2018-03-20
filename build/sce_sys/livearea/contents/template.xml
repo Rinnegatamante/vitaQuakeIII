@@ -8,4 +8,11 @@
 	<gate>
 		<startup-image>startup.png</startup-image>
 	</gate>
+	
+	<frame id='frame1' multi='o' autoflip='3' >
+		<liveitem>
+			<target>psla:team</target>
+			<image>teamarena.png</image>
+		</liveitem>
+	</frame>
 </livearea>

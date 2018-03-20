@@ -2,9 +2,8 @@ TARGET		:= vitaQuakeIII
 TITLE		:= QUAK00003
 GIT_VERSION := $(shell git describe --abbrev=6 --dirty --always --tags)
 
-SOURCES  := code/renderercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2
+SOURCES  := code/renderercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2 code/sys
 INCLUDES := code/renderercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2 code/sys
-EXTRA_FILES := code/sys/con_log.c
 
 LIBS = -lvitaGL -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
 	-lc -lSceCommonDialog_stub -lSceAudio_stub -lSceLibKernel_stub \
@@ -12,7 +11,7 @@ LIBS = -lvitaGL -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
 	-lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -lSceAppMgr_stub \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub	
 
-CFILES   := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c)) $(EXTRA_FILES)
+CFILES   := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c))
 CPPFILES   := $(foreach dir,$(CPPSOURCES), $(wildcard $(dir)/*.cpp))
 BINFILES := $(foreach dir,$(DATA), $(wildcard $(dir)/*.bin))
 OBJS     := $(addsuffix .o,$(BINFILES)) $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)

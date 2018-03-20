@@ -336,8 +336,6 @@ main
 int quake_main (unsigned int argc, void* argv){
 	int i;
 	
-	char** argvv = (char**)argv;
-	
     char commandLine[MAX_STRING_CHARS] = {0};
 
     Sys_PlatformInit();
@@ -345,24 +343,18 @@ int quake_main (unsigned int argc, void* argv){
     // Set the initial time base
     Sys_Milliseconds();
 
-    //Sys_ParseArgs(argc, argv);
     sceIoMkdir(DEFAULT_BASEDIR, 777);
     Sys_SetBinaryPath(DEFAULT_BASEDIR);
     Sys_SetDefaultInstallPath(DEFAULT_BASEDIR);
-
-    // Concatenate the command line for passing to Com_Init
-    for (i = 1; i < argc; i++) {
-        const qboolean containsSpaces = strchr(argvv[i], ' ') != NULL;
-        if (containsSpaces)
-            Q_strcat(commandLine, sizeof(commandLine), "\"");
-
-        Q_strcat(commandLine, sizeof(commandLine), argvv[i]);
-
-        if (containsSpaces)
-            Q_strcat(commandLine, sizeof(commandLine), "\"");
-
-        Q_strcat(commandLine, sizeof(commandLine), " ");
-    }
+	
+	// Quake III: Team Arena support
+	sceAppUtilInit(&(SceAppUtilInitParam){}, &(SceAppUtilBootParam){});
+	SceAppUtilAppEventParam eventParam;
+	memset(&eventParam, 0, sizeof(SceAppUtilAppEventParam));
+	sceAppUtilReceiveAppEvent(&eventParam);
+	if (eventParam.type == 0x05){
+		sprintf(commandLine, "+set fs_game missionpack");
+	}
 
     CON_Init();
     Com_Init(commandLine);
