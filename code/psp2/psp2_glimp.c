@@ -114,7 +114,7 @@ void GLimp_Init( qboolean coreContext)
 	glConfig.isFullscreen = qtrue;
 	
 	if (!inited){
-		vglInitExtended(0x800000, glConfig.vidWidth, glConfig.vidHeight);
+		vglInitExtended(0x800000, glConfig.vidWidth, glConfig.vidHeight, 0x1000000);
 		vglUseVram(GL_TRUE);
 		inited = 1;
 		cur_width = glConfig.vidWidth;
