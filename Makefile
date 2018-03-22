@@ -11,7 +11,7 @@ LIBS = -lvitaGL -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
 	-lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -lSceAppMgr_stub \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub	
 
-CFILES   := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c))
+CFILES   := $(filter-out code/psp2/psp2_dll_hacks.c,$(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c)))
 CPPFILES   := $(foreach dir,$(CPPSOURCES), $(wildcard $(dir)/*.cpp))
 BINFILES := $(foreach dir,$(DATA), $(wildcard $(dir)/*.bin))
 OBJS     := $(addsuffix .o,$(BINFILES)) $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
@@ -33,12 +33,18 @@ ASFLAGS = $(CFLAGS)
 all: $(TARGET).vpk
 
 $(TARGET).vpk: $(TARGET).velf
+	make -C code/cgame
+	cp -f code/cgame/cgame.suprx ./cgamearm.suprx
+	make -C code/ui
+	cp -f code/ui/ui.suprx ./uiarm.suprx
+	make -C code/game
+	cp -f code/game/qagame.suprx ./qagamearm.suprx
 	vita-make-fself -s $< build/eboot.bin
 	vita-mksfoex -s TITLE_ID=$(TITLE) -d ATTRIBUTE2=12 "$(TARGET)" param.sfo
 	cp -f param.sfo build/sce_sys/param.sfo
 
 	#------------ Comment this if you don't have 7zip ------------------
-	7z a -tzip ./$(TARGET).vpk -r ./build/sce_sys ./build/eboot.bin ./build/shaders
+	7z a -tzip ./$(TARGET).vpk -r ./build/sce_sys ./build/eboot.bin
 	#-------------------------------------------------------------------
 
 %.velf: %.elf
@@ -50,4 +56,7 @@ $(TARGET).elf: $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ $(LIBS) -o $@
 
 clean:
+	@make -C code/cgame clean
+	@make -C code/ui clean
+	@make -C code/game clean
 	@rm -rf $(TARGET).velf $(TARGET).elf $(OBJS) $(TARGET).elf.unstripped.elf $(TARGET).vpk build/eboot.bin build/sce_sys/param.sfo ./param.sfo

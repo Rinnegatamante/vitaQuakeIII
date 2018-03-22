@@ -19,33 +19,32 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
+//
+#include "ui_local.h"
 
-#ifdef DEDICATED
-#	ifdef _WIN32
-#		include <windows.h>
-#		define Sys_LoadLibrary(f) (void*)LoadLibrary(f)
-#		define Sys_UnloadLibrary(h) FreeLibrary((HMODULE)h)
-#		define Sys_LoadFunction(h,fn) (void*)GetProcAddress((HMODULE)h,fn)
-#		define Sys_LibraryError() "unknown"
-#	else
-#	include <dlfcn.h>
-#		define Sys_LoadLibrary(f) dlopen(f,RTLD_NOW)
-#		define Sys_UnloadLibrary(h) dlclose(h)
-#		define Sys_LoadFunction(h,fn) dlsym(h,fn)
-#		define Sys_LibraryError() dlerror()
-#	endif
-#else
-/*#	ifdef USE_LOCAL_HEADERS
-#		include "SDL.h"
-#		include "SDL_loadso.h"
-#	else
-#		include <SDL.h>
-#		include <SDL_loadso.h>
-#	endif*/
-#		define Sys_LoadLibrary(f) dlopen(f,0x0002)
-#		define Sys_UnloadLibrary(h) dlclose(h)
-#		define Sys_LoadFunction(h,fn) dlsym(h,fn)
-#		define Sys_LibraryError() dlerror()
-#endif
+void UI_SPArena_Start( const char *arenaInfo ) {
+	char	*map;
+	int		level;
+	int		n;
+	char	*txt;
 
-void * QDECL Sys_LoadDll(const char *name, qboolean useSystemLib);
+	n = (int)trap_Cvar_VariableValue( "sv_maxclients" );
+	if ( n < 8 ) {
+		trap_Cvar_SetValue( "sv_maxclients", 8 );
+	}
+
+	level = atoi( Info_ValueForKey( arenaInfo, "num" ) );
+	txt = Info_ValueForKey( arenaInfo, "special" );
+	if( txt[0] ) {
+		if( Q_stricmp( txt, "training" ) == 0 ) {
+			level = -4;
+		}
+		else if( Q_stricmp( txt, "final" ) == 0 ) {
+			level = UI_GetNumSPTiers() * ARENAS_PER_TIER;
+		}
+	}
+	trap_Cvar_SetValue( "ui_spSelection", level );
+
+	map = Info_ValueForKey( arenaInfo, "map" );
+	trap_Cmd_ExecuteText( EXEC_APPEND, va( "spmap %s\n", map ) );
+}

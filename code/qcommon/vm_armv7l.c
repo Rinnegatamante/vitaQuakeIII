@@ -255,14 +255,6 @@ static int asmcall(int call, int pstack)
 
 void _emit(vm_t *vm, unsigned isn, int pass)
 {
-#if 0
-	static int fd = -2;
-	if (fd == -2)
-		fd = open("code.bin", O_TRUNC|O_WRONLY|O_CREAT, 0644);
-	if (fd > 0)
-		write(fd, &isn, 4);
-#endif
-
 	if (pass)
 		memcpy(vm->codeBase+vm->codeLength, &isn, 4);
 	vm->codeLength+=4;
@@ -622,11 +614,6 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 
 //	int offsidx = 0;
 
-#ifdef CONST_OPTIMIZE
-	// const optimization
-	unsigned got_const = 0, const_value = 0;
-#endif
-
 	if(pass)
 	{
 		memblock = sceKernelAllocMemBlockForVM("code", ALIGN(ALIGN(vm->codeLength, 4 * 1024), 1 * 1024 * 1024));
@@ -747,18 +734,6 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 				break;
 
 			case OP_CALL:
-#if 0
-				// save next instruction
-				emit_MOVR0i(i_count);
-				emit(STRa(R0, rDATABASE, rPSTACK));      // dataBase[pstack] = r0
-#endif
-#ifdef CONST_OPTIMIZE
-				if (got_const)
-				{
-					NOTIMPL(op);
-				}
-				else
-#endif
 				{
 					static int bytes_to_skip = -1;
 					static unsigned start_block = -1;
@@ -816,13 +791,6 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 				break;
 
 			case OP_JUMP:
-#ifdef CONST_OPTIMIZE
-				if (got_const)
-				{
-					NOTIMPL(op);
-				}
-				else
-#endif
 				{
 					emit(LDRTxi(R0, rOPSTACK, 4));  // r0 = *opstack; rOPSTACK -= 4
 					CHECK_JUMP;

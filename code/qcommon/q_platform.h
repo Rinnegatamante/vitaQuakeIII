@@ -195,7 +195,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define Q3_LITTLE_ENDIAN
 #endif
 
-#define DLL_EXT ".so"
+#define DLL_EXT ".suprx"
 
 #endif
 
@@ -237,7 +237,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define Q3_LITTLE_ENDIAN
 #endif
 
-#define DLL_EXT ".so"
+#define DLL_EXT ".suprx"
 
 #endif
 
@@ -264,7 +264,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define Q3_LITTLE_ENDIAN
 #endif
 
-#define DLL_EXT ".so"
+#define DLL_EXT ".suprx"
 
 #endif
 
@@ -280,7 +280,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define Q3_BIG_ENDIAN // SGI's MIPS are always big endian
 
-#define DLL_EXT ".so"
+#define DLL_EXT ".suprx"
 
 #endif
 
