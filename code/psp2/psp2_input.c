@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "../sys/sys_local.h"
 
-static hires_x, hires_y;
+static int hires_x, hires_y;
 /*
 ===============
 IN_Frame
@@ -107,7 +107,7 @@ void IN_Frame( void )
 	hires_y += right_y;
 	if (hires_x != 0 || hires_y != 0) {
 		// increase slowdown variable to slow down aiming, could be made user-adjustable
-		int slowdown = 2048;
+		int slowdown = 1024;
 		Com_QueueEvent(time, SE_MOUSE, hires_x / slowdown, hires_y / slowdown, 0, NULL);
 		hires_x %= slowdown;
 		hires_y %= slowdown;
