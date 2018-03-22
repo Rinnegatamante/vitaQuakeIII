@@ -1,7 +1,7 @@
 TARGET   := qagame
 SOURCES  := .
 CPPSOURCES := 
-INCLUDES := ../renderer ../qcommon ../botlib ../client ../server ../psp2 ../sys ../game
+INCLUDES := ../renderercommon ../renderergl1 ../qcommon ../botlib ../client ../server ../psp2 ../sys ../game
 SOURCE_EXTRA := ../psp2/psp2_dll_hacks.c
 
 LIBS = -lc -lm -lSceNet_stub_weak -lSceNetCtl_stub_weak \

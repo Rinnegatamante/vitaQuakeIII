@@ -193,7 +193,17 @@ static void Main_MenuDraw( void ) {
 	origin[2] = -32;
 
 	trap_R_ClearScene();
-
+	
+	if (strlen(s_errorMessage.errorMessage))
+	{
+		UI_DrawProportionalString_AutoWrapped( 320, 192, 600, 20, s_errorMessage.errorMessage, UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, menu_text_color );
+	}
+	else
+	{
+		// standard menu drawing
+		Menu_Draw( &s_main.menu );		
+	}
+	
 	// add the model
 
 	memset( &ent, 0, sizeof(ent) );
@@ -210,21 +220,13 @@ static void Main_MenuDraw( void ) {
 	trap_R_AddRefEntityToScene( &ent );
 
 	trap_R_RenderScene( &refdef );
-	
-	if (strlen(s_errorMessage.errorMessage))
-	{
-		UI_DrawProportionalString_AutoWrapped( 320, 192, 600, 20, s_errorMessage.errorMessage, UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, menu_text_color );
-	}
-	else
-	{
-		// standard menu drawing
-		Menu_Draw( &s_main.menu );		
-	}
 
 	if (uis.demoversion) {
 		UI_DrawProportionalString( 320, 372, "DEMO      FOR MATURE AUDIENCES      DEMO", UI_CENTER|UI_SMALLFONT, color );
 		UI_DrawString( 320, 400, "Quake III Arena(c) 1999-2000, Id Software, Inc.  All Rights Reserved", UI_CENTER|UI_SMALLFONT, color );
+		UI_DrawString( 320, 430, "Thanks to XandridFire, Styde Pregny and Billy McLaughlin II for their support on Patreon", UI_CENTER|UI_SMALLFONT, color );
 	} else {
+		UI_DrawString( 320, 420, "Thanks to XandridFire, Styde Pregny and Billy McLaughlin II for their support on Patreon", UI_CENTER|UI_SMALLFONT, color );
 		UI_DrawString( 320, 450, "Quake III Arena(c) 1999-2000, Id Software, Inc.  All Rights Reserved", UI_CENTER|UI_SMALLFONT, color );
 	}
 }
@@ -361,7 +363,7 @@ void UI_MainMenu( void ) {
 	s_main.cinematics.generic.y				= y;
 	s_main.cinematics.generic.id			= ID_CINEMATICS;
 	s_main.cinematics.generic.callback		= Main_MenuEvent; 
-	s_main.cinematics.string				= "CINEMATICS";
+	s_main.cinematics.string					= "CINEMATICS";
 	s_main.cinematics.color					= color_red;
 	s_main.cinematics.style					= style;
 
