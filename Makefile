@@ -39,6 +39,12 @@ $(TARGET).vpk: $(TARGET).velf
 	cp -f code/ui/ui.suprx ./uiarm.suprx
 	make -C code/game
 	cp -f code/game/qagame.suprx ./qagamearm.suprx
+	make -C code/cgame2
+	cp -f code/cgame2/cgame.suprx ./cgamearm2.suprx
+	make -C code/ui2
+	cp -f code/ui2/ui.suprx ./uiarm2.suprx
+	make -C code/game2
+	cp -f code/game2/qagame.suprx ./qagamearm2.suprx
 	vita-make-fself -s $< build/eboot.bin
 	vita-mksfoex -s TITLE_ID=$(TITLE) -d ATTRIBUTE2=12 "$(TARGET)" param.sfo
 	cp -f param.sfo build/sce_sys/param.sfo
@@ -59,4 +65,7 @@ clean:
 	@make -C code/cgame clean
 	@make -C code/ui clean
 	@make -C code/game clean
+	@make -C code/cgame2 clean
+	@make -C code/ui2 clean
+	@make -C code/game2 clean
 	@rm -rf $(TARGET).velf $(TARGET).elf $(OBJS) $(TARGET).elf.unstripped.elf $(TARGET).vpk build/eboot.bin build/sce_sys/param.sfo ./param.sfo
