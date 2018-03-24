@@ -5,6 +5,9 @@
 *.elf
 *.sfo
 *.vpk
+*.pk3
+*.cfg
+*.zip
 
 # Windows image file caches
 Thumbs.db
