@@ -1300,7 +1300,7 @@ R_DebugPolygon
 */
 void R_DebugPolygon( int color, int numPoints, float *points ) {
 	int		i;
-
+return;
 	GL_State( GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
 
 	// draw solid shade

@@ -92,6 +92,8 @@ extern vidmode_t r_vidModes[];
 
 uint32_t cur_width;
 
+extern SceUID main_thread;
+
 void GLimp_Init( qboolean coreContext)
 {
 	
@@ -117,6 +119,13 @@ void GLimp_Init( qboolean coreContext)
 		vglInitExtended(0x800000, glConfig.vidWidth, glConfig.vidHeight, 0x1000000);
 		vglUseVram(GL_TRUE);
 		vglMapHeapMem();
+		
+		// Mapping stack into sceGxm
+		SceKernelThreadInfo stack_info;
+		stack_info.size = sizeof(SceKernelThreadInfo);
+		sceKernelGetThreadInfo(main_thread, &stack_info);
+		sceGxmMapMemory(stack_info.stack, stack_info.stackSize, SCE_GXM_MEMORY_ATTRIB_READ | SCE_GXM_MEMORY_ATTRIB_WRITE);
+		
 		inited = 1;
 		cur_width = glConfig.vidWidth;
 	}else if (glConfig.vidWidth != cur_width){ // Changed resolution in game, restarting the game

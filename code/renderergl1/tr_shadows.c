@@ -61,6 +61,7 @@ void R_AddEdgeDef( int i1, int i2, int facing ) {
 
 void R_RenderShadowEdges( void ) {
 	int		i;
+	return;
 
 	int		c, c2;
 	int		j, k;

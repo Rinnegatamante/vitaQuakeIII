@@ -708,7 +708,7 @@ Used for cinematics.
 void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty) {
 	int			i, j;
 	int			start, end;
-
+return;
 	if ( !tr.registered ) {
 		return;
 	}
@@ -959,6 +959,7 @@ Also called by RE_EndRegistration
 ===============
 */
 void RB_ShowImages( void ) {
+	return;
 	int		i;
 	image_t	*image;
 	float	x, y, w, h;

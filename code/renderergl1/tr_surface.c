@@ -283,6 +283,7 @@ RB_SurfaceBeam
 */
 static void RB_SurfaceBeam( void )
 {
+	return;
 #define NUM_BEAM_SEGS 6
 	refEntity_t *e;
 	int	i;
@@ -1159,6 +1160,7 @@ Draws x/y/z lines from the origin for orientation debugging
 ===================
 */
 static void RB_SurfaceAxis( void ) {
+	return;
 	GL_Bind( tr.whiteImage );
 	GL_State( GLS_DEFAULT );
 	//->qglLineWidth( 3 );

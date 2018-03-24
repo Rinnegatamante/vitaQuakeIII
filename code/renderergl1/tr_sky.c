@@ -363,6 +363,7 @@ static float	s_skyTexCoords[SKY_SUBDIVISIONS+1][SKY_SUBDIVISIONS+1][2];
 
 static void DrawSkySide( struct image_s *image, const int mins[2], const int maxs[2] )
 {
+	return;
 	int s, t;
 
 	GL_Bind( image );
