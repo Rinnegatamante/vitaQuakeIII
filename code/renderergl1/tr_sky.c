@@ -389,7 +389,7 @@ static void DrawSkySide( struct image_s *image, const int mins[2], const int max
 		vglTexCoordPointer(2, GL_FLOAT, 0, numindices, gTexCoordBuffer);
 		vglDrawObjects(GL_TRIANGLE_STRIP, numindices, GL_TRUE);
 	}
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 static void DrawSkyBox( shader_t *shader )
