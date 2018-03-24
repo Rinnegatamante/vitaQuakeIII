@@ -116,6 +116,7 @@ void GLimp_Init( qboolean coreContext)
 	if (!inited){
 		vglInitExtended(0x800000, glConfig.vidWidth, glConfig.vidHeight, 0x1000000);
 		vglUseVram(GL_TRUE);
+		vglMapHeapMem();
 		inited = 1;
 		cur_width = glConfig.vidWidth;
 	}else if (glConfig.vidWidth != cur_width){ // Changed resolution in game, restarting the game
@@ -127,7 +128,7 @@ void GLimp_Init( qboolean coreContext)
 	for (i=0;i<MAX_INDICES;i++){
 		indices[i] = i;
 	}
-	vglIndexPointer(GL_SHORT, 0, MAX_INDICES, indices);
+	vglIndexPointerMapped(indices);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	gVertexBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
 	gColorBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
@@ -155,5 +156,5 @@ void GLimp_EndFrame( void )
 {
 	vglStopRendering();
 	vglStartRendering();
-	vglIndexPointer(GL_SHORT, 0, MAX_INDICES, indices);
+	vglIndexPointerMapped(indices);
 }
