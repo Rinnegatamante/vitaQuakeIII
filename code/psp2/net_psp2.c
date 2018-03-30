@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #	include <sys/types.h>
 #	include <sys/time.h>
 #	include <unistd.h>
-#	include <fcntl.h>
 #	include <vitasdk.h>
 
 typedef int SOCKET;
@@ -41,8 +40,6 @@ typedef int SOCKET;
 typedef int	ioctlarg_t;
 #	define socketError			errno
 
-
-//TODO: PSP2: ADD NETWORKING...
 #include <psp2/net/net.h>
 #include <sys/select.h>
 
@@ -66,29 +63,11 @@ struct addrinfo {
     struct addrinfo *ai_next;
 };
 
-int getaddrinfo(const char *node, const char *service,
-                const struct addrinfo *hints,
-                struct addrinfo **res) {
-
-    return -11; // EAI_SYSTEM
-}
-
-void freeaddrinfo(struct addrinfo *res) {
-
-}
-
 const char *gai_strerror(int errcode) {
     return "";
 }
 
 #define NI_NUMERICHOST 0
-int getnameinfo(const struct sockaddr *sa, socklen_t salen,
-                char *host, size_t hostlen,
-                char *serv, size_t servlen, int flags) {
-
-    return -11; // EAI_SYSTEM
-}
-
 
 static qboolean usingSocks = qfalse;
 static int networkingEnabled = 0;
@@ -233,6 +212,14 @@ static struct addrinfo *SearchAddrInfo(struct addrinfo *hints, sa_family_t famil
 	return NULL;
 }
 
+static inline in_addr_t inet_addr( const char *cp )
+{
+	int32_t b1, b2, b3, b4;
+	int res = sscanf( cp, "%d.%d.%d.%d", &b1, &b2, &b3, &b4 );
+	if( res != 4 ) return (in_addr_t)(-1); // is actually expected behavior
+	return htonl( (b1 << 24) | (b2 << 16) | (b3 << 8) | b4 );
+}
+
 /*
 =============
 Sys_StringToSockaddr
@@ -240,19 +227,25 @@ Sys_StringToSockaddr
 */
 static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int sadr_len, sa_family_t family)
 {
-	memset(sadr, '\0', sizeof(*sadr));
-
-	struct sockaddr_in *addr = (struct sockaddr_in*)sadr;
-	int ha1, ha2, ha3, ha4, hp;
-	int ipaddr;
-
-	sscanf(s, "%d.%d.%d.%d:%d", &ha1, &ha2, &ha3, &ha4, &hp);
-	ipaddr = (ha1 << 24) | (ha2 << 16) | (ha3 << 8) | ha4;
-
-	addr->sin_family = AF_INET;
-	addr->sin_addr.s_addr = sceNetHtonl(ipaddr);
-	addr->sin_port = sceNetHtons(hp);
-
+	struct hostent	*h;
+	//char	*colon; // bk001204 - unused
+	
+	memset (sadr, 0, sizeof(*sadr));
+	((struct sockaddr_in *)sadr)->sin_family = AF_INET;
+	
+	((struct sockaddr_in *)sadr)->sin_port = 0;
+	
+	if ( s[0] >= '0' && s[0] <= '9')
+	{
+		*(int *)&((struct sockaddr_in *)sadr)->sin_addr = inet_addr(s);
+	}
+	else
+	{
+		if (! (h = gethostbyname(s)) )
+			return qfalse;
+		*(int *)&((struct sockaddr_in *)sadr)->sin_addr = *(int *)h->h_addr_list[0];
+	}
+	
 	return qtrue;
 }
 
@@ -656,8 +649,9 @@ SOCKET NET_IPSocket( char *net_interface, int port, int *err ) {
 		Com_Printf( "WARNING: NET_IPSocket: socket: %s\n", NET_ErrorString() );
 		return newsocket;
 	}
+	
 	// make it non-blocking
-	fcntl(newsocket, F_SETFL, O_NONBLOCK);
+	setsockopt(newsocket, SOL_SOCKET, SO_NONBLOCK, (char *)&_true, sizeof(_true));
 
 	// make it broadcast capable
 	if( setsockopt( newsocket, SOL_SOCKET, SO_BROADCAST, (char *) &i, sizeof(i) ) == SOCKET_ERROR ) {
@@ -919,7 +913,7 @@ static void NET_GetLocalAddress( void ) {
 
 	
 	
-	if(!getaddrinfo(hostname, NULL, &hint, &res))
+	//if(!getaddrinfo(hostname, NULL, &hint, &res))
 	{
 		struct sockaddr_in mask4;
 		struct sockaddr_in addr;
@@ -940,8 +934,6 @@ static void NET_GetLocalAddress( void ) {
 		Sys_ShowIP();
 	}
 
-	if(res)
-		freeaddrinfo(res);
 }
 
 /*
