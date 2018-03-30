@@ -137,9 +137,9 @@ void GLimp_Init( qboolean coreContext)
 	gColorBufferPtr = (float*)malloc(0x200000);
 	gTexCoordBufferPtr = (float*)malloc(0x200000);
 	gVertexBuffer = gVertexBufferPtr;
-    gColorBuffer = gColorBufferPtr;
-    gTexCoordBuffer = gTexCoordBufferPtr;
-    
+	gColorBuffer = gColorBufferPtr;
+	gTexCoordBuffer = gTexCoordBufferPtr;
+	
 	strncpy(glConfig.vendor_string, glGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
 	strncpy(glConfig.renderer_string, glGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
 	strncpy(glConfig.version_string, glGetString(GL_VERSION), sizeof(glConfig.version_string));
@@ -163,7 +163,7 @@ void GLimp_EndFrame( void )
 	vglStopRendering();
 	vglStartRendering();
 	vglIndexPointerMapped(indices);
-    gVertexBuffer = gVertexBufferPtr;
-    gColorBuffer = gColorBufferPtr;
-    gTexCoordBuffer = gTexCoordBufferPtr;
+	gVertexBuffer = gVertexBufferPtr;
+	gColorBuffer = gColorBufferPtr;
+	gTexCoordBuffer = gTexCoordBufferPtr;
 }
