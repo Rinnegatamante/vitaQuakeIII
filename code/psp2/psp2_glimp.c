@@ -78,10 +78,10 @@ of OpenGL
 */
 uint16_t* indices;
 float *gVertexBuffer;
-float *gColorBuffer;
+uint8_t *gColorBuffer;
 float *gTexCoordBuffer;
 float *gVertexBufferPtr;
-float *gColorBufferPtr;
+uint8_t *gColorBufferPtr;
 float *gTexCoordBufferPtr;
 uint8_t inited = 0;
 
@@ -134,7 +134,7 @@ void GLimp_Init( qboolean coreContext)
 	vglIndexPointerMapped(indices);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	gVertexBufferPtr = (float*)malloc(0x400000);
-	gColorBufferPtr = (float*)malloc(0x200000);
+	gColorBufferPtr = (uint8_t*)malloc(0x200000);
 	gTexCoordBufferPtr = (float*)malloc(0x200000);
 	gVertexBuffer = gVertexBufferPtr;
 	gColorBuffer = gColorBufferPtr;
