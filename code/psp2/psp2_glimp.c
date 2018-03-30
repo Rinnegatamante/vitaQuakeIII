@@ -80,6 +80,9 @@ uint16_t* indices;
 float *gVertexBuffer;
 float *gColorBuffer;
 float *gTexCoordBuffer;
+float *gVertexBufferPtr;
+float *gColorBufferPtr;
+float *gTexCoordBufferPtr;
 uint8_t inited = 0;
 
 typedef struct vidmode_s
@@ -114,7 +117,7 @@ void GLimp_Init( qboolean coreContext)
 	glConfig.isFullscreen = qtrue;
 	
 	if (!inited){
-		vglInitExtended(0x800000, glConfig.vidWidth, glConfig.vidHeight, 0x1000000);
+		vglInitExtended(0x100000, glConfig.vidWidth, glConfig.vidHeight, 0x1000000);
 		vglUseVram(GL_TRUE);
 		vglMapHeapMem();
 		inited = 1;
@@ -130,10 +133,13 @@ void GLimp_Init( qboolean coreContext)
 	}
 	vglIndexPointerMapped(indices);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	gVertexBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
-	gColorBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
-	gTexCoordBuffer = (float*)malloc(sizeof(float)*VERTEXARRAYSIZE);
-	
+	gVertexBufferPtr = (float*)malloc(0x400000);
+	gColorBufferPtr = (float*)malloc(0x200000);
+	gTexCoordBufferPtr = (float*)malloc(0x200000);
+	gVertexBuffer = gVertexBufferPtr;
+    gColorBuffer = gColorBufferPtr;
+    gTexCoordBuffer = gTexCoordBufferPtr;
+    
 	strncpy(glConfig.vendor_string, glGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
 	strncpy(glConfig.renderer_string, glGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
 	strncpy(glConfig.version_string, glGetString(GL_VERSION), sizeof(glConfig.version_string));
@@ -157,4 +163,7 @@ void GLimp_EndFrame( void )
 	vglStopRendering();
 	vglStartRendering();
 	vglIndexPointerMapped(indices);
+    gVertexBuffer = gVertexBufferPtr;
+    gColorBuffer = gColorBufferPtr;
+    gTexCoordBuffer = gTexCoordBufferPtr;
 }

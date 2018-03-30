@@ -375,18 +375,18 @@ static void DrawSkySide( struct image_s *image, const int mins[2], const int max
 		int numindices = 0;
 		for ( s = mins[0]+HALF_SKY_SUBDIVISIONS; s <= maxs[0]+HALF_SKY_SUBDIVISIONS; s++ )
 		{
-			memcpy(texcoord, s_skyTexCoords[t][s], sizeof(vec2_t));
-			memcpy(vertices, s_skyPoints[t][s], sizeof(vec3_t));
-			vertices += 3;
-			texcoord += 2;
-			memcpy(texcoord, s_skyTexCoords[t+1][s], sizeof(vec2_t));
-			memcpy(vertices, s_skyPoints[t+1][s], sizeof(vec3_t));
-			vertices += 3;
-			texcoord += 2;
+			memcpy(gTexCoordBuffer, s_skyTexCoords[t][s], sizeof(vec2_t));
+			memcpy(gVertexBuffer, s_skyPoints[t][s], sizeof(vec3_t));
+			gVertexBuffer += 3;
+			gTexCoordBuffer += 2;
+			memcpy(gTexCoordBuffer, s_skyTexCoords[t+1][s], sizeof(vec2_t));
+			memcpy(gVertexBuffer, s_skyPoints[t+1][s], sizeof(vec3_t));
+			gVertexBuffer += 3;
+			gTexCoordBuffer += 2;
 			numindices += 2;
 		}
-		vglVertexPointer(3, GL_FLOAT, 0, numindices, gVertexBuffer);
-		vglTexCoordPointer(2, GL_FLOAT, 0, numindices, gTexCoordBuffer);
+		vglVertexPointerMapped(vertices);
+		vglTexCoordPointerMapped(texcoord);
 		vglDrawObjects(GL_TRIANGLE_STRIP, numindices, GL_TRUE);
 	}
 	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);

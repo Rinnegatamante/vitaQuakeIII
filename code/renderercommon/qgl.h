@@ -33,6 +33,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 extern float *gVertexBuffer;
 extern float *gColorBuffer;
 extern float *gTexCoordBuffer;
+extern float *gVertexBufferPtr;
+extern float *gColorBufferPtr;
+extern float *gTexCoordBufferPtr;
 extern uint16_t *indices;
 
 #include "vitaGL.h"

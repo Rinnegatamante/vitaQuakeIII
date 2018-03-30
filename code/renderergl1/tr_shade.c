@@ -111,10 +111,10 @@ static void DrawTris (shaderCommands_t *input) {
 	float *vertices = gVertexBuffer;
 	int i;
 	for (i=0;i<input->numIndexes;i++){
-		memcpy(vertices, input->xyz[input->indexes[i]], sizeof(vec3_t));
-		vertices += 3;
+		memcpy(gVertexBuffer, input->xyz[input->indexes[i]], sizeof(vec3_t));
+		gVertexBuffer += 3;
 	}
-	vglVertexPointer(3, GL_FLOAT, 0, input->numIndexes, gVertexBuffer);
+	vglVertexPointerMapped(vertices);
 	
 	//->if (qglLockArraysEXT) {
 	//->	qglLockArraysEXT(0, input->numVertexes);
@@ -149,13 +149,13 @@ static void DrawNormals (shaderCommands_t *input) {
 
 	float *vertices = gVertexBuffer;
 	for (i = 0 ; i < input->numVertexes ; i++) {
-		memcpy(vertices, input->xyz[input->indexes[i]], sizeof(vec3_t));
-		vertices += 3;
+		memcpy(gVertexBuffer, input->xyz[input->indexes[i]], sizeof(vec3_t));
+		gVertexBuffer += 3;
 		VectorMA (input->xyz[input->indexes[i]], 2, input->normal[input->indexes[i]], temp);
-		memcpy(vertices, temp, sizeof(vec3_t));
-		vertices += 3;
+		memcpy(gVertexBuffer, temp, sizeof(vec3_t));
+		gVertexBuffer += 3;
 	}
-	vglVertexPointer(3, GL_FLOAT, 0, input->numVertexes * 2, gVertexBuffer);
+	vglVertexPointerMapped(vertices);
 	vglDrawObjects(GL_LINES, input->numVertexes * 2, GL_TRUE);
 
 	qglDepthRange( 0, 1 );
@@ -221,10 +221,10 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	float *texcoord = gTexCoordBuffer;
 	int i;
 	for (i = 0 ; i < input->numIndexes ; i++) {
-		memcpy(texcoord, input->svars.texcoords[0][input->indexes[i]], sizeof(vec2_t));
-		texcoord += 2;
+		memcpy(gTexCoordBuffer, input->svars.texcoords[0][input->indexes[i]], sizeof(vec2_t));
+		gTexCoordBuffer += 2;
 	}
-	vglTexCoordPointer( 2, GL_FLOAT, 0, input->numIndexes, gTexCoordBuffer );
+	vglTexCoordPointerMapped(texcoord);
 
 	R_BindAnimatedImage( &pStage->bundle[0] );
 	R_DrawElements( input->numIndexes, input->indexes );
@@ -244,10 +244,10 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 
 	texcoord = gTexCoordBuffer;
 	for (i = 0 ; i < input->numIndexes ; i++) {
-		memcpy(texcoord, input->svars.texcoords[1][input->indexes[i]], sizeof(vec2_t));
-		texcoord += 2;
+		memcpy(gTexCoordBuffer, input->svars.texcoords[1][input->indexes[i]], sizeof(vec2_t));
+		gTexCoordBuffer += 2;
 	}
-	vglTexCoordPointer( 2, GL_FLOAT, 0, input->numIndexes, gTexCoordBuffer );
+	vglTexCoordPointerMapped(texcoord);
 	R_BindAnimatedImage( &pStage->bundle[1] );
 	R_DrawElements( input->numIndexes, input->indexes );
 
@@ -406,13 +406,13 @@ static void ProjectDlightTexture_scalar( void ) {
 		float *texcoord = gTexCoordBuffer;
 		float *colorbuf = gColorBuffer;
 		for (i = 0 ; i < numIndexes ; i++) {
-			memcpy(texcoord, texCoordsArray[hitIndexes[i]], sizeof(vec2_t));
-			texcoord += 2;
-			memcpy(colorbuf, colorArray[hitIndexes[i]], sizeof(vec4_t));
-			colorbuf += 4;
+			memcpy(gTexCoordBuffer, texCoordsArray[hitIndexes[i]], sizeof(vec2_t));
+			gTexCoordBuffer += 2;
+			memcpy(gColorBuffer, colorArray[hitIndexes[i]], sizeof(vec4_t));
+			gColorBuffer += 4;
 		}
-		vglColorPointer( 4, GL_FLOAT, 0, numIndexes, gColorBuffer);
-		vglTexCoordPointer( 2, GL_FLOAT, 0, numIndexes, gTexCoordBuffer );
+		vglColorPointerMapped(GL_FLOAT, colorbuf);
+		vglTexCoordPointerMapped(texcoord);
 
 		GL_Bind( tr.dlightImage );
 		// include GLS_DEPTHFUNC_EQUAL so alpha tested surfaces don't add light
@@ -466,16 +466,16 @@ static void RB_FogPass( void ) {
 	float *texcoord = gTexCoordBuffer;
 	float *colorbuf = gColorBuffer;
 	for (i = 0 ; i < tess.numIndexes ; i++) {
-		colorbuf[0] = (float)(tess.svars.colors[tess.indexes[i]][0]) / 255.0f;
-		colorbuf[1] = (float)(tess.svars.colors[tess.indexes[i]][1]) / 255.0f;
-		colorbuf[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
-		colorbuf[3] = (float)(tess.svars.colors[tess.indexes[i]][3]) / 255.0f;
-		memcpy(texcoord, tess.svars.texcoords[0][tess.indexes[i]], sizeof(vec2_t));
-		texcoord += 2;
-		colorbuf += 4;
+		gColorBuffer[0] = (float)(tess.svars.colors[tess.indexes[i]][0]) / 255.0f;
+		gColorBuffer[1] = (float)(tess.svars.colors[tess.indexes[i]][1]) / 255.0f;
+		gColorBuffer[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
+		gColorBuffer[3] = (float)(tess.svars.colors[tess.indexes[i]][3]) / 255.0f;
+		memcpy(gTexCoordBuffer, tess.svars.texcoords[0][tess.indexes[i]], sizeof(vec2_t));
+		gTexCoordBuffer += 2;
+		gColorBuffer += 4;
 	}
-	vglColorPointer( 4, GL_FLOAT, 0, tess.numIndexes, gColorBuffer);
-	vglTexCoordPointer( 2, GL_FLOAT, 0, tess.numIndexes, gTexCoordBuffer );
+	vglColorPointerMapped(GL_FLOAT, colorbuf);
+	vglTexCoordPointerMapped(texcoord);
 	
 	R_DrawElements( tess.numIndexes, tess.indexes );
 }
@@ -823,13 +823,13 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input )
 			float *colorbuf = gColorBuffer;
 			int i;
 			for (i = 0 ; i < input->numIndexes ; i++) {
-				colorbuf[0] = (float)(input->svars.colors[input->indexes[i]][0]) / 255.0f;
-				colorbuf[1] = (float)(input->svars.colors[input->indexes[i]][1]) / 255.0f;
-				colorbuf[2] = (float)(input->svars.colors[input->indexes[i]][2]) / 255.0f;
-				colorbuf[3] = (float)(input->svars.colors[input->indexes[i]][3]) / 255.0f;
-				colorbuf += 4;
+				gColorBuffer[0] = (float)(input->svars.colors[input->indexes[i]][0]) / 255.0f;
+				gColorBuffer[1] = (float)(input->svars.colors[input->indexes[i]][1]) / 255.0f;
+				gColorBuffer[2] = (float)(input->svars.colors[input->indexes[i]][2]) / 255.0f;
+				gColorBuffer[3] = (float)(input->svars.colors[input->indexes[i]][3]) / 255.0f;
+				gColorBuffer += 4;
 			}
-			vglColorPointer( 4, GL_FLOAT, 0, input->numIndexes, gColorBuffer);
+			vglColorPointerMapped(GL_FLOAT, colorbuf);
 		//}
 
 		//
@@ -846,10 +846,10 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input )
 				float *texcoord = gTexCoordBuffer;
 				int i;
 				for (i = 0 ; i < input->numIndexes ; i++) {
-					memcpy(texcoord, input->svars.texcoords[0][input->indexes[i]], sizeof(vec2_t));
-					texcoord += 2;
+					memcpy(gTexCoordBuffer, input->svars.texcoords[0][input->indexes[i]], sizeof(vec2_t));
+					gTexCoordBuffer += 2;
 				}
-				vglTexCoordPointer( 2, GL_FLOAT, 0, input->numIndexes, gTexCoordBuffer);
+				vglTexCoordPointerMapped(texcoord);
 			//}
 
 			//
@@ -912,10 +912,10 @@ void RB_StageIteratorGeneric( void )
 	float *vertices = gVertexBuffer;
 	int i;
 	for (i=0;i<input->numIndexes;i++){
-		memcpy(vertices, input->xyz[input->indexes[i]], sizeof(vec3_t));
-		vertices += 3;
+		memcpy(gVertexBuffer, input->xyz[input->indexes[i]], sizeof(vec3_t));
+		gVertexBuffer += 3;
 	}
-	vglVertexPointer(3, GL_FLOAT, 0, input->numIndexes, gVertexBuffer);
+	vglVertexPointerMapped(vertices);
 	
 	//->if (qglLockArraysEXT)
 	//->{
@@ -1004,19 +1004,19 @@ void RB_StageIteratorVertexLitTexture( void )
 	float *vertices = gVertexBuffer;
 	int i;
 	for (i = 0 ; i < tess.numIndexes ; i++) {
-		colorbuf[0] = (float)(tess.svars.colors[tess.indexes[i]][0]) / 255.0f;
-		colorbuf[1] = (float)(tess.svars.colors[tess.indexes[i]][1]) / 255.0f;
-		colorbuf[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
-		colorbuf[3] = (float)(tess.svars.colors[tess.indexes[i]][3]) / 255.0f;
-		colorbuf += 4;
-		memcpy(texcoord, tess.texCoords[tess.indexes[i]][0], sizeof(vec2_t));
-		texcoord += 2;
-		memcpy(vertices, input->xyz[input->indexes[i]], sizeof(vec3_t));
-		vertices += 3;
+		gColorBuffer[0] = (float)(tess.svars.colors[tess.indexes[i]][0]) / 255.0f;
+		gColorBuffer[1] = (float)(tess.svars.colors[tess.indexes[i]][1]) / 255.0f;
+		gColorBuffer[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
+		gColorBuffer[3] = (float)(tess.svars.colors[tess.indexes[i]][3]) / 255.0f;
+		gColorBuffer += 4;
+		memcpy(gTexCoordBuffer, tess.texCoords[tess.indexes[i]][0], sizeof(vec2_t));
+		gTexCoordBuffer += 2;
+		memcpy(gVertexBuffer, input->xyz[input->indexes[i]], sizeof(vec3_t));
+		gVertexBuffer += 3;
 	}
-	vglColorPointer( 4, GL_FLOAT, 0, tess.numIndexes, gColorBuffer);
-	vglTexCoordPointer(2, GL_FLOAT, 0, tess.numIndexes, gTexCoordBuffer);
-	vglVertexPointer(3, GL_FLOAT, 0, input->numIndexes, gVertexBuffer);
+	vglColorPointerMapped(GL_FLOAT, colorbuf);
+	vglTexCoordPointerMapped(texcoord);
+	vglVertexPointerMapped(vertices);
 
 	//->if ( qglLockArraysEXT )
 	//->{
@@ -1087,16 +1087,16 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	float *vertices = gVertexBuffer;
 	float *colorbuf = gColorBuffer;
 	for (i = 0 ; i < input->numIndexes ; i++) {
-		memcpy(vertices, input->xyz[input->indexes[i]], sizeof(vec3_t));
-		vertices += 3;
-		colorbuf[0] = 1.0f;
-		colorbuf[1] = 1.0f;
-		colorbuf[2] = 1.0f;
-		colorbuf[3] = 1.0f;
-		colorbuf += 4;
+		memcpy(gVertexBuffer, input->xyz[input->indexes[i]], sizeof(vec3_t));
+		gVertexBuffer += 3;
+		gColorBuffer[0] = 1.0f;
+		gColorBuffer[1] = 1.0f;
+		gColorBuffer[2] = 1.0f;
+		gColorBuffer[3] = 1.0f;
+		gColorBuffer += 4;
 	}
-	vglVertexPointer(3, GL_FLOAT, 0, input->numIndexes, gVertexBuffer);
-	vglColorPointer( 4, GL_FLOAT, 0, tess.numIndexes, gColorBuffer);
+	vglVertexPointerMapped(vertices);
+	vglColorPointerMapped(GL_FLOAT, colorbuf);
 
 	//
 	// select base stage
@@ -1108,10 +1108,10 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	
 	float *texcoord = gTexCoordBuffer;
 	for (i = 0 ; i < tess.numIndexes ; i++) {
-		memcpy(texcoord, tess.texCoords[tess.indexes[i]][0], sizeof(vec2_t));
-		texcoord += 2;
+		memcpy(gTexCoordBuffer, tess.texCoords[tess.indexes[i]][0], sizeof(vec2_t));
+		gTexCoordBuffer += 2;
 	}
-	vglTexCoordPointer(2, GL_FLOAT, 0, tess.numIndexes, gTexCoordBuffer);
+	vglTexCoordPointerMapped(texcoord);
 	R_DrawElements( input->numIndexes, input->indexes );
 	
 	//
@@ -1127,10 +1127,10 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	R_BindAnimatedImage( &tess.xstages[0]->bundle[1] );
 	texcoord = gTexCoordBuffer;
 	for (i = 0 ; i < tess.numIndexes ; i++) {
-		memcpy(texcoord, tess.texCoords[tess.indexes[i]][1], sizeof(vec2_t));
-		texcoord += 2;
+		memcpy(gTexCoordBuffer, tess.texCoords[tess.indexes[i]][1], sizeof(vec2_t));
+		gTexCoordBuffer += 2;
 	}
-	vglTexCoordPointer(2, GL_FLOAT, 0, tess.numIndexes, gTexCoordBuffer);
+	vglTexCoordPointerMapped(texcoord);
 
 	//
 	// lock arrays

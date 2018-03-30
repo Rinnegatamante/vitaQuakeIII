@@ -327,12 +327,12 @@ static void RB_SurfaceBeam( void )
 	
 	float *pPos = gVertexBuffer;
 	for ( i = 0; i <= NUM_BEAM_SEGS; i++ ) {
-		memcpy(pPos, start_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
-		pPos+=3;
-		memcpy(pPos, end_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
-		pPos+=3;
+		memcpy(gVertexBuffer, start_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
+		gVertexBuffer+=3;
+		memcpy(gVertexBuffer, end_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
+		gVertexBuffer+=3;
 	}
-	vglVertexPointer(3, GL_FLOAT, 0, (NUM_BEAM_SEGS + 1) * 2, gVertexBuffer);
+	vglVertexPointerMapped(pPos);
 	vglDrawObjects(GL_TRIANGLE_STRIP, (NUM_BEAM_SEGS + 1) * 2, GL_TRUE);
 }
 
