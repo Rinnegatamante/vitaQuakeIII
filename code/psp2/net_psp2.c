@@ -121,59 +121,10 @@ static int numIP;
 NET_ErrorString
 ====================
 */
+char error[256];
 char *NET_ErrorString( void ) {
-#ifdef _WIN32
-	//FIXME: replace with FormatMessage?
-	switch( socketError ) {
-		case WSAEINTR: return "WSAEINTR";
-		case WSAEBADF: return "WSAEBADF";
-		case WSAEACCES: return "WSAEACCES";
-		case WSAEDISCON: return "WSAEDISCON";
-		case WSAEFAULT: return "WSAEFAULT";
-		case WSAEINVAL: return "WSAEINVAL";
-		case WSAEMFILE: return "WSAEMFILE";
-		case WSAEWOULDBLOCK: return "WSAEWOULDBLOCK";
-		case WSAEINPROGRESS: return "WSAEINPROGRESS";
-		case WSAEALREADY: return "WSAEALREADY";
-		case WSAENOTSOCK: return "WSAENOTSOCK";
-		case WSAEDESTADDRREQ: return "WSAEDESTADDRREQ";
-		case WSAEMSGSIZE: return "WSAEMSGSIZE";
-		case WSAEPROTOTYPE: return "WSAEPROTOTYPE";
-		case WSAENOPROTOOPT: return "WSAENOPROTOOPT";
-		case WSAEPROTONOSUPPORT: return "WSAEPROTONOSUPPORT";
-		case WSAESOCKTNOSUPPORT: return "WSAESOCKTNOSUPPORT";
-		case WSAEOPNOTSUPP: return "WSAEOPNOTSUPP";
-		case WSAEPFNOSUPPORT: return "WSAEPFNOSUPPORT";
-		case WSAEAFNOSUPPORT: return "WSAEAFNOSUPPORT";
-		case WSAEADDRINUSE: return "WSAEADDRINUSE";
-		case WSAEADDRNOTAVAIL: return "WSAEADDRNOTAVAIL";
-		case WSAENETDOWN: return "WSAENETDOWN";
-		case WSAENETUNREACH: return "WSAENETUNREACH";
-		case WSAENETRESET: return "WSAENETRESET";
-		case WSAECONNABORTED: return "WSWSAECONNABORTEDAEINTR";
-		case WSAECONNRESET: return "WSAECONNRESET";
-		case WSAENOBUFS: return "WSAENOBUFS";
-		case WSAEISCONN: return "WSAEISCONN";
-		case WSAENOTCONN: return "WSAENOTCONN";
-		case WSAESHUTDOWN: return "WSAESHUTDOWN";
-		case WSAETOOMANYREFS: return "WSAETOOMANYREFS";
-		case WSAETIMEDOUT: return "WSAETIMEDOUT";
-		case WSAECONNREFUSED: return "WSAECONNREFUSED";
-		case WSAELOOP: return "WSAELOOP";
-		case WSAENAMETOOLONG: return "WSAENAMETOOLONG";
-		case WSAEHOSTDOWN: return "WSAEHOSTDOWN";
-		case WSASYSNOTREADY: return "WSASYSNOTREADY";
-		case WSAVERNOTSUPPORTED: return "WSAVERNOTSUPPORTED";
-		case WSANOTINITIALISED: return "WSANOTINITIALISED";
-		case WSAHOST_NOT_FOUND: return "WSAHOST_NOT_FOUND";
-		case WSATRY_AGAIN: return "WSATRY_AGAIN";
-		case WSANO_RECOVERY: return "WSANO_RECOVERY";
-		case WSANO_DATA: return "WSANO_DATA";
-		default: return "NO ERROR";
-	}
-#else
-	return strerror(socketError);
-#endif
+	sprintf(error, "sceNet returned 0x%08X", socketError);
+	return error;
 }
 
 static void NetadrToSockadr( netadr_t *a, struct sockaddr *s ) {
@@ -434,7 +385,7 @@ qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message, fd_set *fdr)
 		{
 			err = socketError;
 
-			if( err != EAGAIN && err != ECONNRESET )
+			if( err != SCE_NET_EAGAIN && err != SCE_NET_ECONNRESET )
 				Com_Printf( "NET_GetPacket: %s\n", NET_ErrorString() );
 		}
 		else
@@ -519,12 +470,12 @@ void Sys_SendPacket( int length, const void *data, netadr_t to ) {
 		int err = socketError;
 
 		// wouldblock is silent
-		if( err == EAGAIN ) {
+		if( err == SCE_NET_EAGAIN ) {
 			return;
 		}
 
 		// some PPP links do not allow broadcasts and return an error
-		if( ( err == EADDRNOTAVAIL ) && ( ( to.type == NA_BROADCAST ) ) ) {
+		if( ( err == SCE_NET_EADDRNOTAVAIL ) && ( ( to.type == NA_BROADCAST ) ) ) {
 			return;
 		}
 
@@ -969,7 +920,7 @@ void NET_OpenIP( void ) {
 			}
 			else
 			{
-				if(err == EAFNOSUPPORT)
+				if(err == SCE_NET_EAFNOSUPPORT)
 					break;
 			}
 		}
