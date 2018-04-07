@@ -876,7 +876,7 @@ void GL_SetDefaultState( void )
 	// the vertex array is always enabled, but the color and texture
 	// arrays are enabled and disabled around the compiled vertex array call
 	qglEnableClientState (GL_VERTEX_ARRAY);
-
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	//
 	// make sure our GL state vector is set correctly
 	//
