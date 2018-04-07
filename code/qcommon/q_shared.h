@@ -27,19 +27,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // A user mod should never modify this file
 
 #ifdef STANDALONE
-  #define PRODUCT_NAME				"iofoo3"
-  #define BASEGAME					"foobar"
-  #define CLIENT_WINDOW_TITLE		"changeme"
-  #define CLIENT_WINDOW_MIN_TITLE	"changeme2"
-  #define HOMEPATH_NAME_UNIX		".foo"
-  #define HOMEPATH_NAME_WIN			"FooBar"
+
+// OpenArena
+# ifdef OPENARENA
+  #define PRODUCT_NAME				"ioq3+oa"
+  #define BASEGAME					"baseoa"
+  #define CLIENT_WINDOW_TITLE		"OpenArena"
+  #define CLIENT_WINDOW_MIN_TITLE	"OA"
+  #define HOMEPATH_NAME_UNIX		".openarena"
+  #define HOMEPATH_NAME_WIN			"OpenArena"
   #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN
-//  #define STEAMPATH_NAME			"Foo Bar"
-//  #define STEAMPATH_APPID         ""
-  #define GAMENAME_FOR_MASTER		"foobar"	// must NOT contain whitespace
-  #define CINEMATICS_LOGO		"foologo.roq"
-  #define CINEMATICS_INTRO		"intro.roq"
-//  #define LEGACY_PROTOCOL	// You probably don't need this for your standalone game
+  #define GAMENAME_FOR_MASTER		"Quake3Arena"	// must NOT contain whitespace
+  #define LEGACY_PROTOCOL	// You probably don't need this for your standalone game
+# endif
+
 #else
   #define PRODUCT_NAME				"ioq3"
   #define BASEGAME					"baseq3"
