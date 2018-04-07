@@ -41,6 +41,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   #define LEGACY_PROTOCOL	1 // You probably don't need this for your standalone game
 # endif
 
+// Q3Rally
+# ifdef Q3RALLY
+  #define PRODUCT_NAME				"Q3Rally"
+  #define BASEGAME					"baseq3r"
+  #define CLIENT_WINDOW_TITLE		"Q3Rally"
+  #define CLIENT_WINDOW_MIN_TITLE	"Q3R"
+  #define HOMEPATH_NAME_UNIX		".q3rally"
+  #define HOMEPATH_NAME_WIN			"Q3Rally"
+  #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN
+  #define GAMENAME_FOR_MASTER		"Q3Rally"	// must NOT contain whitespace
+  #define CINEMATICS_LOGO		"idlogo.roq"
+  #define CINEMATICS_INTRO		"intro.roq"
+# endif
+
 #else
   #define PRODUCT_NAME				"ioq3"
   #define BASEGAME					"baseq3"
