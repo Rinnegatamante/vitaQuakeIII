@@ -864,14 +864,14 @@ static qboolean SurfIsOffscreen( const drawSurf_t *drawSurf, vec4_t clipDest[128
 	RB_BeginSurface( shader, fogNum );
 	rb_surfaceTable[ *drawSurf->surface ]( drawSurf->surface );
 
-	assert( tess.numVertexes < 128 );
+	assert( tess->numVertexes < 128 );
 
-	for ( i = 0; i < tess.numVertexes; i++ )
+	for ( i = 0; i < tess->numVertexes; i++ )
 	{
 		int j;
 		unsigned int pointFlags = 0;
 
-		R_TransformModelToClip( tess.xyz[i], tr.or.modelMatrix, tr.viewParms.projectionMatrix, eye, clip );
+		R_TransformModelToClip( tess->xyz[i], tr.or.modelMatrix, tr.viewParms.projectionMatrix, eye, clip );
 
 		for ( j = 0; j < 3; j++ )
 		{
@@ -899,14 +899,14 @@ static qboolean SurfIsOffscreen( const drawSurf_t *drawSurf, vec4_t clipDest[128
 	// based on vertex distance isn't 100% correct (we should be checking for
 	// range to the surface), but it's good enough for the types of portals
 	// we have in the game right now.
-	numTriangles = tess.numIndexes / 3;
+	numTriangles = tess->numIndexes / 3;
 
-	for ( i = 0; i < tess.numIndexes; i += 3 )
+	for ( i = 0; i < tess->numIndexes; i += 3 )
 	{
 		vec3_t normal;
 		float len;
 
-		VectorSubtract( tess.xyz[tess.indexes[i]], tr.viewParms.or.origin, normal );
+		VectorSubtract( tess->xyz[tess->indexes[i]], tr.viewParms.or.origin, normal );
 
 		len = VectorLengthSquared( normal );			// lose the sqrt
 		if ( len < shortest )
@@ -914,7 +914,7 @@ static qboolean SurfIsOffscreen( const drawSurf_t *drawSurf, vec4_t clipDest[128
 			shortest = len;
 		}
 
-		if ( DotProduct( normal, tess.normal[tess.indexes[i]] ) >= 0 )
+		if ( DotProduct( normal, tess->normal[tess->indexes[i]] ) >= 0 )
 		{
 			numTriangles--;
 		}
@@ -931,7 +931,7 @@ static qboolean SurfIsOffscreen( const drawSurf_t *drawSurf, vec4_t clipDest[128
 		return qfalse;
 	}
 
-	if ( shortest > (tess.shader->portalRange*tess.shader->portalRange) )
+	if ( shortest > (tess->shader->portalRange*tess->shader->portalRange) )
 	{
 		return qtrue;
 	}

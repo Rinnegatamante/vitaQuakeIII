@@ -350,15 +350,15 @@ void RB_MDRSurfaceAnim( mdrSurface_t *surface )
 
 	triangles	= (int *) ((byte *)surface + surface->ofsTriangles);
 	indexes		= surface->numTriangles * 3;
-	baseIndex	= tess.numIndexes;
-	baseVertex	= tess.numVertexes;
+	baseIndex	= tess->numIndexes;
+	baseVertex	= tess->numVertexes;
 	
 	// Set up all triangles.
 	for (j = 0 ; j < indexes ; j++) 
 	{
-		tess.indexes[baseIndex + j] = baseVertex + triangles[j];
+		tess->indexes[baseIndex + j] = baseVertex + triangles[j];
 	}
-	tess.numIndexes += indexes;
+	tess->numIndexes += indexes;
 
 	//
 	// lerp all the needed bones
@@ -404,21 +404,21 @@ void RB_MDRSurfaceAnim( mdrSurface_t *surface )
 			tempNormal[2] += w->boneWeight * DotProduct( bone->matrix[2], v->normal );
 		}
 
-		tess.xyz[baseVertex + j][0] = tempVert[0];
-		tess.xyz[baseVertex + j][1] = tempVert[1];
-		tess.xyz[baseVertex + j][2] = tempVert[2];
+		tess->xyz[baseVertex + j][0] = tempVert[0];
+		tess->xyz[baseVertex + j][1] = tempVert[1];
+		tess->xyz[baseVertex + j][2] = tempVert[2];
 
-		tess.normal[baseVertex + j][0] = tempNormal[0];
-		tess.normal[baseVertex + j][1] = tempNormal[1];
-		tess.normal[baseVertex + j][2] = tempNormal[2];
+		tess->normal[baseVertex + j][0] = tempNormal[0];
+		tess->normal[baseVertex + j][1] = tempNormal[1];
+		tess->normal[baseVertex + j][2] = tempNormal[2];
 
-		tess.texCoords[baseVertex + j][0][0] = v->texCoords[0];
-		tess.texCoords[baseVertex + j][0][1] = v->texCoords[1];
+		tess->texCoords[baseVertex + j][0][0] = v->texCoords[0];
+		tess->texCoords[baseVertex + j][0][1] = v->texCoords[1];
 
 		v = (mdrVertex_t *)&v->weights[v->numWeights];
 	}
 
-	tess.numVertexes += surface->numVerts;
+	tess->numVertexes += surface->numVerts;
 }
 
 

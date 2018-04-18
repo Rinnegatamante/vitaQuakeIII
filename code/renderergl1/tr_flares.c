@@ -372,9 +372,9 @@ void RB_RenderFlare( flare_t *f ) {
 	// Calculations for fogging
 	if(tr.world && f->fogNum > 0 && f->fogNum < tr.world->numfogs)
 	{
-		tess.numVertexes = 1;
-		VectorCopy(f->origin, tess.xyz[0]);
-		tess.fogNum = f->fogNum;
+		tess->numVertexes = 1;
+		VectorCopy(f->origin, tess->xyz[0]);
+		tess->fogNum = f->fogNum;
 	
 		RB_CalcModulateColorsByFog(fogFactors);
 		
@@ -390,52 +390,52 @@ void RB_RenderFlare( flare_t *f ) {
 	RB_BeginSurface( tr.flareShader, f->fogNum );
 
 	// FIXME: use quadstamp?
-	tess.xyz[tess.numVertexes][0] = f->windowX - size;
-	tess.xyz[tess.numVertexes][1] = f->windowY - size;
-	tess.texCoords[tess.numVertexes][0][0] = 0;
-	tess.texCoords[tess.numVertexes][0][1] = 0;
-	tess.vertexColors[tess.numVertexes][0] = iColor[0];
-	tess.vertexColors[tess.numVertexes][1] = iColor[1];
-	tess.vertexColors[tess.numVertexes][2] = iColor[2];
-	tess.vertexColors[tess.numVertexes][3] = 255;
-	tess.numVertexes++;
+	tess->xyz[tess->numVertexes][0] = f->windowX - size;
+	tess->xyz[tess->numVertexes][1] = f->windowY - size;
+	tess->texCoords[tess->numVertexes][0][0] = 0;
+	tess->texCoords[tess->numVertexes][0][1] = 0;
+	tess->vertexColors[tess->numVertexes][0] = iColor[0];
+	tess->vertexColors[tess->numVertexes][1] = iColor[1];
+	tess->vertexColors[tess->numVertexes][2] = iColor[2];
+	tess->vertexColors[tess->numVertexes][3] = 255;
+	tess->numVertexes++;
 
-	tess.xyz[tess.numVertexes][0] = f->windowX - size;
-	tess.xyz[tess.numVertexes][1] = f->windowY + size;
-	tess.texCoords[tess.numVertexes][0][0] = 0;
-	tess.texCoords[tess.numVertexes][0][1] = 1;
-	tess.vertexColors[tess.numVertexes][0] = iColor[0];
-	tess.vertexColors[tess.numVertexes][1] = iColor[1];
-	tess.vertexColors[tess.numVertexes][2] = iColor[2];
-	tess.vertexColors[tess.numVertexes][3] = 255;
-	tess.numVertexes++;
+	tess->xyz[tess->numVertexes][0] = f->windowX - size;
+	tess->xyz[tess->numVertexes][1] = f->windowY + size;
+	tess->texCoords[tess->numVertexes][0][0] = 0;
+	tess->texCoords[tess->numVertexes][0][1] = 1;
+	tess->vertexColors[tess->numVertexes][0] = iColor[0];
+	tess->vertexColors[tess->numVertexes][1] = iColor[1];
+	tess->vertexColors[tess->numVertexes][2] = iColor[2];
+	tess->vertexColors[tess->numVertexes][3] = 255;
+	tess->numVertexes++;
 
-	tess.xyz[tess.numVertexes][0] = f->windowX + size;
-	tess.xyz[tess.numVertexes][1] = f->windowY + size;
-	tess.texCoords[tess.numVertexes][0][0] = 1;
-	tess.texCoords[tess.numVertexes][0][1] = 1;
-	tess.vertexColors[tess.numVertexes][0] = iColor[0];
-	tess.vertexColors[tess.numVertexes][1] = iColor[1];
-	tess.vertexColors[tess.numVertexes][2] = iColor[2];
-	tess.vertexColors[tess.numVertexes][3] = 255;
-	tess.numVertexes++;
+	tess->xyz[tess->numVertexes][0] = f->windowX + size;
+	tess->xyz[tess->numVertexes][1] = f->windowY + size;
+	tess->texCoords[tess->numVertexes][0][0] = 1;
+	tess->texCoords[tess->numVertexes][0][1] = 1;
+	tess->vertexColors[tess->numVertexes][0] = iColor[0];
+	tess->vertexColors[tess->numVertexes][1] = iColor[1];
+	tess->vertexColors[tess->numVertexes][2] = iColor[2];
+	tess->vertexColors[tess->numVertexes][3] = 255;
+	tess->numVertexes++;
 
-	tess.xyz[tess.numVertexes][0] = f->windowX + size;
-	tess.xyz[tess.numVertexes][1] = f->windowY - size;
-	tess.texCoords[tess.numVertexes][0][0] = 1;
-	tess.texCoords[tess.numVertexes][0][1] = 0;
-	tess.vertexColors[tess.numVertexes][0] = iColor[0];
-	tess.vertexColors[tess.numVertexes][1] = iColor[1];
-	tess.vertexColors[tess.numVertexes][2] = iColor[2];
-	tess.vertexColors[tess.numVertexes][3] = 255;
-	tess.numVertexes++;
+	tess->xyz[tess->numVertexes][0] = f->windowX + size;
+	tess->xyz[tess->numVertexes][1] = f->windowY - size;
+	tess->texCoords[tess->numVertexes][0][0] = 1;
+	tess->texCoords[tess->numVertexes][0][1] = 0;
+	tess->vertexColors[tess->numVertexes][0] = iColor[0];
+	tess->vertexColors[tess->numVertexes][1] = iColor[1];
+	tess->vertexColors[tess->numVertexes][2] = iColor[2];
+	tess->vertexColors[tess->numVertexes][3] = 255;
+	tess->numVertexes++;
 
-	tess.indexes[tess.numIndexes++] = 0;
-	tess.indexes[tess.numIndexes++] = 1;
-	tess.indexes[tess.numIndexes++] = 2;
-	tess.indexes[tess.numIndexes++] = 0;
-	tess.indexes[tess.numIndexes++] = 2;
-	tess.indexes[tess.numIndexes++] = 3;
+	tess->indexes[tess->numIndexes++] = 0;
+	tess->indexes[tess->numIndexes++] = 1;
+	tess->indexes[tess->numIndexes++] = 2;
+	tess->indexes[tess->numIndexes++] = 0;
+	tess->indexes[tess->numIndexes++] = 2;
+	tess->indexes[tess->numIndexes++] = 3;
 
 	RB_EndSurface();
 }

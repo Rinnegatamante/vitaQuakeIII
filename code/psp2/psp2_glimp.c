@@ -133,9 +133,9 @@ void GLimp_Init( qboolean coreContext)
 	}
 	vglIndexPointerMapped(indices);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	gVertexBufferPtr = (float*)malloc(0x400000);
-	gColorBufferPtr = (uint8_t*)malloc(0x200000);
-	gTexCoordBufferPtr = (float*)malloc(0x200000);
+	gVertexBufferPtr = (float*)malloc(0x10000);
+	gColorBufferPtr = (uint8_t*)malloc(0x10000);
+	gTexCoordBufferPtr = (float*)malloc(0x10000);
 	gVertexBuffer = gVertexBufferPtr;
 	gColorBuffer = gColorBufferPtr;
 	gTexCoordBuffer = gTexCoordBufferPtr;

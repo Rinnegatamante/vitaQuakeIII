@@ -543,7 +543,7 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 
 				// we have to reset the shaderTime as well otherwise image animations start
 				// from the wrong frame
-				tess.shaderTime = backEnd.refdef.floatTime - tess.shader->timeOffset;
+				tess->shaderTime = backEnd.refdef.floatTime - tess->shader->timeOffset;
 
 				// set up the transformation matrix
 				R_RotateForEntity( backEnd.currentEntity, &backEnd.viewParms, &backEnd.or );
@@ -567,7 +567,7 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 				backEnd.or = backEnd.viewParms.world;
 				// we have to reset the shaderTime as well otherwise image animations on
 				// the world (like water) continue with the wrong frame
-				tess.shaderTime = backEnd.refdef.floatTime - tess.shader->timeOffset;
+				tess->shaderTime = backEnd.refdef.floatTime - tess->shader->timeOffset;
 				R_TransformDlights( backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.or );
 			}
 
@@ -714,7 +714,7 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 	}
 	R_IssuePendingRenderCommands();
 
-	if ( tess.numIndexes ) {
+	if ( tess->numIndexes ) {
 		RB_EndSurface();
 	}
 
@@ -842,8 +842,8 @@ const void *RB_StretchPic ( const void *data ) {
 	}
 
 	shader = cmd->shader;
-	if ( shader != tess.shader ) {
-		if ( tess.numIndexes ) {
+	if ( shader != tess->shader ) {
+		if ( tess->numIndexes ) {
 			RB_EndSurface();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
@@ -851,51 +851,51 @@ const void *RB_StretchPic ( const void *data ) {
 	}
 
 	RB_CHECKOVERFLOW( 4, 6 );
-	numVerts = tess.numVertexes;
-	numIndexes = tess.numIndexes;
+	numVerts = tess->numVertexes;
+	numIndexes = tess->numIndexes;
 
-	tess.numVertexes += 4;
-	tess.numIndexes += 6;
+	tess->numVertexes += 4;
+	tess->numIndexes += 6;
 
-	tess.indexes[ numIndexes ] = numVerts + 3;
-	tess.indexes[ numIndexes + 1 ] = numVerts + 0;
-	tess.indexes[ numIndexes + 2 ] = numVerts + 2;
-	tess.indexes[ numIndexes + 3 ] = numVerts + 2;
-	tess.indexes[ numIndexes + 4 ] = numVerts + 0;
-	tess.indexes[ numIndexes + 5 ] = numVerts + 1;
+	tess->indexes[ numIndexes ] = numVerts + 3;
+	tess->indexes[ numIndexes + 1 ] = numVerts + 0;
+	tess->indexes[ numIndexes + 2 ] = numVerts + 2;
+	tess->indexes[ numIndexes + 3 ] = numVerts + 2;
+	tess->indexes[ numIndexes + 4 ] = numVerts + 0;
+	tess->indexes[ numIndexes + 5 ] = numVerts + 1;
 
-	*(int *)tess.vertexColors[ numVerts ] =
-		*(int *)tess.vertexColors[ numVerts + 1 ] =
-		*(int *)tess.vertexColors[ numVerts + 2 ] =
-		*(int *)tess.vertexColors[ numVerts + 3 ] = *(int *)backEnd.color2D;
+	*(int *)tess->vertexColors[ numVerts ] =
+		*(int *)tess->vertexColors[ numVerts + 1 ] =
+		*(int *)tess->vertexColors[ numVerts + 2 ] =
+		*(int *)tess->vertexColors[ numVerts + 3 ] = *(int *)backEnd.color2D;
 
-	tess.xyz[ numVerts ][0] = cmd->x;
-	tess.xyz[ numVerts ][1] = cmd->y;
-	tess.xyz[ numVerts ][2] = 0;
+	tess->xyz[ numVerts ][0] = cmd->x;
+	tess->xyz[ numVerts ][1] = cmd->y;
+	tess->xyz[ numVerts ][2] = 0;
 
-	tess.texCoords[ numVerts ][0][0] = cmd->s1;
-	tess.texCoords[ numVerts ][0][1] = cmd->t1;
+	tess->texCoords[ numVerts ][0][0] = cmd->s1;
+	tess->texCoords[ numVerts ][0][1] = cmd->t1;
 
-	tess.xyz[ numVerts + 1 ][0] = cmd->x + cmd->w;
-	tess.xyz[ numVerts + 1 ][1] = cmd->y;
-	tess.xyz[ numVerts + 1 ][2] = 0;
+	tess->xyz[ numVerts + 1 ][0] = cmd->x + cmd->w;
+	tess->xyz[ numVerts + 1 ][1] = cmd->y;
+	tess->xyz[ numVerts + 1 ][2] = 0;
 
-	tess.texCoords[ numVerts + 1 ][0][0] = cmd->s2;
-	tess.texCoords[ numVerts + 1 ][0][1] = cmd->t1;
+	tess->texCoords[ numVerts + 1 ][0][0] = cmd->s2;
+	tess->texCoords[ numVerts + 1 ][0][1] = cmd->t1;
 
-	tess.xyz[ numVerts + 2 ][0] = cmd->x + cmd->w;
-	tess.xyz[ numVerts + 2 ][1] = cmd->y + cmd->h;
-	tess.xyz[ numVerts + 2 ][2] = 0;
+	tess->xyz[ numVerts + 2 ][0] = cmd->x + cmd->w;
+	tess->xyz[ numVerts + 2 ][1] = cmd->y + cmd->h;
+	tess->xyz[ numVerts + 2 ][2] = 0;
 
-	tess.texCoords[ numVerts + 2 ][0][0] = cmd->s2;
-	tess.texCoords[ numVerts + 2 ][0][1] = cmd->t2;
+	tess->texCoords[ numVerts + 2 ][0][0] = cmd->s2;
+	tess->texCoords[ numVerts + 2 ][0][1] = cmd->t2;
 
-	tess.xyz[ numVerts + 3 ][0] = cmd->x;
-	tess.xyz[ numVerts + 3 ][1] = cmd->y + cmd->h;
-	tess.xyz[ numVerts + 3 ][2] = 0;
+	tess->xyz[ numVerts + 3 ][0] = cmd->x;
+	tess->xyz[ numVerts + 3 ][1] = cmd->y + cmd->h;
+	tess->xyz[ numVerts + 3 ][2] = 0;
 
-	tess.texCoords[ numVerts + 3 ][0][0] = cmd->s1;
-	tess.texCoords[ numVerts + 3 ][0][1] = cmd->t2;
+	tess->texCoords[ numVerts + 3 ][0][0] = cmd->s1;
+	tess->texCoords[ numVerts + 3 ][0][1] = cmd->t2;
 
 	return (const void *)(cmd + 1);
 }
@@ -911,7 +911,7 @@ const void	*RB_DrawSurfs( const void *data ) {
 	const drawSurfsCommand_t	*cmd;
 
 	// finish any 2D drawing if needed
-	if ( tess.numIndexes ) {
+	if ( tess->numIndexes ) {
 		RB_EndSurface();
 	}
 
@@ -1038,7 +1038,7 @@ const void *RB_ClearDepth(const void *data)
 {
 	const clearDepthCommand_t *cmd = data;
 	
-	if(tess.numIndexes)
+	if(tess->numIndexes)
 		RB_EndSurface();
 
 	// texture swapping test
@@ -1060,7 +1060,7 @@ const void	*RB_SwapBuffers( const void *data ) {
 	const swapBuffersCommand_t	*cmd;
 
 	// finish any 2D drawing if needed
-	if ( tess.numIndexes ) {
+	if ( tess->numIndexes ) {
 		RB_EndSurface();
 	}
 

@@ -1035,10 +1035,10 @@ void RB_IQMSurfaceAnim( surfaceType_t *surface ) {
 
 	RB_CHECKOVERFLOW( surf->num_vertexes, surf->num_triangles * 3 );
 
-	outXYZ = &tess.xyz[tess.numVertexes];
-	outNormal = &tess.normal[tess.numVertexes];
-	outTexCoord = &tess.texCoords[tess.numVertexes];
-	outColor = &tess.vertexColors[tess.numVertexes];
+	outXYZ = &tess->xyz[tess->numVertexes];
+	outNormal = &tess->normal[tess->numVertexes];
+	outTexCoord = &tess->texCoords[tess->numVertexes];
+	outColor = &tess->vertexColors[tess->numVertexes];
 
 	// compute interpolated joint matrices
 	if ( data->num_poses > 0 ) {
@@ -1134,8 +1134,8 @@ void RB_IQMSurfaceAnim( surfaceType_t *surface ) {
 	}
 
 	tri = data->triangles + 3 * surf->first_triangle;
-	ptr = &tess.indexes[tess.numIndexes];
-	base = tess.numVertexes;
+	ptr = &tess->indexes[tess->numIndexes];
+	base = tess->numVertexes;
 
 	for( i = 0; i < surf->num_triangles; i++ ) {
 		*ptr++ = base + (*tri++ - surf->first_vertex);
@@ -1143,8 +1143,8 @@ void RB_IQMSurfaceAnim( surfaceType_t *surface ) {
 		*ptr++ = base + (*tri++ - surf->first_vertex);
 	}
 
-	tess.numIndexes += 3 * surf->num_triangles;
-	tess.numVertexes += surf->num_vertexes;
+	tess->numIndexes += 3 * surf->num_triangles;
+	tess->numVertexes += surf->num_vertexes;
 }
 
 int R_IQMLerpTag( orientation_t *tag, iqmData_t *data,

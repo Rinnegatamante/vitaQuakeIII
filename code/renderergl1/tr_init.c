@@ -1188,6 +1188,8 @@ void R_Register( void )
 	ri.Cmd_AddCommand( "minimize", GLimp_Minimize );
 }
 
+shaderCommands_t *tess_pool[256];
+
 /*
 ===============
 R_Init
@@ -1200,19 +1202,24 @@ void R_Init( void ) {
 
 	ri.Printf( PRINT_ALL, "----- R_Init -----\n" );
 
+	for (i=0; i < 256; i++){
+		tess_pool[i] = (shaderCommands_t*)malloc(sizeof(shaderCommands_t));
+	}
+	tess = tess_pool[0];
+	
 	// clear all our internal state
 	Com_Memset( &tr, 0, sizeof( tr ) );
 	Com_Memset( &backEnd, 0, sizeof( backEnd ) );
-	Com_Memset( &tess, 0, sizeof( tess ) );
+	Com_Memset( tess, 0, sizeof( shaderCommands_t ) );
 
 	if(sizeof(glconfig_t) != 11332)
 		ri.Error( ERR_FATAL, "Mod ABI incompatible: sizeof(glconfig_t) == %u != 11332", (unsigned int) sizeof(glconfig_t));
 //	Swap_Init();
 
-	if ( (intptr_t)tess.xyz & 15 ) {
-		ri.Printf( PRINT_WARNING, "tess.xyz not 16 byte aligned\n" );
+	if ( (intptr_t)tess->xyz & 15 ) {
+		ri.Printf( PRINT_WARNING, "tess->xyz not 16 byte aligned\n" );
 	}
-	Com_Memset( tess.constantColor255, 255, sizeof( tess.constantColor255 ) );
+	Com_Memset( tess->constantColor255, 255, sizeof( tess->constantColor255 ) );
 
 	//
 	// init function tables
