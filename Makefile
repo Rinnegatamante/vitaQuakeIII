@@ -32,6 +32,8 @@ ASFLAGS = $(CFLAGS)
 
 all: $(TARGET).vpk
 
+exec-only: eboot.bin
+
 $(TARGET).vpk: $(TARGET).velf
 	make -C code/cgame
 	cp -f code/cgame/cgame.suprx ./cgamearm.suprx
@@ -53,6 +55,9 @@ $(TARGET).vpk: $(TARGET).velf
 	7z a -tzip ./$(TARGET).vpk -r ./build/sce_sys ./build/eboot.bin
 	#-------------------------------------------------------------------
 
+eboot.bin: $(TARGET).velf
+	vita-make-fself -s $< eboot.bin
+	
 %.velf: %.elf
 	cp $< $<.unstripped.elf
 	$(PREFIX)-strip -g $<
