@@ -79,6 +79,7 @@ of OpenGL
 uint16_t* indices;
 float *gVertexBuffer;
 uint8_t *gColorBuffer;
+uint8_t *gColorBuffer255;
 float *gTexCoordBuffer;
 float *gVertexBufferPtr;
 uint8_t *gColorBufferPtr;
@@ -117,7 +118,7 @@ void GLimp_Init( qboolean coreContext)
 	glConfig.isFullscreen = qtrue;
 	
 	if (!inited){
-		vglInitExtended(0x100000, glConfig.vidWidth, glConfig.vidHeight, 0x1000000);
+		vglInitExtended(0x100000, glConfig.vidWidth, glConfig.vidHeight, 0x1000000, SCE_GXM_MULTISAMPLE_4X);
 		vglUseVram(GL_TRUE);
 		vglMapHeapMem();
 		inited = 1;
@@ -136,6 +137,8 @@ void GLimp_Init( qboolean coreContext)
 	gVertexBufferPtr = (float*)malloc(0x400000);
 	gColorBufferPtr = (uint8_t*)malloc(0x200000);
 	gTexCoordBufferPtr = (float*)malloc(0x200000);
+	gColorBuffer255 = (uint8_t*)malloc(0x3000);
+	memset(gColorBuffer255, 0xFF, 0x3000);
 	gVertexBuffer = gVertexBufferPtr;
 	gColorBuffer = gColorBufferPtr;
 	gTexCoordBuffer = gTexCoordBufferPtr;
