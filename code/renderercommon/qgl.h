@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define VERTEXARRAYSIZE 18360
 extern float *gVertexBuffer;
 extern uint8_t *gColorBuffer;
+extern uint8_t *gColorBuffer255;
 extern float *gTexCoordBuffer;
 extern uint16_t *indices;
 

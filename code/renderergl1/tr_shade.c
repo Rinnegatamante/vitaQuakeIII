@@ -466,10 +466,7 @@ static void RB_FogPass( void ) {
 	float *texcoord = gTexCoordBuffer;
 	uint8_t *colorbuf = gColorBuffer;
 	for (i = 0 ; i < tess.numIndexes ; i++) {
-		gColorBuffer[0] = tess.svars.colors[tess.indexes[i]][0];
-		gColorBuffer[1] = tess.svars.colors[tess.indexes[i]][1];
-		gColorBuffer[2] = tess.svars.colors[tess.indexes[i]][2];
-		gColorBuffer[3] = tess.svars.colors[tess.indexes[i]][3];
+		memcpy(gColorBuffer, tess.svars.colors[tess.indexes[i]], sizeof(uint32_t));
 		memcpy(gTexCoordBuffer, tess.svars.texcoords[0][tess.indexes[i]], sizeof(vec2_t));
 		gTexCoordBuffer += 2;
 		gColorBuffer += 4;
@@ -823,10 +820,7 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input )
 			uint8_t *colorbuf = gColorBuffer;
 			int i;
 			for (i = 0 ; i < input->numIndexes ; i++) {
-				gColorBuffer[0] = input->svars.colors[input->indexes[i]][0];
-				gColorBuffer[1] = input->svars.colors[input->indexes[i]][1];
-				gColorBuffer[2] = input->svars.colors[input->indexes[i]][2];
-				gColorBuffer[3] = input->svars.colors[input->indexes[i]][3];
+				memcpy(gColorBuffer, input->svars.colors[input->indexes[i]], sizeof(uint32_t));
 				gColorBuffer += 4;
 			}
 			vglColorPointerMapped(GL_UNSIGNED_BYTE, colorbuf);
@@ -1004,10 +998,7 @@ void RB_StageIteratorVertexLitTexture( void )
 	float *vertices = gVertexBuffer;
 	int i;
 	for (i = 0 ; i < tess.numIndexes ; i++) {
-		gColorBuffer[0] = tess.svars.colors[tess.indexes[i]][0];
-		gColorBuffer[1] = tess.svars.colors[tess.indexes[i]][1];
-		gColorBuffer[2] = tess.svars.colors[tess.indexes[i]][2];
-		gColorBuffer[3] = tess.svars.colors[tess.indexes[i]][3];
+		memcpy(gColorBuffer, tess.svars.colors[tess.indexes[i]], sizeof(uint32_t));
 		gColorBuffer += 4;
 		memcpy(gTexCoordBuffer, tess.texCoords[tess.indexes[i]][0], sizeof(vec2_t));
 		gTexCoordBuffer += 2;
@@ -1085,18 +1076,12 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	qglEnableClientState( GL_COLOR_ARRAY );
 	int i;
 	float *vertices = gVertexBuffer;
-	uint8_t *colorbuf = gColorBuffer;
 	for (i = 0 ; i < input->numIndexes ; i++) {
 		memcpy(gVertexBuffer, input->xyz[input->indexes[i]], sizeof(vec3_t));
 		gVertexBuffer += 3;
-		gColorBuffer[0] = 255;
-		gColorBuffer[1] = 255;
-		gColorBuffer[2] = 255;
-		gColorBuffer[3] = 255;
-		gColorBuffer += 4;
 	}
 	vglVertexPointerMapped(vertices);
-	vglColorPointerMapped(GL_UNSIGNED_BYTE, colorbuf);
+	vglColorPointerMapped(GL_UNSIGNED_BYTE, gColorBuffer255);
 
 	//
 	// select base stage
