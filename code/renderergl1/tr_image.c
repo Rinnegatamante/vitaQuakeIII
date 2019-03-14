@@ -209,7 +209,6 @@ void R_ImageList_f( void ) {
 				break;
 #ifndef __PSP2__
 			case GL_LUMINANCE8:
-			case GL_LUMINANCE16:
 #endif
 			case GL_LUMINANCE:
 				format = "L    ";
@@ -226,7 +225,6 @@ void R_ImageList_f( void ) {
 				break;
 #ifndef __PSP2__
 			case GL_LUMINANCE8_ALPHA8:
-			case GL_LUMINANCE16_ALPHA16:
 #endif
 			case GL_LUMINANCE_ALPHA:
 				format = "LA   ";

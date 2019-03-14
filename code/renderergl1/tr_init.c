@@ -178,7 +178,6 @@ int		max_polyverts;
 */
 static void InitOpenGL( void )
 {
-	char renderer_buffer[1024];
 
 	//
 	// initialize OS specific portions of the renderer
@@ -196,9 +195,6 @@ static void InitOpenGL( void )
 		GLint		temp;
 		
 		GLimp_Init( qfalse );
-
-		strcpy( renderer_buffer, glConfig.renderer_string );
-		Q_strlwr( renderer_buffer );
 
 		// OpenGL driver constants
 		//->qglGetIntegerv( GL_MAX_TEXTURE_SIZE, &temp );
@@ -1315,6 +1311,9 @@ void RE_Shutdown( qboolean destroyWindow ) {
 		GLimp_Shutdown();
 
 		Com_Memset( &glConfig, 0, sizeof( glConfig ) );
+		textureFilterAnisotropic = qfalse;
+		maxAnisotropy = 0;
+		displayAspect = 0.0f;
 		Com_Memset( &glState, 0, sizeof( glState ) );
 	}
 
