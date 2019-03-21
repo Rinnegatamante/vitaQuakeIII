@@ -15,4 +15,12 @@
 			<image>teamarena.png</image>
 		</liveitem>
 	</frame>
+	
+	<frame id='frame2' multi='o' autoflip='3' >
+		<liveitem>
+			<target>psla:open</target>
+			<image>openarena.png</image>
+		</liveitem>
+	</frame>
+	
 </livearea>

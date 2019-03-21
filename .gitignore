@@ -8,6 +8,7 @@
 *.pk3
 *.cfg
 *.zip
+datafiles/*
 
 # Windows image file caches
 Thumbs.db

@@ -449,15 +449,20 @@ int quake_main (unsigned int argc, void* argv){
     Sys_SetBinaryPath(DEFAULT_BASEDIR);
     Sys_SetDefaultInstallPath(DEFAULT_BASEDIR);
 	
-	// Quake III: Team Arena support
+	// Quake III: Team Arena & OpenArena support
+#ifndef OPENARENA
 	sceAppUtilInit(&(SceAppUtilInitParam){}, &(SceAppUtilBootParam){});
 	SceAppUtilAppEventParam eventParam;
 	memset(&eventParam, 0, sizeof(SceAppUtilAppEventParam));
 	sceAppUtilReceiveAppEvent(&eventParam);
 	if (eventParam.type == 0x05){
-		sprintf(commandLine, "+set fs_game missionpack");
+		char buffer[2048];
+		memset(buffer, 0, 2048);
+		sceAppUtilAppEventParseLiveArea(&eventParam, buffer);
+		if (strstr(buffer, "open") != NULL) sceAppMgrLoadExec("app0:/openarena.bin", NULL, NULL); 
+		else sprintf(commandLine, "+set fs_game missionpack");
 	}
-
+#endif
     CON_Init();
     Com_Init(commandLine);
     NET_Init();

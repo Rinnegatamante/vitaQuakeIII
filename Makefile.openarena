@@ -1,5 +1,4 @@
-TARGET		:= vitaOpenArena
-TITLE		:= OPENARENA
+TARGET		:= openarena
 GIT_VERSION := $(shell git describe --abbrev=6 --dirty --always --tags)
 
 SOURCES  := code/renderercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2 code/sys
@@ -30,16 +29,10 @@ CFLAGS  = $(INCLUDE) -D__PSP2__ -D__FLOAT_WORD_ORDER=1 -D__GNU__ -DRELEASE \
 CXXFLAGS  = $(CFLAGS) -fno-exceptions -std=gnu++11
 ASFLAGS = $(CFLAGS)
 
-all: $(TARGET).vpk
+all: $(TARGET).bin
 
-$(TARGET).vpk: $(TARGET).velf
-	vita-make-fself -s $< build_oa/eboot.bin
-	vita-mksfoex -s TITLE_ID=$(TITLE) -d ATTRIBUTE2=12 "$(TARGET)" param.sfo
-	cp -f param.sfo build_oa/sce_sys/param.sfo
-
-	#------------ Comment this if you don't have 7zip ------------------
-	7z a -tzip ./$(TARGET).vpk -r ./build_oa/sce_sys ./build_oa/eboot.bin
-	#-------------------------------------------------------------------
+$(TARGET).bin: $(TARGET).velf
+	vita-make-fself -s $< build/$(TARGET).bin
 
 %.velf: %.elf
 	cp $< $<.unstripped.elf
