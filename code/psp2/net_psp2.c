@@ -385,7 +385,7 @@ qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message, fd_set *fdr)
 		{
 			err = socketError;
 
-			if( err != SCE_NET_EAGAIN && err != SCE_NET_ECONNRESET )
+			if( err != SCE_NET_EAGAIN && err != SCE_NET_ECONNRESET && err < 0 )
 				Com_Printf( "NET_GetPacket: %s\n", NET_ErrorString() );
 		}
 		else
@@ -1064,6 +1064,7 @@ static void *net_memory = NULL;
 void NET_Init( void ) {
 	
 	sceSysmoduleLoadModule(SCE_SYSMODULE_NET);
+	sceSysmoduleLoadModule(SCE_SYSMODULE_HTTP);
 	SceNetInitParam initparam;
 	int ret = sceNetShowNetstat();
 	if (ret == SCE_NET_ERROR_ENOTINIT) {
@@ -1080,6 +1081,7 @@ void NET_Init( void ) {
 	if (ret < 0){
 		sceNetTerm();
 		free(net_memory);
+		net_memory = NULL;
 	}
 	
 	NET_Config( qtrue );
@@ -1102,7 +1104,9 @@ void NET_Shutdown( void ) {
 	
 	sceNetCtlTerm();
 	sceNetTerm();
-	free(net_memory);
+	if (net_memory) free(net_memory);
+	net_memory = NULL;
+	sceSysmoduleUnloadModule(SCE_SYSMODULE_HTTP);
 	sceSysmoduleUnloadModule(SCE_SYSMODULE_NET);
 }
 
