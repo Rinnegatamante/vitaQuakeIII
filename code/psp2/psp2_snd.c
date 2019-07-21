@@ -57,6 +57,8 @@ static int audio_thread(int args, void *argp)
 	return 0;
 }
 
+uint8_t psp2_inited = 0;
+
 /*
 ===============
 SNDDMA_Init
@@ -64,6 +66,8 @@ SNDDMA_Init
 */
 qboolean SNDDMA_Init(void)
 {
+	if (psp2_inited) return qtrue;
+	psp2_inited = 1;
 	Com_Printf("Initializing audio device.\n");
 	dma.samplebits = 16;
 	dma.speed = SAMPLE_RATE;
@@ -115,8 +119,8 @@ void SNDDMA_Shutdown(void)
 {
 	Com_Printf("Closing audio device...\n");
 	if(snd_inited){
-		stop_audio = qtrue;
-		chn = -1;
+	//->	stop_audio = qtrue;
+	//->	chn = -1;
 	}
 }
 
