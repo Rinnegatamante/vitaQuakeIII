@@ -6,7 +6,6 @@
 *.sfo
 *.vpk
 *.pk3
-*.cfg
 *.zip
 datafiles/*
 
