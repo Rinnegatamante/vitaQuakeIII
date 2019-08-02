@@ -461,9 +461,7 @@ void RB_BeginDrawingView (void) {
 #ifndef __PSP2__
 		qglClipPlane (GL_CLIP_PLANE0, plane2);
 		qglEnable (GL_CLIP_PLANE0);
-#endif
 	} else {
-#ifndef __PSP2__
 		qglDisable (GL_CLIP_PLANE0);
 #endif
 	}

@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
-int _newlib_heap_size_user = 200 * 1024 * 1024;
+int _newlib_heap_size_user = 256 * 1024 * 1024;
 
 static char binaryPath[MAX_OSPATH] = {0};
 static char installPath[MAX_OSPATH] = {0};
