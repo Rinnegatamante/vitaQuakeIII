@@ -2168,7 +2168,7 @@ void CL_BeginDownload( const char *localName, const char *remoteName ) {
 				"****************************\n", localName, remoteName);
 
 	Q_strncpyz ( clc.downloadName, localName, sizeof(clc.downloadName) );
-	Com_sprintf( clc.downloadTempName, sizeof(clc.downloadTempName), "%s.tmp", localName );
+	Com_sprintf( clc.downloadTempName, sizeof(clc.downloadTempName), "ux0:data/ioq3/%s.tmp", localName );
 
 	// Set so UI gets access to it
 	Cvar_Set( "cl_downloadName", remoteName );
