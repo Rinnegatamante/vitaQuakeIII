@@ -189,7 +189,7 @@ void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *heigh
 
   if(!cinfo.output_width || !cinfo.output_height
       || ((pixelcount * 4) / cinfo.output_width) / 4 != cinfo.output_height
-      || pixelcount > 0x1FFFFFFF || cinfo.output_components != 3
+      || pixelcount > 0x1FFFFFFF
     )
   {
     // Free the memory to make sure we don't leak memory
@@ -230,13 +230,21 @@ void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *heigh
   sindex = pixelcount * cinfo.output_components;
   dindex = memcount;
 
-  do
-  {	
-    buf[--dindex] = 255;
-    buf[--dindex] = buf[--sindex];
-    buf[--dindex] = buf[--sindex];
-    buf[--dindex] = buf[--sindex];
-  } while(sindex);
+  if (cinfo.output_components == 3) {
+    do
+    {	
+      buf[--dindex] = 255;
+      buf[--dindex] = buf[--sindex];
+      buf[--dindex] = buf[--sindex];
+      buf[--dindex] = buf[--sindex];
+    } while(sindex);
+  } else {
+      buf[--dindex] = 255;
+	  uint8_t clr = buf[--sindex];
+      buf[--dindex] = clr;
+      buf[--dindex] = clr;
+      buf[--dindex] = clr;
+  }
 
   *pic = out;
 
