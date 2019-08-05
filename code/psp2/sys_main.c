@@ -477,6 +477,9 @@ int quake_main (unsigned int argc, void* argv){
     NET_Init();
 
 	while (1) {
+		// Prevent screen power-off
+		sceKernelPowerTick(0);
+		
         Com_Frame();
     }
 
