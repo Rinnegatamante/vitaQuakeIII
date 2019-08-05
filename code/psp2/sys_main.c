@@ -39,7 +39,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
+#ifdef URBANTERROR
+int _newlib_heap_size_user = 305 * 1024 * 1024;
+#else
 int _newlib_heap_size_user = 256 * 1024 * 1024;
+#endif
 
 static char binaryPath[MAX_OSPATH] = {0};
 static char installPath[MAX_OSPATH] = {0};
@@ -450,7 +454,10 @@ int quake_main (unsigned int argc, void* argv){
     Sys_SetDefaultInstallPath(DEFAULT_BASEDIR);
 	
 	// Quake III: Team Arena & OpenArena support
-#ifndef OPENARENA
+#ifdef URBANTERROR
+	sprintf(commandLine, "+set fs_game q3ut4");
+#else
+# ifndef OPENARENA
 	sceAppUtilInit(&(SceAppUtilInitParam){}, &(SceAppUtilBootParam){});
 	SceAppUtilAppEventParam eventParam;
 	memset(&eventParam, 0, sizeof(SceAppUtilAppEventParam));
@@ -459,9 +466,11 @@ int quake_main (unsigned int argc, void* argv){
 		char buffer[2048];
 		memset(buffer, 0, 2048);
 		sceAppUtilAppEventParseLiveArea(&eventParam, buffer);
-		if (strstr(buffer, "open") != NULL) sceAppMgrLoadExec("app0:/openarena.bin", NULL, NULL); 
+		if (strstr(buffer, "open") != NULL) sceAppMgrLoadExec("app0:/openarena.bin", NULL, NULL);
+		else if (strstr(buffer, "terror") != NULL) sceAppMgrLoadExec("app0:/urbanterror.bin", NULL, NULL);
 		else sprintf(commandLine, "+set fs_game missionpack");
 	}
+# endif
 #endif
     CON_Init();
     Com_Init(commandLine);

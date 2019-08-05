@@ -118,7 +118,11 @@ void GLimp_Init( qboolean coreContext)
 	glConfig.isFullscreen = qtrue;
 	
 	if (!inited){
+#ifdef URBANTERROR
+		vglInitExtended(0x100000, glConfig.vidWidth, glConfig.vidHeight, 0x1000000, SCE_GXM_MULTISAMPLE_4X);
+#else
 		vglInitExtended(0x100000, glConfig.vidWidth, glConfig.vidHeight, 0x1800000, SCE_GXM_MULTISAMPLE_4X);
+#endif
 		vglUseVram(GL_TRUE);
 		vglMapHeapMem();
 		inited = 1;

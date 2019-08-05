@@ -757,7 +757,9 @@ static void Upload32( unsigned *data,
 
 	if (mipmap)
 	{
+#ifndef URBANTERROR
 		glGenerateMipmap(GL_TEXTURE_2D);
+#endif
 	}
 done:
 
