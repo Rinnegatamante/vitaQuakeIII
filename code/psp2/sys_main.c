@@ -453,7 +453,7 @@ int quake_main (unsigned int argc, void* argv){
     Sys_SetBinaryPath(DEFAULT_BASEDIR);
     Sys_SetDefaultInstallPath(DEFAULT_BASEDIR);
 	
-	// Quake III: Team Arena & OpenArena support
+	// Quake III: Team Arena, Urban Terror & OpenArena support
 #ifdef URBANTERROR
 	sprintf(commandLine, "+set fs_game q3ut4");
 #else
