@@ -128,7 +128,13 @@ void GLimp_Init( qboolean coreContext)
 		inited = 1;
 		cur_width = glConfig.vidWidth;
 	}else if (glConfig.vidWidth != cur_width){ // Changed resolution in game, restarting the game
+#ifdef URBANTERROR
+		sceAppMgrLoadExec("app0:/urbanterror.bin", NULL, NULL);
+#elif defined(OPENARENA)
+		sceAppMgrLoadExec("app0:/openarena.bin", NULL, NULL);
+#else
 		sceAppMgrLoadExec("app0:/eboot.bin", NULL, NULL);
+#endif
 	}
 	vglStartRendering();
 	int i;
