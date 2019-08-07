@@ -458,12 +458,10 @@ void RB_BeginDrawingView (void) {
 		plane2[3] = DotProduct (plane, backEnd.viewParms.or.origin) - plane[3];
 
 		qglLoadMatrixf( s_flipMatrix );
-#ifndef __PSP2__
-		qglClipPlane (GL_CLIP_PLANE0, plane2);
+		glClipPlane (GL_CLIP_PLANE0, plane2);
 		qglEnable (GL_CLIP_PLANE0);
 	} else {
 		qglDisable (GL_CLIP_PLANE0);
-#endif
 	}
 }
 
@@ -685,9 +683,8 @@ void	RB_SetGL2D (void) {
 			  GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA );
 
 	GL_Cull( CT_TWO_SIDED );
-#ifndef __PSP2__
 	qglDisable( GL_CLIP_PLANE0 );
-#endif
+
 	// set time for 2D shaders
 	backEnd.refdef.time = ri.Milliseconds();
 	backEnd.refdef.floatTime = backEnd.refdef.time * 0.001;

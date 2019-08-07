@@ -514,9 +514,7 @@ void RB_RenderFlares (void) {
 	}
 
 	if ( backEnd.viewParms.isPortal ) {
-#ifndef __PSP2__
 		qglDisable (GL_CLIP_PLANE0);
-#endif
 	}
 
 	qglPushMatrix();
