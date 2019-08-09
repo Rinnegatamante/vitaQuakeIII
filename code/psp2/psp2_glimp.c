@@ -124,7 +124,7 @@ void GLimp_Init( qboolean coreContext)
 		vglInitExtended(0x100000, glConfig.vidWidth, glConfig.vidHeight, 0x1800000, SCE_GXM_MULTISAMPLE_4X);
 #endif
 		vglUseVram(GL_TRUE);
-		vglMapHeapMem();
+
 		inited = 1;
 		cur_width = glConfig.vidWidth;
 	}else if (glConfig.vidWidth != cur_width){ // Changed resolution in game, restarting the game
