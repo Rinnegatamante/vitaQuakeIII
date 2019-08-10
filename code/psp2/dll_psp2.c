@@ -172,7 +172,7 @@ int dlclose( void *handle )
 		}
 
 		if( d == dll_list )
-			dll_list = NULL;
+			dll_list = d->next;
 		else
 			for( dll_t *pd = dll_list; pd; pd = pd->next )
 			{
