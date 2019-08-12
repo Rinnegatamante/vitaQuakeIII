@@ -412,8 +412,8 @@ void RB_MDRSurfaceAnim( mdrSurface_t *surface )
 		tess.normal[baseVertex + j][1] = tempNormal[1];
 		tess.normal[baseVertex + j][2] = tempNormal[2];
 
-		tess.texCoords[baseVertex + j][0][0] = v->texCoords[0];
-		tess.texCoords[baseVertex + j][0][1] = v->texCoords[1];
+		tess.texCoords[0][baseVertex + j][0] = v->texCoords[0];
+		tess.texCoords[0][baseVertex + j][1] = v->texCoords[1];
 
 		v = (mdrVertex_t *)&v->weights[v->numWeights];
 	}

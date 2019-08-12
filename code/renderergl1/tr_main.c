@@ -1307,6 +1307,7 @@ void R_DebugPolygon( int color, int numPoints, float *points ) {
 
 	qglColor3f( color&1, (color>>1)&1, (color>>2)&1 );
 	vglVertexPointer(3, GL_FLOAT, 0, numPoints, points);
+	vglIndexPointerMapped(gIndexesBufferOrdered);
 	vglDrawObjects(GL_TRIANGLE_FAN, 4, GL_TRUE);
 
 	// draw wireframe outline

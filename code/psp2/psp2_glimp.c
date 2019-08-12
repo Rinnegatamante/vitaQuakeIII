@@ -76,11 +76,13 @@ This routine is responsible for initializing the OS specific portions
 of OpenGL
 ===============
 */
-uint16_t* indices;
+uint16_t *gIndexesBuffer;
+uint16_t *gIndexesBufferOrdered;
 float *gVertexBuffer;
 uint8_t *gColorBuffer;
 uint8_t *gColorBuffer255;
 float *gTexCoordBuffer;
+uint16_t *gIndexesBufferPtr;
 float *gVertexBufferPtr;
 uint8_t *gColorBufferPtr;
 float *gTexCoordBufferPtr;
@@ -138,20 +140,21 @@ void GLimp_Init( qboolean coreContext)
 	}
 	vglStartRendering();
 	int i;
-	indices = (uint16_t*)malloc(sizeof(uint16_t*)*MAX_INDICES);
+	gIndexesBufferOrdered = (uint16_t*)malloc(sizeof(uint16_t*)*MAX_INDICES);
 	for (i=0;i<MAX_INDICES;i++){
-		indices[i] = i;
+		gIndexesBufferOrdered[i] = i;
 	}
-	vglIndexPointerMapped(indices);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	gVertexBufferPtr = (float*)malloc(0x400000);
-	gColorBufferPtr = (uint8_t*)malloc(0x200000);
-	gTexCoordBufferPtr = (float*)malloc(0x200000);
-	gColorBuffer255 = (uint8_t*)malloc(0x3000);
+	gIndexesBufferPtr = (uint16_t*)vglAlloc(0x400000, VGL_MEM_RAM);
+	gVertexBufferPtr = (float*)vglAlloc(0x400000, VGL_MEM_RAM);
+	gColorBufferPtr = (uint8_t*)vglAlloc(0x200000, VGL_MEM_RAM);
+	gTexCoordBufferPtr = (float*)vglAlloc(0x200000, VGL_MEM_RAM);
+	gColorBuffer255 = (uint8_t*)vglAlloc(0x3000, VGL_MEM_RAM);
 	memset(gColorBuffer255, 0xFF, 0x3000);
 	gVertexBuffer = gVertexBufferPtr;
 	gColorBuffer = gColorBufferPtr;
 	gTexCoordBuffer = gTexCoordBufferPtr;
+	gIndexesBuffer = gIndexesBufferPtr;
 	
 	strncpy(glConfig.vendor_string, glGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
 	strncpy(glConfig.renderer_string, glGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
@@ -175,8 +178,8 @@ void GLimp_EndFrame( void )
 {
 	vglStopRendering();
 	vglStartRendering();
-	vglIndexPointerMapped(indices);
 	gVertexBuffer = gVertexBufferPtr;
 	gColorBuffer = gColorBufferPtr;
 	gTexCoordBuffer = gTexCoordBufferPtr;
+	gIndexesBuffer = gIndexesBufferPtr;
 }

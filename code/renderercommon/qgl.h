@@ -34,7 +34,8 @@ extern float *gVertexBuffer;
 extern uint8_t *gColorBuffer;
 extern uint8_t *gColorBuffer255;
 extern float *gTexCoordBuffer;
-extern uint16_t *indices;
+extern uint16_t *gIndexesBuffer;
+extern uint16_t *gIndexesBufferOrdered;
 
 #include "vitaGL.h"
 

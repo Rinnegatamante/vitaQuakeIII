@@ -127,7 +127,7 @@ void RB_CalcDeformVertexes( deformStage_t *ds )
 	{
 		scale = EvalWaveForm( &ds->deformationWave );
 
-		for ( i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4 )
+		for ( i = 0; i < tess.numVertexes; i++, xyz += 3, normal += 4 )
 		{
 			VectorScale( normal, scale, offset );
 			
@@ -140,7 +140,7 @@ void RB_CalcDeformVertexes( deformStage_t *ds )
 	{
 		table = TableForFunc( ds->deformationWave.func );
 
-		for ( i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4 )
+		for ( i = 0; i < tess.numVertexes; i++, xyz += 3, normal += 4 )
 		{
 			float off = ( xyz[0] + xyz[1] + xyz[2] ) * ds->deformationSpread;
 
@@ -171,7 +171,7 @@ void RB_CalcDeformNormals( deformStage_t *ds ) {
 	float	*xyz = ( float * ) tess.xyz;
 	float	*normal = ( float * ) tess.normal;
 
-	for ( i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4 ) {
+	for ( i = 0; i < tess.numVertexes; i++, xyz += 3, normal += 4 ) {
 		scale = 0.98f;
 		scale = R_NoiseGet4f( xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
 			tess.shaderTime * ds->deformationWave.frequency );
@@ -206,7 +206,7 @@ void RB_CalcBulgeVertexes( deformStage_t *ds ) {
 
 	now = backEnd.refdef.time * 0.001 * ds->bulgeSpeed;
 
-	for ( i = 0; i < tess.numVertexes; i++, xyz += 4, st += 4, normal += 4 ) {
+	for ( i = 0; i < tess.numVertexes; i++, xyz += 3, st += 2, normal += 4 ) {
 		int64_t off;
 		float scale;
 
@@ -245,7 +245,7 @@ void RB_CalcMoveVertexes( deformStage_t *ds ) {
 	VectorScale( ds->moveVector, scale, offset );
 
 	xyz = ( float * ) tess.xyz;
-	for ( i = 0; i < tess.numVertexes; i++, xyz += 4 ) {
+	for ( i = 0; i < tess.numVertexes; i++, xyz += 3 ) {
 		VectorAdd( xyz, offset, xyz );
 	}
 }
@@ -465,8 +465,8 @@ static void Autosprite2Deform( void ) {
 			float	l;
 			vec3_t	temp;
 
-			v1 = xyz + 4 * edgeVerts[j][0];
-			v2 = xyz + 4 * edgeVerts[j][1];
+			v1 = xyz + 3 * edgeVerts[j][0];
+			v2 = xyz + 3 * edgeVerts[j][1];
 
 			VectorSubtract( v1, v2, temp );
 			
@@ -483,8 +483,8 @@ static void Autosprite2Deform( void ) {
 		}
 
 		for ( j = 0 ; j < 2 ; j++ ) {
-			v1 = xyz + 4 * edgeVerts[nums[j]][0];
-			v2 = xyz + 4 * edgeVerts[nums[j]][1];
+			v1 = xyz + 3 * edgeVerts[nums[j]][0];
+			v2 = xyz + 3 * edgeVerts[nums[j]][1];
 
 			mid[j][0] = 0.5f * (v1[0] + v2[0]);
 			mid[j][1] = 0.5f * (v1[1] + v2[1]);
@@ -502,8 +502,8 @@ static void Autosprite2Deform( void ) {
 		for ( j = 0 ; j < 2 ; j++ ) {
 			float	l;
 
-			v1 = xyz + 4 * edgeVerts[nums[j]][0];
-			v2 = xyz + 4 * edgeVerts[nums[j]][1];
+			v1 = xyz + 3 * edgeVerts[nums[j]][0];
+			v2 = xyz + 3 * edgeVerts[nums[j]][1];
 
 			l = 0.5 * sqrt( lengths[j] );
 			
@@ -853,7 +853,7 @@ void RB_CalcFogTexCoords( float *st ) {
 	fogDistanceVector[3] += 1.0/512;
 
 	// calculate density for each point
-	for (i = 0, v = tess.xyz[0] ; i < tess.numVertexes ; i++, v += 4) {
+	for (i = 0, v = tess.xyz[0] ; i < tess.numVertexes ; i++, v += 3) {
 		// calculate the length in fog
 		s = DotProduct( v, fogDistanceVector ) + fogDistanceVector[3];
 		t = DotProduct( v, fogDepthVector ) + fogDepthVector[3];
@@ -894,7 +894,7 @@ void RB_CalcEnvironmentTexCoords( float *st )
 	v = tess.xyz[0];
 	normal = tess.normal[0];
 
-	for (i = 0 ; i < tess.numVertexes ; i++, v += 4, normal += 4, st += 2 ) 
+	for (i = 0 ; i < tess.numVertexes ; i++, v += 3, normal += 4, st += 2 ) 
 	{
 		VectorSubtract (backEnd.or.viewOrigin, v, viewer);
 		VectorNormalizeFast (viewer);
@@ -1036,7 +1036,7 @@ void RB_CalcSpecularAlpha( unsigned char *alphas ) {
 	alphas += 3;
 
 	numVertexes = tess.numVertexes;
-	for (i = 0 ; i < numVertexes ; i++, v += 4, normal += 4, alphas += 4) {
+	for (i = 0 ; i < numVertexes ; i++, v += 3, normal += 4, alphas += 4) {
 		float ilength;
 
 		VectorSubtract( lightOrigin, v, lightDir );
@@ -1127,7 +1127,7 @@ static void RB_CalcDiffuseColor_altivec( unsigned char *colors )
 
 	normalPerm = vec_lvsl(0,normal);
 	numVertexes = tess.numVertexes;
-	for (i = 0 ; i < numVertexes ; i++, v += 4, normal += 4) {
+	for (i = 0 ; i < numVertexes ; i++, v += 3, normal += 4) {
 		normalVec0 = vec_ld(0,(vector float *)normal);
 		normalVec1 = vec_ld(11,(vector float *)normal);
 		normalVec0 = vec_perm(normalVec0,normalVec1,normalPerm);
@@ -1170,7 +1170,7 @@ static void RB_CalcDiffuseColor_scalar( unsigned char *colors )
 	normal = tess.normal[0];
 
 	numVertexes = tess.numVertexes;
-	for (i = 0 ; i < numVertexes ; i++, v += 4, normal += 4) {
+	for (i = 0 ; i < numVertexes ; i++, v += 3, normal += 4) {
 		incoming = DotProduct (normal, lightDir);
 		if ( incoming <= 0 ) {
 			*(int *)&colors[i*4] = ambientLightInt;

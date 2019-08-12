@@ -103,6 +103,7 @@ void R_RenderShadowEdges( void ) {
 					shadowXyz[i2][0], shadowXyz[i2][1], shadowXyz[i2][2]
 				};
 				vglVertexPointer( 3, GL_FLOAT, 0, 4, vertices );
+				vglIndexPointerMapped(gIndexesBufferOrdered);
 				vglDrawObjects(GL_TRIANGLE_STRIP, 4, GL_TRUE);
 				c_edges++;
 			} else {
@@ -247,6 +248,7 @@ void RB_ShadowFinish( void ) {
 		 100, -100, -10,
 		-100, -100, -10
 	};
+	vglIndexPointerMapped(gIndexesBufferOrdered);
 	vglVertexPointer( 3, GL_FLOAT, 0, 4, vertices );
 	vglDrawObjects(GL_TRIANGLE_FAN, 4, GL_TRUE);
 
@@ -292,7 +294,7 @@ void RB_ProjectionShadowDeform( void ) {
 	light[1] = lightDir[1] * d;
 	light[2] = lightDir[2] * d;
 
-	for ( i = 0; i < tess.numVertexes; i++, xyz += 4 ) {
+	for ( i = 0; i < tess.numVertexes; i++, xyz += 3 ) {
 		h = DotProduct( xyz, ground ) + groundDist;
 
 		xyz[0] -= light[0] * h;
