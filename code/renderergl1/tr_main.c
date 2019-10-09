@@ -1305,14 +1305,14 @@ void R_DebugPolygon( int color, int numPoints, float *points ) {
 
 	// draw solid shade
 
-	qglColor3f( color&1, (color>>1)&1, (color>>2)&1 );
+	qglColor4f( color&1, (color>>1)&1, (color>>2)&1, 1 );
 	vglVertexPointer(3, GL_FLOAT, 0, numPoints, points);
 	vglDrawObjects(GL_TRIANGLE_FAN, 4, GL_TRUE);
 
 	// draw wireframe outline
 	GL_State( GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
 	qglDepthRange( 0, 0 );
-	qglColor3f( 1, 1, 1 );
+	qglColor4f( 1, 1, 1, 1 );
 	vglDrawObjects(GL_TRIANGLE_FAN, 4, GL_TRUE);
 	qglDepthRange( 0, 1 );
 }

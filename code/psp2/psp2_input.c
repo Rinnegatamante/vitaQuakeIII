@@ -40,47 +40,147 @@ void Key_Event(int key, int value, int time){
 }
 
 void Sys_SetKeys(uint32_t keys, int time){
-	if((keys & SCE_CTRL_START) != (oldkeys & SCE_CTRL_START))
-		Key_Event(K_ESCAPE, (keys & SCE_CTRL_START) == SCE_CTRL_START, time);
-	if((keys & SCE_CTRL_SELECT) != (oldkeys & SCE_CTRL_SELECT))
-		Key_Event(K_ENTER, (keys & SCE_CTRL_SELECT) == SCE_CTRL_SELECT, time);
-	if((keys & SCE_CTRL_UP) != (oldkeys & SCE_CTRL_UP))
-		Key_Event(K_UPARROW, (keys & SCE_CTRL_UP) == SCE_CTRL_UP, time);
-	if((keys & SCE_CTRL_DOWN) != (oldkeys & SCE_CTRL_DOWN))
-		Key_Event(K_DOWNARROW, (keys & SCE_CTRL_DOWN) == SCE_CTRL_DOWN, time);
-	if((keys & SCE_CTRL_LEFT) != (oldkeys & SCE_CTRL_LEFT))
-		Key_Event(K_LEFTARROW, (keys & SCE_CTRL_LEFT) == SCE_CTRL_LEFT, time);
-	if((keys & SCE_CTRL_RIGHT) != (oldkeys & SCE_CTRL_RIGHT))
-		Key_Event(K_RIGHTARROW, (keys & SCE_CTRL_RIGHT) == SCE_CTRL_RIGHT, time);
-	if((keys & SCE_CTRL_TRIANGLE) != (oldkeys & SCE_CTRL_TRIANGLE))
-		Key_Event(K_AUX4, (keys & SCE_CTRL_TRIANGLE) == SCE_CTRL_TRIANGLE, time);
-	if((keys & SCE_CTRL_SQUARE) != (oldkeys & SCE_CTRL_SQUARE))
-		Key_Event(K_AUX3, (keys & SCE_CTRL_SQUARE) == SCE_CTRL_SQUARE, time);
-	if((keys & SCE_CTRL_CIRCLE) != (oldkeys & SCE_CTRL_CIRCLE))
-		Key_Event(K_AUX2, (keys & SCE_CTRL_CIRCLE) == SCE_CTRL_CIRCLE, time);
-	if((keys & SCE_CTRL_CROSS) != (oldkeys & SCE_CTRL_CROSS))
-		Key_Event(K_AUX1, (keys & SCE_CTRL_CROSS) == SCE_CTRL_CROSS, time);
-	if((keys & SCE_CTRL_LTRIGGER) != (oldkeys & SCE_CTRL_LTRIGGER))
-		Key_Event(K_AUX5, (keys & SCE_CTRL_LTRIGGER) == SCE_CTRL_LTRIGGER, time);
-	if((keys & SCE_CTRL_RTRIGGER) != (oldkeys & SCE_CTRL_RTRIGGER))
-		Key_Event(K_AUX6, (keys & SCE_CTRL_RTRIGGER) == SCE_CTRL_RTRIGGER, time);
-}
+	int port;
 
-void IN_RescaleAnalog(int *x, int *y, int dead) {
+	if (!poll_cb)
+		return;
 
-	float analogX = (float) *x;
-	float analogY = (float) *y;
-	float deadZone = (float) dead;
-	float maximum = 32768.0f;
-	float magnitude = sqrt(analogX * analogX + analogY * analogY);
-	if (magnitude >= deadZone)
+	poll_cb();
+
+	if (!input_cb)
+		return;
+
+	for (port = 0; port < MAX_PADS; port++)
 	{
-		float scalingFactor = maximum / magnitude * (magnitude - deadZone) / (maximum - deadZone);
-		*x = (int) (analogX * scalingFactor);
-		*y = (int) (analogY * scalingFactor);
-	} else {
-		*x = 0;
-		*y = 0;
+		if (!input_cb)
+			break;
+
+		switch (quake_devices[port])
+		{
+		case RETRO_DEVICE_JOYPAD:
+		case RETRO_DEVICE_JOYPAD_ALT:
+		case RETRO_DEVICE_MODERN:
+		{
+			unsigned i;
+			int16_t ret    = 0;
+			if (libretro_supports_bitmasks)
+				ret = input_cb(port, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_MASK);
+			else
+			{
+				for (i=RETRO_DEVICE_ID_JOYPAD_B; i <= RETRO_DEVICE_ID_JOYPAD_R3; ++i)
+				{
+					if (input_cb(port, RETRO_DEVICE_JOYPAD, 0, i))
+						ret |= (1 << i);
+				}
+			}
+
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_UP))
+				Key_Event(K_UPARROW, 1, time);
+			else
+				Key_Event(K_UPARROW, 0);
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_DOWN))
+				Key_Event(K_DOWNARROW, 1, time);
+			else
+				Key_Event(K_DOWNARROW, 0, time);
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_LEFT))
+				Key_Event(K_LEFTARROW, 1, time);
+			else
+				Key_Event(K_LEFTARROW, 0, time);
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_RIGHT))
+				Key_Event(K_RIGHTARROW, 1), time);
+			else
+				Key_Event(K_RIGHTARROW, 0), time);
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_START))
+				Key_Event(K_ESCAPE, 1, time);
+			else
+				Key_Event(K_ESCAPE, 0, time);
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_SELECT))
+				Key_Event(K_ENTER, 1, time);
+			else
+				Key_Event(K_ENTER, 0, time);
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_Y))
+				Key_Event(K_AUX3, 1);
+			else
+				Key_Event(K_AUX3, 0, time);
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_X))
+				Key_Event(K_AUX4, 1, time);
+			else
+				Key_Event(K_AUX4, 0, time);
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_B))
+			{
+				Key_Event(K_AUX1, 1, time);
+			}
+			else
+			{
+				Key_Event(K_AUX1, 0, time);
+			}
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_A))
+				Key_Event(K_AUX2, 1, time);
+			else
+				Key_Event(K_AUX2, 0, time);
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_L))
+				Key_Event(K_AUX5, 1);
+			else
+				Key_Event(K_AUX5, 0, time);
+			if (ret & (1 << RETRO_DEVICE_ID_JOYPAD_R))
+				Key_Event(K_AUX6, 1, time);
+			else
+				Key_Event(K_AUX6, 0, time);
+		}
+		break;
+		/*
+		case RETRO_DEVICE_KEYBOARD:
+			if (input_cb(port, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT))
+				Sys_SetKeys(K_MOUSE1, 1);
+			else
+				Sys_SetKeys(K_MOUSE1, 0);
+			if (input_cb(port, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT))
+				Sys_SetKeys(K_MOUSE2, 1);
+			else
+				Sys_SetKeys(K_MOUSE2, 0);
+			if (input_cb(port, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE))
+				Sys_SetKeys(K_MOUSE3, 1);
+			else
+				Sys_SetKeys(K_MOUSE3, 0);
+			if (input_cb(port, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELUP))
+				Sys_SetKeys(K_MOUSE4, 1);
+			else
+				Sys_SetKeys(K_MOUSE4, 0);
+			if (input_cb(port, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELDOWN))
+				Sys_SetKeys(K_MOUSE5, 1);
+			else
+				Sys_SetKeys(K_MOUSE5, 0);
+			if (input_cb(port, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELUP))
+				Sys_SetKeys(K_MOUSE6, 1);
+			else
+				Sys_SetKeys(K_MOUSE6, 0);
+			if (input_cb(port, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELDOWN))
+				Sys_SetKeys(K_MOUSE7, 1);
+			else
+				Sys_SetKeys(K_MOUSE7, 0);
+			if (quake_devices[0] == RETRO_DEVICE_KEYBOARD) {
+				if (input_cb(port, RETRO_DEVICE_KEYBOARD, 0, RETROK_UP))
+					Sys_SetKeys(K_UPARROW, 1);
+				else
+					Sys_SetKeys(K_UPARROW, 0);
+				if (input_cb(port, RETRO_DEVICE_KEYBOARD, 0, RETROK_DOWN))
+					Sys_SetKeys(K_DOWNARROW, 1);
+				else
+					Sys_SetKeys(K_DOWNARROW, 0);
+				if (input_cb(port, RETRO_DEVICE_KEYBOARD, 0, RETROK_LEFT))
+					Sys_SetKeys(K_LEFTARROW, 1);
+				else
+					Sys_SetKeys(K_LEFTARROW, 0);
+				if (input_cb(port, RETRO_DEVICE_KEYBOARD, 0, RETROK_RIGHT))
+					Sys_SetKeys(K_RIGHTARROW, 1);
+				else
+					Sys_SetKeys(K_RIGHTARROW, 0);
+			}
+			break;
+		*/
+		case RETRO_DEVICE_NONE:
+			break;
+		}
 	}
 }
 

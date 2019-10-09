@@ -2374,6 +2374,19 @@ void Com_ExecuteCfg(void)
 		Cbuf_ExecuteText(EXEC_NOW, "exec autoexec.cfg\n");
 		Cbuf_Execute();
 	}
+	
+	// Setting default keys
+	Cbuf_AddText("bind SELECT \"+scores\"\n");
+	Cbuf_AddText("bind CROSS \"+moveup\"\n");
+	Cbuf_AddText("bind CIRCLE \"+button2\"\n");
+	Cbuf_AddText("bind SQUARE \"+movedown\"\n");
+	Cbuf_AddText("bind TRIANGLE \"weapnext\"\n");
+	Cbuf_AddText("bind LTRIGGER \"+zoom\"\n");
+	Cbuf_AddText("bind RTRIGGER \"+attack\"\n");
+	Cbuf_AddText("bind LANALOG_LEFT \"+moveleft\"\n");
+	Cbuf_AddText("bind LANALOG_RIGHT \"+moveright\"\n");
+	Cbuf_AddText("bind LANALOG_UP \"+forward\"\n");
+	Cbuf_AddText("bind LANALOG_DOWN \"+back\"\n");
 }
 
 /*
@@ -2591,7 +2604,7 @@ Find out whether we have SSE support for Q_ftol function
 =================
 */
 
-#if id386 || idx64
+/*#if id386 || idx64
 
 static void Com_DetectSSE(void)
 {
@@ -2625,11 +2638,11 @@ static void Com_DetectSSE(void)
 #endif
 }
 
-#else
+#else*/
 
 #define Com_DetectSSE()
 
-#endif
+//#endif
 
 /*
 =================
@@ -2745,7 +2758,7 @@ void Com_Init( char *commandLine ) {
 	// init commands and vars
 	//
 	com_altivec = Cvar_Get ("com_altivec", "1", CVAR_ARCHIVE);
-	com_maxfps = Cvar_Get ("com_maxfps", "85", CVAR_ARCHIVE);
+	com_maxfps = Cvar_Get ("com_maxfps", "240", CVAR_ARCHIVE);
 	com_blood = Cvar_Get ("com_blood", "1", CVAR_ARCHIVE);
 
 	com_logfile = Cvar_Get ("logfile", "0", CVAR_TEMP );
@@ -3108,13 +3121,13 @@ void Com_Frame( void ) {
 			minMsec = SV_FrameMsec();
 		else
 		{
-			if(com_minimized->integer && com_maxfpsMinimized->integer > 0)
+			/*if(com_minimized->integer && com_maxfpsMinimized->integer > 0)
 				minMsec = 1000 / com_maxfpsMinimized->integer;
 			else if(com_unfocused->integer && com_maxfpsUnfocused->integer > 0)
 				minMsec = 1000 / com_maxfpsUnfocused->integer;
 			else if(com_maxfps->integer > 0)
 				minMsec = 1000 / com_maxfps->integer;
-			else
+			else*/
 				minMsec = 1;
 			
 			timeVal = com_frameTime - lastTime;
