@@ -364,15 +364,19 @@ static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_
 	}
 }
 
+first_reset = true;
+
+extern void CL_Vid_Restart_f( void );
+
 static void context_reset() { 
 	if (!context_needs_reinit)
 		return;
 
 	initialize_gl();
-	/*if (!first_reset) {
-		restore_textures();
+	if (!first_reset) {
+		CL_Vid_Restart_f();
 	}
-	first_reset = false;*/
+	first_reset = false;
 	context_needs_reinit = false;
 }
 
