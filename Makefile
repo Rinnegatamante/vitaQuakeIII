@@ -188,7 +188,7 @@ ifeq ($(COMPILE_ARCH),axp)
   COMPILE_ARCH=alpha
 endif
 
-CFLAGS   += -Wall -D__LIBRETRO__ $(fpic) $(INCLUDE) -DUSE_ICON -std=c99 -DARCH_STRING=\"$(COMPILE_ARCH)\" -DNO_VM_COMPILED -DBOTLIB -DPRODUCT_VERSION=\"1.36_GIT_ba68b99c-2018-01-23\" -fno-short-enums -fsigned-char
+CFLAGS   += -Wall -D__LIBRETRO__ $(fpic) $(INCLUDE) -DRELEASE -DUSE_ICON -std=c99 -DARCH_STRING=\"$(COMPILE_ARCH)\" -DNO_VM_COMPILED -DBOTLIB -DPRODUCT_VERSION=\"1.36_GIT_ba68b99c-2018-01-23\" -fno-short-enums -fsigned-char
 CXXFLAGS += -Wall -D__LIBRETRO__ $(fpic) -fpermissive
 
 all: $(TARGET)
