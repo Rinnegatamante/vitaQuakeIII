@@ -318,10 +318,10 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 		{
 			R_IssuePendingRenderCommands();
 			qglEnable( GL_STENCIL_TEST );
-			qglStencilMask( ~0U );
-			qglClearStencil( 0U );
-			qglStencilFunc( GL_ALWAYS, 0U, ~0U );
-			qglStencilOp( GL_KEEP, GL_INCR, GL_INCR );
+			if (!use_pgl) qglStencilMask( ~0U );
+			if (!use_pgl) qglClearStencil( 0U );
+			if (!use_pgl) qglStencilFunc( GL_ALWAYS, 0U, ~0U );
+			if (!use_pgl) qglStencilOp( GL_KEEP, GL_INCR, GL_INCR );
 		}
 		r_measureOverdraw->modified = qfalse;
 	}
@@ -368,7 +368,7 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 			if(r_anaglyphMode->modified)
 			{
 				// clear both, front and backbuffer.
-				qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+				if (!use_pgl) qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 				qglClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 				
 				//->qglDrawBuffer(GL_FRONT);
@@ -420,7 +420,7 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 
 			if(r_anaglyphMode->modified)
 			{
-				qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+				if (!use_pgl) qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 				r_anaglyphMode->modified = qfalse;
 			}
 

@@ -178,7 +178,8 @@ int		max_polyverts;
 */
 static void InitOpenGL( void )
 {
-
+	printf("Initializing OpenGL...\n");
+	
 	//
 	// initialize OS specific portions of the renderer
 	//
@@ -207,6 +208,8 @@ static void InitOpenGL( void )
 		}
 	}
 
+	printf("Setting default GL state...\n");
+	
 	// set default state
 	GL_SetDefaultState();
 }
@@ -668,7 +671,7 @@ void GL_SetDefaultState( void )
 	GL_TextureMode( r_textureMode->string );
 	GL_TexEnv( GL_MODULATE );
 
-	qglDepthFunc( GL_LEQUAL );
+	if (!use_pgl) qglDepthFunc( GL_LEQUAL );
 
 	// the vertex array is always enabled, but the color and texture
 	// arrays are enabled and disabled around the compiled vertex array call
@@ -680,7 +683,7 @@ void GL_SetDefaultState( void )
 	glState.glStateBits = GLS_DEPTHTEST_DISABLE | GLS_DEPTHMASK_TRUE;
 
 	qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-	qglDepthMask( GL_TRUE );
+	if (!use_pgl) qglDepthMask( GL_TRUE );
 	qglDisable( GL_DEPTH_TEST );
 	qglEnable( GL_SCISSOR_TEST );
 	qglDisable( GL_CULL_FACE );

@@ -115,8 +115,10 @@ void GL_TextureMode( const char *string ) {
 		glt = tr.images[ i ];
 		if ( glt->flags & IMGFLAG_MIPMAP ) {
 			GL_Bind (glt);
-			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+			if (!use_pgl) {
+				qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+				qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+			}
 		}
 	}
 }
@@ -684,22 +686,22 @@ static void Upload32( unsigned *data,
 	if (mipmap)
 	{
 #ifndef URBANTERROR
-		qglGenerateMipmap(GL_TEXTURE_2D);
+		if (!use_pgl) qglGenerateMipmap(GL_TEXTURE_2D);
 #endif
 	}
 done:
-
-	if (mipmap)
-	{
-		qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-		qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+	if (!use_pgl) {
+		if (mipmap)
+		{
+			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+		}
+		else
+		{
+			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+		}
 	}
-	else
-	{
-		qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-		qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	}
-
 	GL_CheckErrors();
 
 	if ( scaledBuffer != 0 )
@@ -771,10 +773,11 @@ image_t *R_CreateImage( const char *name, byte *pic, int width, int height,
 								&image->internalFormat,
 								&image->uploadWidth,
 								&image->uploadHeight );
-
-	qglTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapClampMode );
-	qglTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapClampMode );
-
+	if (!use_pgl) {
+		qglTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapClampMode );
+		qglTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapClampMode );
+	}
+	
 	glState.currenttextures[glState.currenttmu] = 0;
 	qglBindTexture( GL_TEXTURE_2D, 0 );
 

@@ -31,6 +31,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../renderercommon/tr_common.h"
 #include "../renderercommon/iqm.h"
 #include "../renderercommon/qgl.h"
+#include "../tinygl/gl.h"
+
+extern uint8_t use_pgl;
 
 #define GL_INDEX_TYPE		GL_UNSIGNED_INT
 typedef unsigned int glIndex_t;

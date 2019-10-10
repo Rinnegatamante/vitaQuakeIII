@@ -1161,7 +1161,7 @@ Draws x/y/z lines from the origin for orientation debugging
 static void RB_SurfaceAxis( void ) {
 	GL_Bind( tr.whiteImage );
 	GL_State( GLS_DEFAULT );
-	qglLineWidth( 3 );
+	if (!use_pgl) qglLineWidth( 3 );
 	float clrs[] = {
 		1, 0, 0, 0,
 		1, 0, 0, 0,
@@ -1183,7 +1183,7 @@ static void RB_SurfaceAxis( void ) {
 	vglColorPointer(4, GL_FLOAT, 0, 6, clrs);
 	vglDrawObjects(GL_LINES, 6, GL_TRUE);
 	qglDisableClientState(GL_COLOR_ARRAY);
-	qglLineWidth( 1 );
+	if (!use_pgl) qglLineWidth( 1 );
 }
 
 //===========================================================================
