@@ -40,7 +40,7 @@ else ifneq ($(findstring MINGW,$(shell uname -a)),)
 endif
 
 CORE_DIR    += .
-TARGET_NAME := vitaQuakeIII
+TARGET_NAME := vitaquake3
 LIBM		    = -lm
 
 ifeq ($(ARCHFLAGS),)
