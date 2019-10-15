@@ -133,7 +133,10 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
     int do_free;
 	if (format == GL_RGB) components = 3;
 	else if (format == GL_RGBA) components = 4;
-	else components = format;
+	else{
+		printf("unknown components %d\n", format);
+		components = format;
+	}
     /*
     if (!(target == GL_TEXTURE_2D && level == 0 && components == 3 &&
           border == 0 && format == GL_RGB &&

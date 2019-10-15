@@ -367,7 +367,7 @@ static void DrawSkySide( struct image_s *image, const int mins[2], const int max
 
 	GL_Bind( image );
 #ifdef URBANTERROR
-	qglDisableClientState(GL_COLOR_ARRAY);
+	//qglDisableClientState(GL_COLOR_ARRAY);
 #endif
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	for ( t = mins[1]+HALF_SKY_SUBDIVISIONS; t < maxs[1]+HALF_SKY_SUBDIVISIONS; t++ )
@@ -393,7 +393,7 @@ static void DrawSkySide( struct image_s *image, const int mins[2], const int max
 	}
 	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #ifdef URBANTERROR	
-	qglEnableClientState(GL_COLOR_ARRAY);
+	//qglEnableClientState(GL_COLOR_ARRAY);
 #endif
 }
 

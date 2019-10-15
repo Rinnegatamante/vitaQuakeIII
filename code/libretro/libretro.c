@@ -1153,7 +1153,7 @@ bool retro_load_game(const struct retro_game_info *info)
 	hw_render.depth = true;
 	hw_render.stencil = true;
 
-	if (!environ_cb(RETRO_ENVIRONMENT_SET_HW_RENDER, &hw_render))
+	//if (!environ_cb(RETRO_ENVIRONMENT_SET_HW_RENDER, &hw_render))
 	{
 		if (log_cb)
 			log_cb(RETRO_LOG_WARN, "vitaQuakeIII: libretro frontend doesn't have OpenGL support, falling back to TinyGL.\n");
@@ -2028,7 +2028,7 @@ Responsible for doing a swapbuffers
 */
 void GLimp_EndFrame( void )
 {
-	if (use_pgl) video_cb(pgl_buffer, scr_width, scr_height, scr_width);
+	if (use_pgl) video_cb(pgl_buffer, scr_width, scr_height, scr_width << 1);
 	else video_cb(RETRO_HW_FRAME_BUFFER_VALID, scr_width, scr_height, 0);
 	gVertexBuffer = gVertexBufferPtr;
 	gColorBuffer = gColorBufferPtr;

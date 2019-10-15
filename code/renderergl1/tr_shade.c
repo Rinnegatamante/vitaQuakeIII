@@ -105,7 +105,7 @@ static void DrawTris (shaderCommands_t *input) {
 	GL_State( GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE );
 	if (!use_pgl) qglDepthRange( 0, 0 );
 
-	qglDisableClientState (GL_COLOR_ARRAY);
+	//qglDisableClientState (GL_COLOR_ARRAY);
 	qglDisableClientState (GL_TEXTURE_COORD_ARRAY);
 
 	float *vertices = gVertexBuffer;
@@ -401,7 +401,7 @@ static void ProjectDlightTexture_scalar( void ) {
 		}
 		
 		qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
-		qglEnableClientState( GL_COLOR_ARRAY );
+		//qglEnableClientState( GL_COLOR_ARRAY );
 
 		float *texcoord = gTexCoordBuffer;
 		float *colorbuf = gColorBuffer;
@@ -444,7 +444,7 @@ static void RB_FogPass( void ) {
 	fog_t		*fog;
 	int			i;
 
-	qglEnableClientState( GL_COLOR_ARRAY );
+	//qglEnableClientState( GL_COLOR_ARRAY );
 	qglEnableClientState( GL_TEXTURE_COORD_ARRAY);
 
 	fog = tr.world->fogs + tess.fogNum;
@@ -466,7 +466,7 @@ static void RB_FogPass( void ) {
 	float *texcoord = gTexCoordBuffer;
 	float *colorbuf = gColorBuffer;
 	for (i = 0 ; i < tess.numIndexes ; i++) {
-		memcpy(gColorBuffer, tess.svars.colors[tess.indexes[i]], sizeof(uint32_t));
+		memcpy(gTexCoordBuffer, tess.svars.texcoords[0][tess.indexes[i]], sizeof(vec2_t));
 		gColorBuffer[0] = (float)(tess.svars.colors[tess.indexes[i]][0]) / 255.0f;
 		gColorBuffer[1] = (float)(tess.svars.colors[tess.indexes[i]][1]) / 255.0f;
 		gColorBuffer[2] = (float)(tess.svars.colors[tess.indexes[i]][2]) / 255.0f;
@@ -819,7 +819,7 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input )
 
 		//if ( !setArraysOnce )
 		//{
-			qglEnableClientState( GL_COLOR_ARRAY );
+			//qglEnableClientState( GL_COLOR_ARRAY );
 			float *colorbuf = gColorBuffer;
 			int i;
 			for (i = 0 ; i < input->numIndexes ; i++) {
@@ -996,7 +996,7 @@ void RB_StageIteratorVertexLitTexture( void )
 	//
 	// set arrays and lock
 	//
-	qglEnableClientState( GL_COLOR_ARRAY);
+	//qglEnableClientState( GL_COLOR_ARRAY);
 	qglEnableClientState( GL_TEXTURE_COORD_ARRAY);
 
 	float *colorbuf = gColorBuffer;
@@ -1082,7 +1082,7 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	// set color, pointers, and lock
 	//
 	GL_State( GLS_DEFAULT );
-	qglEnableClientState( GL_COLOR_ARRAY );
+	//qglEnableClientState( GL_COLOR_ARRAY );
 	int i;
 	float *vertices = gVertexBuffer;
 	for (i = 0 ; i < input->numIndexes ; i++) {

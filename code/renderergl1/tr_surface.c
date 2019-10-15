@@ -1178,11 +1178,11 @@ static void RB_SurfaceAxis( void ) {
 		0, 0, 0,
 		0, 0, 16
 	};
-	qglEnableClientState(GL_COLOR_ARRAY);
+	//qglEnableClientState(GL_COLOR_ARRAY);
 	vglVertexPointer(3, GL_FLOAT, 0, 6, verts);
 	vglColorPointer(4, GL_FLOAT, 0, 6, clrs);
 	vglDrawObjects(GL_LINES, 6, GL_TRUE);
-	qglDisableClientState(GL_COLOR_ARRAY);
+	//qglDisableClientState(GL_COLOR_ARRAY);
 	if (!use_pgl) qglLineWidth( 1 );
 }
 
