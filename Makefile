@@ -10,7 +10,7 @@ LIBS = -lSceAppMgr_stub -lvitaGL -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg12
 	-lSceNet_stub -lSceNetCtl_stub -lpng -lz -lSceDisplay_stub -lSceGxm_stub \
 	-lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub -lcurl \
-	-lssl -lcrypto -lSceSsl_stub
+	-lssl -lcrypto -lSceSsl_stub -lmathneon
 
 CFILES   := $(filter-out code/psp2/psp2_dll_hacks.c,$(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c)))
 CPPFILES   := $(foreach dir,$(CPPSOURCES), $(wildcard $(dir)/*.cpp))
