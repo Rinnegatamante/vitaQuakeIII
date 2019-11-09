@@ -70,8 +70,6 @@ ARMv7-A_ARMv7-R_DDI0406_2007.pdf
 
 #define ALIGN(x, a) (((x) + ((a) - 1)) & ~((a) - 1))
 
-SceUID memblock;
-
 /* arm eabi, builtin gcc functions */
 int __aeabi_idiv (int, int);
 unsigned __aeabi_uidiv (unsigned, unsigned);
@@ -206,7 +204,7 @@ static const char *opnames[256] = {
 static void VM_Destroy_Compiled(vm_t *vm)
 {
 	if (vm->codeBase) {
-		if (sceKernelFreeMemBlock(memblock) < 0)
+		if (sceKernelFreeMemBlock(vm->memblock) < 0)
 			Com_Printf(S_COLOR_RED "Memory unmap failed, possible memory leak\n");
 	}
 	vm->codeBase = NULL;
@@ -616,9 +614,9 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 
 	if(pass)
 	{
-		memblock = sceKernelAllocMemBlockForVM("code", ALIGN(ALIGN(vm->codeLength, 4 * 1024), 1 * 1024 * 1024));
-		sceKernelGetMemBlockBase(memblock, &vm->codeBase);
-		if(memblock < 0)
+		vm->memblock = sceKernelAllocMemBlockForVM("code", ALIGN(ALIGN(vm->codeLength, 4 * 1024), 1 * 1024 * 1024));
+		sceKernelGetMemBlockBase(vm->memblock, &vm->codeBase);
+		if(vm->memblock < 0)
 			Com_Error(ERR_FATAL, "VM_CompileARM: can't mmap memory");
 		sceKernelOpenVMDomain();
 		vm->codeLength = 0;
@@ -1132,7 +1130,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 		DIE("mprotect failed");
 	}*/
 
-	sceKernelSyncVMDomain(memblock, vm->codeBase, vm->codeLength);
+	sceKernelSyncVMDomain(vm->memblock, vm->codeBase, vm->codeLength);
 
 	vm->destroy = VM_Destroy_Compiled;
 	vm->compiled = qtrue;
