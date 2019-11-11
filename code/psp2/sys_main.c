@@ -434,6 +434,29 @@ void Sys_SigHandler(int signal) {
         Sys_Exit(2);
 }
 
+#define Q3A   0
+#define Q3TA  1
+#define Q3TAS 2
+#define OA    3
+#define URT4  4
+
+char commandLine[MAX_STRING_CHARS] = {0};
+
+void redirect(uint32_t idx, const char *fname, const char *executable) {
+	FILE *f = fopen(fname, "r");
+	if (!f) {
+		f = fopen("ux0:data/ioq3.d", "w");
+		fprintf(f, "%lu", idx);
+		fclose(f);
+		sceAppMgrLoadExec("app0:/downloader.bin", NULL, NULL);
+	} else {
+		fclose(f);
+		if (idx == Q3TA) sprintf(commandLine, executable);
+		else sceAppMgrLoadExec(executable, NULL, NULL);
+	}
+}
+
+
 /*
 =================
 main
@@ -441,8 +464,6 @@ main
 */
 int quake_main (unsigned int argc, void* argv){
 	int i;
-	
-    char commandLine[MAX_STRING_CHARS] = {0};
 
     Sys_PlatformInit();
 
@@ -466,10 +487,13 @@ int quake_main (unsigned int argc, void* argv){
 		char buffer[2048];
 		memset(buffer, 0, 2048);
 		sceAppUtilAppEventParseLiveArea(&eventParam, buffer);
-		if (strstr(buffer, "open") != NULL) sceAppMgrLoadExec("app0:/openarena.bin", NULL, NULL);
-		else if (strstr(buffer, "terror") != NULL) sceAppMgrLoadExec("app0:/urbanterror.bin", NULL, NULL);
-		else sprintf(commandLine, "+set fs_game missionpack");
-	}
+		if (strstr(buffer, "open") != NULL) redirect(OA, "ux0:data/openarena/baseoa/uiarm.suprx", "app0:/openarena.bin");
+		else if (strstr(buffer, "terror") != NULL) redirect(URT4, "ux0:data/ioq3/q3ut4/zUrT43_qvm.pk3", "app0:/urbanterror.bin");
+		else {
+			redirect(Q3TAS, "ux0:data/ioq3/missionpack/uiarm.suprx", NULL);
+			redirect(Q3TA, "ux0:data/ioq3/missionpack/pak0.pk3", "+set fs_game missionpack");
+		}
+	} else redirect(Q3A, "ux0:data/ioq3/baseq3/uiarm.suprx", NULL);
 # endif
 #endif
     CON_Init();
