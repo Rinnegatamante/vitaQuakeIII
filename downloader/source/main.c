@@ -53,7 +53,7 @@ uint8_t chunk_idx = 0;
 uint8_t wchunk_idx = 0;
 uint8_t end_write = 0;
 
-SceUID fh, write_thread, Write_Mutex;
+FILE *fh;
 
 curl_off_t curl_bytes;
 
@@ -72,15 +72,7 @@ static uint8_t chunk_buffer[2][CHUNK_MAXSIZE];
 static size_t write_cb(void *ptr, size_t size, size_t nmemb, void *stream)
 {
 	downloaded_bytes += size * nmemb;
-	memcpy(&chunk_buffer[chunk_idx][chunk_ptr], ptr, size * nmemb);
-	chunk_ptr += size * nmemb;
-	if ((chunk_ptr + size * nmemb) > CHUNK_MAXSIZE) {
-		chunk_idx = (chunk_idx + 1) % 2;
-		chunk_size = chunk_ptr;
-		chunk_ptr = 0;
-		sceKernelSignalSema(Write_Mutex, 1);
-	}
-	return size * nmemb;
+	return fwrite(ptr, size, nmemb, fh);
 }
 
 static size_t header_cb(char *buffer, size_t size, size_t nitems, void *userdata)
@@ -117,29 +109,13 @@ static void resumeDownload()
 	curl_easy_perform(curl_handle);
 }
 
-static int writeThread(unsigned int args, void* arg){
-	fh = sceIoOpen("ux0:/data/ioq3d.zip", SCE_O_WRONLY | SCE_O_CREAT | SCE_O_TRUNC, 0777);
-	for (;;) {
-		sceKernelWaitSema(Write_Mutex, 1, NULL);
-		sceIoWrite(fh, chunk_buffer[wchunk_idx], chunk_size);
-		wchunk_idx = (wchunk_idx + 1) % 2;
-		if (end_write) break;
-	}
-	sceIoClose(fh);
-	sceKernelExitDeleteThread(0);
-	return 0;
-}
-
 static int downloadThread(unsigned int args, void* arg){
 	curl_handle = curl_easy_init();
-	
+	fh = fopen("ux0:/data/ioq3d.zip", "wb");
 	while (downloaded_bytes < total_bytes) {
 		resumeDownload();
 	}
-	chunk_size = chunk_ptr;
-	end_write = 1;
-	sceKernelSignalSema(Write_Mutex, 1);
-	sceKernelWaitThreadEnd(write_thread, NULL, NULL);
+	fclose(fh);
 	state = DOWNLOADED;
 	sceKernelExitDeleteThread(0);
 	return 0;
@@ -175,11 +151,8 @@ void launchDownload(const char *url) {
 	}
 	sceNetCtlInit();
 	sceHttpInit(1*1024*1024);
-	Write_Mutex = sceKernelCreateSema("Write Mutex", 0, 0, 1, NULL);
 	SceUID thd = sceKernelCreateThread("Net Downloader Thread", &downloadThread, 0x10000100, 0x100000, 0, 0, NULL);
 	sceKernelStartThread(thd, 0, NULL);
-	write_thread = sceKernelCreateThread("Writer Thread", &writeThread, 0x10000100, 0x100000, 0, 0, NULL);
-	sceKernelStartThread(write_thread, 0, NULL);
 	state = DOWNLOADING;
 }
 
@@ -260,7 +233,7 @@ static int downloader_main(unsigned int args, void* arg) {
 				vita2d_pgf_draw_text(pgf, 20, 220, RGBA8(255,255,255,255), 1.0f, "Extracting pack, please wait!");
 				vita2d_pgf_draw_textf(pgf, 20, 300, RGBA8(255,255,255,255), 1.0f, "File: %lu / %lu", zip_idx, zip_total);
 				vita2d_pgf_draw_textf(pgf, 20, 320, RGBA8(255,255,255,255), 1.0f, "Filename: %s", fname);
-				vita2d_pgf_draw_textf(pgf, 20, 340, RGBA8(255,255,255,255), 1.0f, "Filesize: (%.2f %s / %.2f %s", format(curr_extracted_bytes), sizes[quota(curr_extracted_bytes)], format(file_info.uncompressed_size), sizes[quota(file_info.uncompressed_size)]);
+				vita2d_pgf_draw_textf(pgf, 20, 340, RGBA8(255,255,255,255), 1.0f, "Filesize: (%.2f %s / %.2f %s)", format(curr_extracted_bytes), sizes[quota(curr_extracted_bytes)], format(file_info.uncompressed_size), sizes[quota(file_info.uncompressed_size)]);
 				vita2d_pgf_draw_textf(pgf, 20, 360, RGBA8(255,255,255,255), 1.0f, "Total Progress: (%.2f %s / %.2f %s)", format(extracted_bytes), sizes[quota(extracted_bytes)], format(total_bytes), sizes[quota(total_bytes)]);
 				if (state < EXTRACTING) {
 					extracted_bytes = 0;
@@ -277,7 +250,8 @@ static int downloader_main(unsigned int args, void* arg) {
 					zip_idx = 0;
 					unzGoToFirstFile(zipfile);
 					state = EXTRACTING;
-				} else if (state == EXTRACTING) {
+				} 
+				if (state == EXTRACTING) {
 					if (zip_idx < zip_total) {
 						if (!extract_started) {
 							char filename[512];
@@ -297,7 +271,8 @@ static int downloader_main(unsigned int args, void* arg) {
 								fwrite(read_buffer, err, 1, f);
 								extracted_bytes += err;
 								curr_extracted_bytes += err;
-							} else {
+							} 
+							if (curr_extracted_bytes == file_info.uncompressed_size) {
 								fclose(f);
 								unzCloseCurrentFile(zipfile);
 								extract_started = 0;
@@ -343,6 +318,8 @@ static int downloader_main(unsigned int args, void* arg) {
 }
 
 int main() {
+	scePowerSetArmClockFrequency(444);
+	scePowerSetBusClockFrequency(222);
 	SceUID main_thread = sceKernelCreateThread("main_downloader", downloader_main, 0x40, 0x1000000, 0, 0, NULL);
 	if (main_thread >= 0){
 		sceKernelStartThread(main_thread, 0, NULL);
