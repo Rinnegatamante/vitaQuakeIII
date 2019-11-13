@@ -452,7 +452,7 @@ void redirect(uint32_t idx, const char *fname, const char *executable) {
 	} else {
 		fclose(f);
 		if (idx == Q3TA) sprintf(commandLine, executable);
-		else sceAppMgrLoadExec(executable, NULL, NULL);
+		else if (idx != Q3A) sceAppMgrLoadExec(executable, NULL, NULL);
 	}
 }
 
