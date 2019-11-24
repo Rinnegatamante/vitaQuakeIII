@@ -4,7 +4,7 @@ SOURCES		:= source source/minizip
 INCLUDES	:= include
 
 LIBS = -lcurl -lssl -lcrypto -lvita2d -lSceLibKernel_stub -lScePvf_stub \
-	-lSceAppMgr_stub -lSceCtrl_stub -lm -lSceNet_stub -lSceNetCtl_stub \
+	-lSceAppMgr_stub -lSceCtrl_stub -lm -lSceNet_stub -lSceNetCtl_stub -lScePower_stub \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lfreetype -lc -lpng16 -lz -lSceCommonDialog_stub \
 	-lSceGxm_stub -lSceDisplay_stub -lSceHttp_stub -lSceAudioIn_stub -lSceSysmodule_stub
 
