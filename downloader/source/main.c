@@ -23,6 +23,7 @@
 #define EXTRACTING  3
 #define FINISHED    4
 #define MISSING     5
+#define ERROR       6
 
 int state = BOOTING;
 
@@ -44,6 +45,8 @@ char *sizes[] = {
 	"GB"
 };
 
+uint64_t free_storage = 0;
+uint64_t dummy;
 uint64_t downloaded_bytes = 0;
 uint64_t extracted_bytes = 0;
 uint64_t chunk_size = 0;
@@ -52,6 +55,7 @@ uint64_t total_bytes = 0xFFFFFFFF;
 uint8_t chunk_idx = 0;
 uint8_t wchunk_idx = 0;
 uint8_t end_write = 0;
+uint8_t abort_download = 0;
 
 FILE *fh;
 
@@ -71,6 +75,7 @@ static uint8_t chunk_buffer[2][CHUNK_MAXSIZE];
 
 static size_t write_cb(void *ptr, size_t size, size_t nmemb, void *stream)
 {
+	if (abort_download) return -1;
 	downloaded_bytes += size * nmemb;
 	return fwrite(ptr, size, nmemb, fh);
 }
@@ -80,6 +85,7 @@ static size_t header_cb(char *buffer, size_t size, size_t nitems, void *userdata
 	if (total_bytes == 0xFFFFFFFF) {
 		char *ptr = strcasestr(buffer, "Content-Length");
 		if (ptr != NULL) sscanf(ptr, "Content-Length: %llu", &total_bytes);
+		if (total_bytes * 2 > free_storage) abort_download = 1;
 	}
 	return nitems * size;
 }
@@ -117,9 +123,11 @@ static int downloadThread(unsigned int args, void* arg){
 	fh = fopen("ux0:/data/ioq3d.zip", "wb");
 	while (downloaded_bytes < total_bytes) {
 		resumeDownload();
+		if (abort_download) break;
 	}
 	fclose(fh);
-	state = DOWNLOADED;
+	if (abort_download) state = ERROR;
+	else state = DOWNLOADED;
 	sceKernelExitDeleteThread(0);
 	return 0;
 }
@@ -189,6 +197,16 @@ static int downloader_main(unsigned int args, void* arg) {
 	fclose(f);
 	sceIoRemove("ux0:data/ioq3.d");
 	
+	// Getting free space on ux0
+	SceIoDevInfo info;
+	memset(&info, 0, sizeof(SceIoDevInfo));
+	char *dev_name = (char*)malloc(12);
+	sprintf(dev_name, "ux0:");
+	int res = sceIoDevctl(dev_name, 0x3001, NULL, 0, &info, sizeof(SceIoDevInfo));
+	if (res >= 0) free_storage = info.free_size;
+	else sceAppMgrGetDevInfo("ux0:", &dummy, &free_storage);
+	free(dev_name);
+	
 	for (;;) {
 		
 		// Prevent screen power-off
@@ -231,7 +249,7 @@ static int downloader_main(unsigned int args, void* arg) {
 		
 		if (state > DOWNLOADING) {
 			if (state >= FINISHED) vita2d_pgf_draw_textf(pgf, 20, 400, RGBA8(255,255,255,255), 1.0f, "Press X to exit.");
-			vita2d_pgf_draw_textf(pgf, 20, 200, RGBA8(0,255,0,255), 1.0f, "Pack downloaded successfully! (%.2f %s)", format(downloaded_bytes), sizes[quota(downloaded_bytes)]);
+			if (state < MISSING) vita2d_pgf_draw_textf(pgf, 20, 200, RGBA8(0,255,0,255), 1.0f, "Pack downloaded successfully! (%.2f %s)", format(downloaded_bytes), sizes[quota(downloaded_bytes)]);
 			if (state < FINISHED) {
 				vita2d_pgf_draw_text(pgf, 20, 220, RGBA8(255,255,255,255), 1.0f, "Extracting pack, please wait!");
 				vita2d_pgf_draw_textf(pgf, 20, 300, RGBA8(255,255,255,255), 1.0f, "File: %lu / %lu", zip_idx, zip_total);
@@ -292,30 +310,31 @@ static int downloader_main(unsigned int args, void* arg) {
 						state = FINISHED;
 					}
 				}
-			}
-			if (state > EXTRACTING) vita2d_pgf_draw_text(pgf, 20, 220, RGBA8(0,255,0,255), 1.0f, "Pack extracted succesfully!");
+			} else if (state == ERROR) {
+				vita2d_pgf_draw_text(pgf, 20, 200, RGBA8(255,0,0,255), 1.0f, "ERROR: Not enough free space on ux0...");
+				vita2d_pgf_draw_textf(pgf, 20, 220, RGBA8(255,255,255,255), 1.0f, "Please free %.2f %s and restart this core!", format(total_bytes * 2 - free_storage), sizes[quota(total_bytes * 2 - free_storage)]);
+			} else if (state == FINISHED) vita2d_pgf_draw_text(pgf, 20, 220, RGBA8(0,255,0,255), 1.0f, "Pack extracted succesfully!");
 		} else vita2d_pgf_draw_textf(pgf, 20, 200, RGBA8(255,255,255,255), 1.0f, "Downloading pack, please wait. (%.2f %s / %.2f %s)", format(downloaded_bytes), sizes[quota(downloaded_bytes)], format(total_bytes), sizes[quota(total_bytes)]);
 
 		vita2d_end_drawing();
 		vita2d_swap_buffers();
 	}
 
-	switch (core_idx) {
-	case Q3A:
-		sceAppMgrLoadExec("app0:eboot.bin", NULL, NULL);
-		break;
-	case OA:
-		sceAppMgrLoadExec("app0:openarena.bin", NULL, NULL);
-		break;
-	case URT4:
-		sceAppMgrLoadExec("app0:urbanterror.bin", NULL, NULL);
-		break;
-	default:
-		break;
+	if (!abort_download) {
+		switch (core_idx) {
+		case Q3A:
+			sceAppMgrLoadExec("app0:eboot.bin", NULL, NULL);
+			break;
+		case OA:
+			sceAppMgrLoadExec("app0:openarena.bin", NULL, NULL);
+			break;
+		case URT4:
+			sceAppMgrLoadExec("app0:urbanterror.bin", NULL, NULL);
+			break;
+		default:
+			break;
+		}
 	}
-	
-	vita2d_free_pgf(pgf);
-	vita2d_fini();
 	
 	return 0;
 }
