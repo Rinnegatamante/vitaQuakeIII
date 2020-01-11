@@ -91,6 +91,9 @@ static void resumeDownload()
 	curl_easy_setopt(curl_handle, CURLOPT_URL, asyncUrl);
 	curl_easy_setopt(curl_handle, CURLOPT_HTTPGET, 1L);
 	curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+	curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYHOST, 0L);
+	curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYPEER, 0L);
+	curl_easy_setopt(curl_handle, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
 	curl_easy_setopt(curl_handle, CURLOPT_CONNECTTIMEOUT, 10L);
 	curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
@@ -206,7 +209,7 @@ static int downloader_main(unsigned int args, void* arg) {
 		switch (core_idx) {
 		case Q3A:
 			vita2d_pgf_draw_textf(pgf, 20, 120, RGBA8(0,255,0,255), 1.0f, "Found shareware data files pack for %s!", cores[core_idx]);
-			launchDownload("http://rinnegatamante.it/ioq3.zip");
+			launchDownload("https://rinnegatamante.it/ioq3.zip");
 			break;
 		case Q3TA:
 			vita2d_pgf_draw_text(pgf, 20, 120, RGBA8(255,0,0,255), 1.0f, "No data files available for download.");
@@ -214,15 +217,15 @@ static int downloader_main(unsigned int args, void* arg) {
 			break;
 		case Q3TAS:
 			vita2d_pgf_draw_textf(pgf, 20, 120, RGBA8(0,255,0,255), 1.0f, "Found dynamic libraries pack for %s!", cores[core_idx]);
-			launchDownload("http://rinnegatamante.it/missionpack.zip");
+			launchDownload("https://rinnegatamante.it/missionpack.zip");
 			break;
 		case OA:
 			vita2d_pgf_draw_textf(pgf, 20, 120, RGBA8(0,255,0,255), 1.0f, "Found game data files (v.0.8.8) pack for %s!", cores[core_idx]);
-			launchDownload("http://rinnegatamante.it/openarena.zip");
+			launchDownload("https://rinnegatamante.it/openarena.zip");
 			break;
 		case URT4:
 			vita2d_pgf_draw_textf(pgf, 20, 120, RGBA8(0,255,0,255), 1.0f, "Found game data files (v.4.3.4) pack for %s!", cores[core_idx]);
-			launchDownload("http://rinnegatamante.it/urbanterror.zip");
+			launchDownload("https://rinnegatamante.it/urbanterror.zip");
 			break;
 		}
 		
