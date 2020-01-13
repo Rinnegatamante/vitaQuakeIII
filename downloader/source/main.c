@@ -84,8 +84,10 @@ static size_t header_cb(char *buffer, size_t size, size_t nitems, void *userdata
 {
 	if (total_bytes == 0xFFFFFFFF) {
 		char *ptr = strcasestr(buffer, "Content-Length");
-		if (ptr != NULL) sscanf(ptr, "Content-Length: %llu", &total_bytes);
-		if (total_bytes * 2 > free_storage) abort_download = 1;
+		if (ptr != NULL) { 
+			sscanf(ptr, "Content-Length: %llu", &total_bytes);
+			if (total_bytes * 2 > free_storage) abort_download = 1;
+		}
 	}
 	return nitems * size;
 }
