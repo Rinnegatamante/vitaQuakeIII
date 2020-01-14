@@ -47,9 +47,12 @@ void log2file(const char *format, ...) {
 	char msg[512];
 	done = vsprintf(msg, format, arg);
 	va_end(arg);
-	int i;
 	sprintf(msg, "%s\n", msg);
-	CON_Print(msg);
+	FILE *log = fopen("ux0:/data/ioq3.log", "a+");
+	if (log != NULL) {
+		fwrite(msg, 1, strlen(msg), log);
+		fclose(log);
+	}
 }
 
 #ifndef RELEASE
@@ -528,47 +531,7 @@ Display an error message
 ==============
 */
 void Sys_ErrorDialog(const char *error) {
-    char buffer[1024];
-    unsigned int size;
-    int f = -1;
-    const char *homepath = Cvar_VariableString("fs_homepath");
-    const char *gamedir = Cvar_VariableString("fs_game");
-    const char *fileName = "crashlog.txt";
-    char *dirpath = FS_BuildOSPath(homepath, gamedir, "");
-    char *ospath = FS_BuildOSPath(homepath, gamedir, fileName);
-
-    Sys_Print(va("%s\n", error));
-
-    // Make sure the write path for the crashlog exists...
-
-    if (!Sys_Mkdir(homepath)) {
-        Com_Printf("ERROR: couldn't create path '%s' for crash log.\n", homepath);
-        return;
-    }
-
-    if (!Sys_Mkdir(dirpath)) {
-        Com_Printf("ERROR: couldn't create path '%s' for crash log.\n", dirpath);
-        return;
-    }
-
-    // We might be crashing because we maxed out the Quake MAX_FILE_HANDLES,
-    // which will come through here, so we don't want to recurse forever by
-    // calling FS_FOpenFileWrite()...use the Unix system APIs instead.
-    f = open(ospath, O_CREAT | O_TRUNC | O_WRONLY, 0640);
-    if (f == -1) {
-        Com_Printf("ERROR: couldn't open %s\n", fileName);
-        return;
-    }
-
-    // We're crashing, so we don't care much if write() or close() fails.
-    while ((size = CON_LogRead(buffer, sizeof(buffer))) > 0) {
-        if (write(f, buffer, size) != size) {
-            Com_Printf("ERROR: couldn't fully write to %s\n", fileName);
-            break;
-        }
-    }
-
-    close(f);
+    log2file(error);
 }
 
 /*
