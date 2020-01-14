@@ -23,7 +23,7 @@ CFLAGS  = $(INCLUDE) -D__PSP2__ -D__FLOAT_WORD_ORDER=1 -D__GNU__ -DRELEASE \
         -fno-lto \
         -DPRODUCT_VERSION=\"1.36_GIT_ba68b99c-2018-01-23\" -DHAVE_VM_COMPILED=true \
         -mfpu=neon -mcpu=cortex-a9 -fsigned-char -nostartfiles \
-        -Wl,-q -O3 -g -ffast-math -fno-short-enums -include "../psp2/psp2_dll_defs.h"
+        -Wl,-q -O2 -ftree-vectorize -g -ffast-math -fno-short-enums -include "../psp2/psp2_dll_defs.h"
 CXXFLAGS  = $(CFLAGS) -fno-exceptions -std=gnu++11 -fpermissive
 ASFLAGS = $(CFLAGS)
 
