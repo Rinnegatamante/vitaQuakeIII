@@ -531,7 +531,7 @@ Display an error message
 ==============
 */
 void Sys_ErrorDialog(const char *error) {
-    log2file(error);
+    CON_Print(error);
 }
 
 /*
