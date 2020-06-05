@@ -92,4 +92,4 @@ clean:
 	@make -C oa-0.8.8/code/cgame clean
 	@make -C oa-0.8.8/code/ui clean
 	@make -C oa-0.8.8/code/game clean
-	@rm -rf $(TARGET).velf $(TARGET).elf $(OBJS) $(TARGET).elf.unstripped.elf $(TARGET).vpk build/eboot.bin build/openarena.bin build/downloader.bin build/urbanterror.bin build/sce_sys/param.sfo ./param.sfo
+	@rm -rf $(TARGET).velf $(TARGET).elf $(OBJS) $(TARGET).elf.unstripped.elf $(TARGET).vpk build/sce_sys/param.sfo ./param.sfo

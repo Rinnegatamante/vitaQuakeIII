@@ -46,23 +46,6 @@ typedef int	ioctlarg_t;
 #define INADDR_BROADCAST SCE_NET_INADDR_BROADCAST
 #define INADDR_ANY SCE_NET_INADDR_ANY
 
-struct sockaddr_storage {
-    uint8_t ss_len;
-    sa_family_t ss_family;
-    char ss_padding[128];
-};
-
-struct addrinfo {
-    int              ai_flags;
-    int              ai_family;
-    int              ai_socktype;
-    int              ai_protocol;
-    socklen_t        ai_addrlen;
-    struct sockaddr *ai_addr;
-    char            *ai_canonname;
-    struct addrinfo *ai_next;
-};
-
 const char *gai_strerror(int errcode) {
     return "";
 }
@@ -121,10 +104,10 @@ static int numIP;
 NET_ErrorString
 ====================
 */
-char error[256];
+char net_error[256];
 char *NET_ErrorString( void ) {
-	sprintf(error, "sceNet returned 0x%08X", socketError);
-	return error;
+	sprintf(net_error, "sceNet returned 0x%08X", socketError);
+	return net_error;
 }
 
 static void NetadrToSockadr( netadr_t *a, struct sockaddr *s ) {
@@ -163,7 +146,7 @@ static struct addrinfo *SearchAddrInfo(struct addrinfo *hints, sa_family_t famil
 	return NULL;
 }
 
-static inline in_addr_t inet_addr( const char *cp )
+inline in_addr_t inet_addr( const char *cp )
 {
 	int32_t b1, b2, b3, b4;
 	int res = sscanf( cp, "%d.%d.%d.%d", &b1, &b2, &b3, &b4 );
