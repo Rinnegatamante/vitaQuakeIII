@@ -120,9 +120,9 @@ void GLimp_Init( qboolean coreContext)
 	if (!inited){
 #ifdef URBANTERROR
 		vglUseExtraMem(GL_FALSE);
-		vglInitExtended(0x80000, glConfig.vidWidth, glConfig.vidHeight, 0x1000000, SCE_GXM_MULTISAMPLE_NONE);
+		vglInitExtended(glConfig.vidWidth, glConfig.vidHeight, 0x1000000, SCE_GXM_MULTISAMPLE_NONE);
 #else
-		vglInitExtended(0x100000, glConfig.vidWidth, glConfig.vidHeight, 0x1800000, SCE_GXM_MULTISAMPLE_4X);
+		vglInitExtended(glConfig.vidWidth, glConfig.vidHeight, 0x1800000, SCE_GXM_MULTISAMPLE_4X);
 #endif
 		vglUseVram(GL_TRUE);
 
@@ -137,7 +137,6 @@ void GLimp_Init( qboolean coreContext)
 		sceAppMgrLoadExec("app0:/eboot.bin", NULL, NULL);
 #endif
 	}
-	vglStartRendering();
 	int i;
 	indices = (uint16_t*)malloc(sizeof(uint16_t)*MAX_INDICES);
 	for (i=0;i<MAX_INDICES;i++){
@@ -174,8 +173,7 @@ Responsible for doing a swapbuffers
 */
 void GLimp_EndFrame( void )
 {
-	vglStopRendering();
-	vglStartRendering();
+	vglSwapBuffers(GL_FALSE);
 	vglIndexPointerMapped(indices);
 	gVertexBuffer = gVertexBufferPtr;
 	gColorBuffer = gColorBufferPtr;

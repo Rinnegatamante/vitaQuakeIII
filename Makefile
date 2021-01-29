@@ -5,12 +5,12 @@ GIT_VERSION := $(shell git describe --abbrev=6 --dirty --always --tags)
 SOURCES  := code/renderercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2 code/sys
 INCLUDES := code/renderercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2 code/sys
 
-LIBS = -lSceAppMgr_stub -lvitaGL -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
+LIBS = -lvitaGL -lvitashark -lSceAppMgr_stub -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
 	-lc -lSceCommonDialog_stub -lSceAudio_stub -lSceLibKernel_stub \
 	-lSceNet_stub -lSceNetCtl_stub -lpng -lz -lSceDisplay_stub -lSceGxm_stub \
 	-lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub -lcurl \
-	-lssl -lcrypto -lSceSsl_stub -lmathneon
+	-lssl -lcrypto -lSceSsl_stub -lmathneon -lSceShaccCg_stub
 
 CFILES   := $(filter-out code/psp2/psp2_dll_hacks.c,$(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c)))
 CPPFILES   := $(foreach dir,$(CPPSOURCES), $(wildcard $(dir)/*.cpp))
