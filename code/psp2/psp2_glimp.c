@@ -120,9 +120,9 @@ void GLimp_Init( qboolean coreContext)
 	if (!inited){
 #ifdef URBANTERROR
 		vglUseExtraMem(GL_FALSE);
-		vglInitExtended(glConfig.vidWidth, glConfig.vidHeight, 0x1000000, SCE_GXM_MULTISAMPLE_NONE);
+		vglInitExtended(0, glConfig.vidWidth, glConfig.vidHeight, 0x1000000, SCE_GXM_MULTISAMPLE_NONE);
 #else
-		vglInitExtended(glConfig.vidWidth, glConfig.vidHeight, 0x1800000, SCE_GXM_MULTISAMPLE_4X);
+		vglInitExtended(0, glConfig.vidWidth, glConfig.vidHeight, 0x1800000, SCE_GXM_MULTISAMPLE_4X);
 #endif
 		vglUseVram(GL_TRUE);
 
