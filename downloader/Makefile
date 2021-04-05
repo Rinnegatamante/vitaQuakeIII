@@ -26,7 +26,7 @@ all: $(TARGET).velf
 	cp $< $<.unstripped.elf
 	$(PREFIX)-strip -g $<
 	vita-elf-create $< $@
-	vita-make-fself -s $@ $(TARGET).bin
+	vita-make-fself -c -s $@ $(TARGET).bin
 
 $(TARGET).elf: $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ $(LIBS) -o $@

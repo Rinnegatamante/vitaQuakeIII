@@ -63,7 +63,7 @@ $(TARGET).vpk: $(TARGET).velf
 	cp -f oa-0.8.8/code/cgame/cgame.suprx ./cgamearm3.suprx
 	make -C oa-0.8.8/code/ui
 	cp -f oa-0.8.8/code/ui/ui.suprx ./uiarm3.suprx
-	vita-make-fself -s $< build/eboot.bin
+	vita-make-fself -c -s $< build/eboot.bin
 	vita-mksfoex -s TITLE_ID=$(TITLE) -d ATTRIBUTE2=12 "$(TARGET)" param.sfo
 	cp -f param.sfo build/sce_sys/param.sfo
 

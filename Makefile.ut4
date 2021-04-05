@@ -33,7 +33,7 @@ ASFLAGS = $(CFLAGS)
 all: $(TARGET).bin
 
 $(TARGET).bin: $(TARGET).velf
-	vita-make-fself -s $< build/$(TARGET).bin
+	vita-make-fself -c -s $< build/$(TARGET).bin
 
 eboot.bin: $(TARGET).velf
 	vita-make-fself -s $< eboot.bin
