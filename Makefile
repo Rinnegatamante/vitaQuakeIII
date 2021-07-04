@@ -36,8 +36,6 @@ all: $(TARGET).vpk
 release:
 	make -f Makefile.oa
 	make clean
-	make -f Makefile.ut4
-	make clean
 	make all
 
 exec-only: eboot.bin
