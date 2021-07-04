@@ -698,6 +698,10 @@ static void Upload32( unsigned *data,
 			{
 				internalFormat = GL_LUMINANCE;
 			}
+			else if(allowCompression)
+			{
+				internalFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+			}
 			else
 			{
 				internalFormat = GL_RGB;
@@ -708,6 +712,10 @@ static void Upload32( unsigned *data,
 			if(r_greyscale->integer)
 			{
 				internalFormat = GL_LUMINANCE;
+			}
+			else if(allowCompression)
+			{
+				internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 			}
 			else
 			{
@@ -754,15 +762,33 @@ static void Upload32( unsigned *data,
 	*format = internalFormat;
 
 	qglTexImage2D (GL_TEXTURE_2D, 0, internalFormat, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer );
-
+#ifndef URBANTERROR
 	if (mipmap)
 	{
-#ifndef URBANTERROR
-		glGenerateMipmap(GL_TEXTURE_2D);
-#endif
-	}
-done:
+		int		miplevel;
 
+		miplevel = 0;
+		while (scaled_width > 1 || scaled_height > 1)
+		{
+			R_MipMap( (byte *)scaledBuffer, scaled_width, scaled_height );
+			scaled_width >>= 1;
+			scaled_height >>= 1;
+			if (scaled_width < 1)
+				scaled_width = 1;
+			if (scaled_height < 1)
+				scaled_height = 1;
+			miplevel++;
+
+			if ( r_colorMipLevels->integer ) {
+				R_BlendOverTexture( (byte *)scaledBuffer, scaled_width * scaled_height, mipBlendColors[miplevel] );
+			}
+
+			qglTexImage2D (GL_TEXTURE_2D, miplevel, internalFormat, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer );
+		}
+	}
+#endif
+done:
+#ifndef URBANTERROR
 	if (mipmap)
 	{
 #ifndef __PSP2__
@@ -774,6 +800,7 @@ done:
 		qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
 	else
+#endif
 	{
 #ifndef __PSP2__
 		if ( textureFilterAnisotropic )
