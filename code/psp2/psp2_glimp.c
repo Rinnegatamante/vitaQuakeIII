@@ -79,7 +79,6 @@ of OpenGL
 uint16_t* indices;
 float *gVertexBuffer;
 uint8_t *gColorBuffer;
-uint8_t *gColorBuffer255;
 float *gTexCoordBuffer;
 float *gVertexBufferPtr;
 uint8_t *gColorBufferPtr;
@@ -112,8 +111,8 @@ void GLimp_Init( qboolean coreContext)
 	glConfig.driverType = GLDRV_ICD;
 	glConfig.hardwareType = GLHW_GENERIC;
 	glConfig.deviceSupportsGamma = qfalse;
-	glConfig.textureCompression = TC_NONE;
-	glConfig.textureEnvAddAvailable = qfalse;
+	glConfig.textureCompression = TC_S3TC;
+	glConfig.textureEnvAddAvailable = qtrue;
 	glConfig.windowAspect = ((float)r_vidModes[r_mode->integer].width) / ((float)r_vidModes[r_mode->integer].height);
 	glConfig.isFullscreen = qtrue;
 	
@@ -144,11 +143,9 @@ void GLimp_Init( qboolean coreContext)
 	}
 	vglIndexPointerMapped(indices);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	gVertexBufferPtr = (float*)malloc(0x400000);
-	gColorBufferPtr = (uint8_t*)malloc(0x200000);
-	gTexCoordBufferPtr = (float*)malloc(0x200000);
-	gColorBuffer255 = (uint8_t*)malloc(0x3000);
-	memset(gColorBuffer255, 0xFF, 0x3000);
+	gVertexBufferPtr = (float*)malloc(0x100000);
+	gColorBufferPtr = (uint8_t*)malloc(0x100000);
+	gTexCoordBufferPtr = (float*)malloc(0x100000);
 	gVertexBuffer = gVertexBufferPtr;
 	gColorBuffer = gColorBufferPtr;
 	gTexCoordBuffer = gTexCoordBufferPtr;

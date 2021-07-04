@@ -375,12 +375,12 @@ static void DrawSkySide( struct image_s *image, const int mins[2], const int max
 		int numindices = 0;
 		for ( s = mins[0]+HALF_SKY_SUBDIVISIONS; s <= maxs[0]+HALF_SKY_SUBDIVISIONS; s++ )
 		{
-			memcpy(gTexCoordBuffer, s_skyTexCoords[t][s], sizeof(vec2_t));
-			memcpy(gVertexBuffer, s_skyPoints[t][s], sizeof(vec3_t));
+			sceClibMemcpy(gTexCoordBuffer, s_skyTexCoords[t][s], sizeof(vec2_t));
+			sceClibMemcpy(gVertexBuffer, s_skyPoints[t][s], sizeof(vec3_t));
 			gVertexBuffer += 3;
 			gTexCoordBuffer += 2;
-			memcpy(gTexCoordBuffer, s_skyTexCoords[t+1][s], sizeof(vec2_t));
-			memcpy(gVertexBuffer, s_skyPoints[t+1][s], sizeof(vec3_t));
+			sceClibMemcpy(gTexCoordBuffer, s_skyTexCoords[t+1][s], sizeof(vec2_t));
+			sceClibMemcpy(gVertexBuffer, s_skyPoints[t+1][s], sizeof(vec3_t));
 			gVertexBuffer += 3;
 			gTexCoordBuffer += 2;
 			numindices += 2;

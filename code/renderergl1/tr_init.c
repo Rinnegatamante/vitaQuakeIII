@@ -852,13 +852,11 @@ void GL_SetDefaultState( void )
 
 	// initialize downstream texture unit if we're running
 	// in a multitexture environment
-	//->if ( qglActiveTextureARB ) {
-	//->	GL_SelectTexture( 1 );
-	//->	GL_TextureMode( r_textureMode->string );
-	//->	GL_TexEnv( GL_MODULATE );
-	//->	qglDisable( GL_TEXTURE_2D );
-	//->	GL_SelectTexture( 0 );
-	//->}
+	GL_SelectTexture( 1 );
+	GL_TextureMode( r_textureMode->string );
+	GL_TexEnv( GL_MODULATE );
+	qglDisable( GL_TEXTURE_2D );
+	GL_SelectTexture( 0 );
 
 	qglEnable(GL_TEXTURE_2D);
 	GL_TextureMode( r_textureMode->string );
@@ -975,14 +973,6 @@ void GfxInfo_f( void )
 
 		// default is to use triangles if compiled vertex arrays are present
 		ri.Printf( PRINT_ALL, "rendering primitives: " );
-		primitives = r_primitives->integer;
-		if ( primitives == 0 ) {
-			//->if ( qglLockArraysEXT ) {
-			//->	primitives = 2;
-			//->} else {
-				primitives = 1;
-			//->}
-		}
 		#ifdef __PSP2__
 			ri.Printf( PRINT_ALL, "vglDrawObjects\n");
 		#else

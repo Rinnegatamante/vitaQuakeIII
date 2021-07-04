@@ -327,9 +327,9 @@ static void RB_SurfaceBeam( void )
 	
 	float *pPos = gVertexBuffer;
 	for ( i = 0; i <= NUM_BEAM_SEGS; i++ ) {
-		memcpy(gVertexBuffer, start_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
+		sceClibMemcpy(gVertexBuffer, start_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
 		gVertexBuffer+=3;
-		memcpy(gVertexBuffer, end_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
+		sceClibMemcpy(gVertexBuffer, end_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
 		gVertexBuffer+=3;
 	}
 	vglVertexPointerMapped(pPos);
