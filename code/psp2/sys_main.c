@@ -478,7 +478,7 @@ int quake_main (unsigned int argc, void* argv){
 #ifdef URBANTERROR
 	sprintf(commandLine, "+set fs_game q3ut4");
 #else
-# ifndef OPENARENA
+#ifndef OPENARENA
 	sceAppUtilInit(&(SceAppUtilInitParam){}, &(SceAppUtilBootParam){});
 	SceAppUtilAppEventParam eventParam;
 	memset(&eventParam, 0, sizeof(SceAppUtilAppEventParam));
@@ -494,7 +494,7 @@ int quake_main (unsigned int argc, void* argv){
 			redirect(Q3TA, "ux0:data/ioq3/missionpack/pak0.pk3", "+set fs_game missionpack");
 		}
 	} else redirect(Q3A, "ux0:data/ioq3/baseq3/uiarm.suprx", NULL);
-# endif
+#endif
 #endif
     CON_Init();
     Com_Init(commandLine);
