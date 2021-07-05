@@ -23,11 +23,4 @@
 		</liveitem>
 	</frame>
 	
-	<frame id='frame3' multi='o' autoflip='3' >
-		<liveitem>
-			<target>psla:terror</target>
-			<image>urbanterror.png</image>
-		</liveitem>
-	</frame>
-	
 </livearea>

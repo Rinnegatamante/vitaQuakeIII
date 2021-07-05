@@ -48,17 +48,17 @@ $(TARGET).vpk: $(TARGET).velf
 	make -C code/ui
 	cp -f code/ui/ui.suprx ./uiarm.suprx
 	make -C code/game
-	cp -f code/game/qagame.suprx ./qagamearm.suprx
+	cp -f code/game/qagame.suprx ./qagamearm_team.suprx
 	make -C code/cgame2
-	cp -f code/cgame2/cgame.suprx ./cgamearm2.suprx
+	cp -f code/cgame2/cgame.suprx ./cgamearm_team.suprx
 	make -C code/ui2
-	cp -f code/ui2/ui.suprx ./uiarm2.suprx
+	cp -f code/ui2/ui.suprx ./uiarm_team.suprx
 	make -C code/game2
-	cp -f code/game2/qagame.suprx ./qagamearm2.suprx
+	cp -f code/game2/qagame.suprx ./qagamearm_oa.suprx
 	make -C oa-0.8.8/code/game
-	cp -f oa-0.8.8/code/game/qagame.suprx ./qagamearm3.suprx
+	cp -f oa-0.8.8/code/game/qagame.suprx ./qagamearm_oa.suprx
 	make -C oa-0.8.8/code/cgame
-	cp -f oa-0.8.8/code/cgame/cgame.suprx ./cgamearm3.suprx
+	cp -f oa-0.8.8/code/cgame/cgame.suprx ./cgamearm_oa.suprx
 	make -C oa-0.8.8/code/ui
 	cp -f oa-0.8.8/code/ui/ui.suprx ./uiarm3.suprx
 	vita-make-fself -c -s $< build/eboot.bin
