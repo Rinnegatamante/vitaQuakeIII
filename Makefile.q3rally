@@ -6,7 +6,7 @@ SOURCES  := code/renderercommon code/qcommon code/botlib code/client code/server
 INCLUDES := code/renderercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2 code/sys
 
 LIBS = -lvitaGL -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
-	-lc -lSceCommonDialog_stub -lSceAudio_stub -lSceLibKernel_stub \
+	-lc -lSceCommonDialog_stub -lSceAudio_stub -lSceLibKernel_stub -lSceKernelDmacMgr_stub \
 	-lSceNet_stub -lSceNetCtl_stub -lpng -lz -lSceDisplay_stub -lSceGxm_stub \
 	-lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -lSceAppMgr_stub \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub -lmathneon
