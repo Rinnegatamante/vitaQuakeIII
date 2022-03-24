@@ -176,3 +176,76 @@ void GLimp_EndFrame( void )
 	gColorBuffer = gColorBufferPtr;
 	gTexCoordBuffer = gTexCoordBufferPtr;
 }
+
+/*
+===========================================================
+SMP acceleration
+===========================================================
+*/
+
+SceUID renderCommandsEvent, renderCompletedEvent, renderActiveEvent;
+void ( *glimpRenderThread )( void );
+
+static int GLimp_RenderThreadWrapper(unsigned int args, void* arg) {
+	glimpRenderThread();
+	return sceKernelExitDeleteThread(0);
+}
+
+
+/*
+=======================
+GLimp_SpawnRenderThread
+=======================
+*/
+SceUID renderThreadHandle;
+qboolean GLimp_SpawnRenderThread( void ( *function )( void ) ) {
+	
+	
+	renderCommandsEvent = sceKernelCreateSema("renderCommandsEvent", 0, 0, 1, NULL);
+	renderCompletedEvent = sceKernelCreateSema("renderCompletedEvent", 0, 0, 1, NULL);
+	renderActiveEvent = sceKernelCreateSema("renderActiveEvent", 0, 0, 1, NULL);
+	
+	glimpRenderThread = function;
+	
+	renderThreadHandle = sceKernelCreateThread("Renderer Thread", &GLimp_RenderThreadWrapper, 0x10000100, 0x200000, 0, 0, NULL);
+	
+	if (sceKernelStartThread(renderThreadHandle, 0, NULL)) {
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+static volatile void *smpData = NULL;
+
+void *GLimp_RendererSleep( void ) {
+	//printf("entering RendererSleep\n");
+	void  *data;
+	
+	int dummy;
+
+	// after this, the front end can exit GLimp_FrontEndSleep
+	//sceKernelSignalSema(renderCompletedEvent, 1);
+	sceKernelWaitSema(renderCommandsEvent, 1, NULL);
+	
+	data = smpData;
+	
+	sceKernelSignalSema(renderActiveEvent, 1);
+
+	return data;
+}
+
+
+void GLimp_FrontEndSleep( void ) {
+	//printf("entering FrontEndSleep\n");
+	//sceKernelWaitSema(renderCompletedEvent, 1, NULL);
+}
+
+
+void GLimp_WakeRenderer( void *data ) {
+	//printf("entering WakeRenderer\n");
+	smpData = data;
+
+	sceKernelSignalSema(renderCommandsEvent, 1);
+	sceKernelWaitSema(renderActiveEvent, 1, NULL);
+}

@@ -180,7 +180,7 @@ static int R_DlightFace( srfSurfaceFace_t *face, int dlightBits ) {
 		tr.pc.c_dlightSurfacesCulled++;
 	}
 
-	face->dlightBits = dlightBits;
+	face->dlightBits[backEnd.smpFrame] = dlightBits;
 	return dlightBits;
 }
 
@@ -208,14 +208,14 @@ static int R_DlightGrid( srfGridMesh_t *grid, int dlightBits ) {
 		tr.pc.c_dlightSurfacesCulled++;
 	}
 
-	grid->dlightBits = dlightBits;
+	grid->dlightBits[backEnd.smpFrame] = dlightBits;
 	return dlightBits;
 }
 
 
 static int R_DlightTrisurf( srfTriangles_t *surf, int dlightBits ) {
 	// FIXME: more dlight culling to trisurfs...
-	surf->dlightBits = dlightBits;
+	surf->dlightBits[backEnd.smpFrame] = dlightBits;
 	return dlightBits;
 #if 0
 	int			i;
@@ -241,7 +241,7 @@ static int R_DlightTrisurf( srfTriangles_t *surf, int dlightBits ) {
 		tr.pc.c_dlightSurfacesCulled++;
 	}
 
-	grid->dlightBits = dlightBits;
+	grid->dlightBits[backEnd.smpFrame] = dlightBits;
 	return dlightBits;
 #endif
 }

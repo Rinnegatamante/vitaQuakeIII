@@ -1924,7 +1924,7 @@ sortedIndex.
 ==============
 */
 static void FixRenderCommandList( int newShader ) {
-	renderCommandList_t	*cmdList = &backEndData->commands;
+	renderCommandList_t *cmdList = &backEndData[tr.smpFrame]->commands;
 
 	if( cmdList ) {
 		const void *curCmd = cmdList->cmds;
@@ -2544,6 +2544,10 @@ shader_t *R_FindShader( const char *name, int lightmapIndex, qboolean mipRawImag
 			return sh;
 		}
 	}
+	
+	if ( r_smp->integer ) {
+		R_IssuePendingRenderCommands();
+	}
 
 	InitShader( strippedName, lightmapIndex );
 
@@ -2681,6 +2685,10 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 			// match found
 			return sh->index;
 		}
+	}
+	
+	if ( r_smp->integer ) {
+		R_IssuePendingRenderCommands();
 	}
 
 	InitShader( name, lightmapIndex );

@@ -21,6 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "tr_local.h"
 
+int c_blockedOnRender;
+int c_blockedOnMain;
+volatile qboolean renderThreadActive;
+
 /*
 =====================
 R_PerformanceCounters
@@ -78,13 +82,31 @@ R_IssueRenderCommands
 void R_IssueRenderCommands( qboolean runPerformanceCounters ) {
 	renderCommandList_t	*cmdList;
 
-	cmdList = &backEndData->commands;
+	cmdList = &backEndData[tr.smpFrame]->commands;
 	assert(cmdList);
 	// add an end-of-list command
 	*(int *)(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
 
 	// clear it out, in case this is a sync and not a buffer flip
 	cmdList->used = 0;
+	
+	if ( glConfig.smpActive ) {
+		// if the render thread is not idle, wait for it
+		if ( renderThreadActive ) {
+			c_blockedOnRender++;
+			if ( r_showSmp->integer ) {
+				ri.Printf( PRINT_ALL, "R" );
+			}
+		} else {
+			c_blockedOnMain++;
+			if ( r_showSmp->integer ) {
+				ri.Printf( PRINT_ALL, "." );
+			}
+		}
+
+		// sleep until the renderer has completed
+		GLimp_FrontEndSleep();
+	}
 
 	if ( runPerformanceCounters ) {
 		R_PerformanceCounters();
@@ -93,7 +115,42 @@ void R_IssueRenderCommands( qboolean runPerformanceCounters ) {
 	// actually start the commands going
 	if ( !r_skipBackEnd->integer ) {
 		// let it start on the new batch
-		RB_ExecuteRenderCommands( cmdList->cmds );
+		if ( !glConfig.smpActive ) {
+			RB_ExecuteRenderCommands( cmdList->cmds );
+		} else {
+			GLimp_WakeRenderer( cmdList );
+		}
+	}
+}
+
+/*
+====================
+R_InitCommandBuffers
+====================
+*/
+void R_InitCommandBuffers( void ) {
+	glConfig.smpActive = qfalse;
+	if ( r_smp->integer ) {
+		ri.Printf( PRINT_ALL, "Trying SMP acceleration...\n" );
+		if ( GLimp_SpawnRenderThread( RB_RenderThread ) ) {
+			ri.Printf( PRINT_ALL, "...succeeded.\n" );
+			glConfig.smpActive = qtrue;
+		} else {
+			ri.Printf( PRINT_ALL, "...failed.\n" );
+		}
+	}
+}
+
+/*
+====================
+R_ShutdownCommandBuffers
+====================
+*/
+void R_ShutdownCommandBuffers( void ) {
+	// kill the rendering thread
+	if ( glConfig.smpActive ) {
+		GLimp_WakeRenderer( NULL );
+		glConfig.smpActive = qfalse;
 	}
 }
 
@@ -110,6 +167,11 @@ void R_IssuePendingRenderCommands( void ) {
 		return;
 	}
 	R_IssueRenderCommands( qfalse );
+	
+	if ( !glConfig.smpActive ) {
+		return;
+	}
+	GLimp_FrontEndSleep();
 }
 
 /*
@@ -122,7 +184,7 @@ make sure there is enough command space
 void *R_GetCommandBufferReserved( int bytes, int reservedBytes ) {
 	renderCommandList_t	*cmdList;
 
-	cmdList = &backEndData->commands;
+	cmdList = &backEndData[tr.smpFrame]->commands;
 	bytes = PAD(bytes, sizeof(void *));
 
 	// always leave room for the end of list command

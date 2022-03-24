@@ -35,6 +35,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define GL_INDEX_TYPE		GL_UNSIGNED_SHORT
 typedef uint16_t glIndex_t;
 
+#define SMP_FRAMES      2
+
 // 14 bits
 // can't be increased without changing bit packing for drawsurfs
 // see QSORT_SHADERNUM_SHIFT
@@ -520,7 +522,7 @@ typedef struct srfGridMesh_s {
 	surfaceType_t	surfaceType;
 
 	// dynamic lighting information
-	int				dlightBits;
+	int dlightBits[SMP_FRAMES];
 
 	// culling information
 	vec3_t			meshBounds[2];
@@ -550,7 +552,7 @@ typedef struct {
 	cplane_t	plane;
 
 	// dynamic lighting information
-	int			dlightBits;
+	int dlightBits[SMP_FRAMES];
 
 	// triangle definitions (no normals at points)
 	int			numPoints;
@@ -566,7 +568,7 @@ typedef struct {
 	surfaceType_t	surfaceType;
 
 	// dynamic lighting information
-	int				dlightBits;
+	int dlightBits[SMP_FRAMES];
 
 	// culling information (FIXME: use this!)
 	vec3_t			bounds[2];
@@ -849,6 +851,7 @@ typedef struct {
 // all state modified by the back end is separated
 // from the front end state
 typedef struct {
+	int smpFrame;
 	trRefdef_t	refdef;
 	viewParms_t	viewParms;
 	orientationr_t	or;
@@ -879,7 +882,7 @@ typedef struct {
 	int						sceneCount;		// incremented every scene
 	int						viewCount;		// incremented every view (twice a scene if portaled)
 											// and every R_MarkFragments call
-
+	int smpFrame;
 	int						frameSceneNum;	// zeroed at RE_BeginFrame
 
 	qboolean				worldMapLoaded;
@@ -964,6 +967,8 @@ extern glstate_t	glState;		// outside of TR since it shouldn't be cleared during
 //
 // cvars
 //
+extern cvar_t  *r_smp;
+extern cvar_t  *r_showSmp;
 extern cvar_t	*r_flareSize;
 extern cvar_t	*r_flareFade;
 // coefficient for the flare intensity falloff function.
@@ -1567,7 +1572,9 @@ typedef struct {
 extern	int		max_polys;
 extern	int		max_polyverts;
 
-extern	backEndData_t	*backEndData;	// the second one may not be allocated
+extern volatile qboolean renderThreadActive;
+extern backEndData_t   *backEndData[SMP_FRAMES];    // the second one may not be allocated
+void RB_RenderThread( void );
 
 
 void *R_GetCommandBuffer( int bytes );
