@@ -23,11 +23,10 @@ PREFIX  = arm-vita-eabi
 CC      = $(PREFIX)-gcc
 CXX      = $(PREFIX)-g++
 CFLAGS  = $(INCLUDE) -D__PSP2__ -D__FLOAT_WORD_ORDER=1 -D__GNU__ -DRELEASE \
-        -DUSE_ICON -DARCH_STRING=\"arm\" -DBOTLIB -DUSE_CODEC_VORBIS \
-        -DDEFAULT_BASEDIR=\"ux0:/data/ioq3\" -DUSE_CURL=1 \
+        -DUSE_ICON -DARCH_STRING=\"arm\" -DBOTLIB -DUSE_CODEC_VORBIS -DUSE_CURL=1 \
         -DPRODUCT_VERSION=\"1.36_GIT_ba68b99c-2018-01-23\" -DHAVE_VM_COMPILED=true \
-        -mfpu=neon -mcpu=cortex-a9 -fsigned-char \
-        -Wl,-q -O2 -ftree-vectorize -g -ffast-math -fno-short-enums
+        -mfpu=neon -mcpu=cortex-a9 -fsigned-char -fno-lto \
+        -Wl,-q -O3 -g -ffast-math -fno-short-enums
 CXXFLAGS  = $(CFLAGS) -fno-exceptions -std=gnu++11
 ASFLAGS = $(CFLAGS)
 

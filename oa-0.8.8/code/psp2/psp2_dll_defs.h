@@ -19,8 +19,6 @@ extern "C"
 
 #include "psp2_dll_imports.h"
 
-#define DEFAULT_BASEDIR "ux0:/data/iortcw"
-
 #ifndef PATH_MAX
 #define PATH_MAX 256
 #endif
