@@ -6,9 +6,9 @@ SOURCES  := code/renderercommon code/qcommon code/botlib code/client code/server
 INCLUDES := code/renderercommon code/qcommon code/botlib code/client code/server code/renderergl1 code/psp2 code/sys
 
 LIBS = -lvitaGL -lvitashark -lSceAppMgr_stub -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
-	-lc -lSceCommonDialog_stub -lSceAudio_stub -lSceLibKernel_stub \
+	-lc -lSceCommonDialog_stub -lSceAudio_stub -lSceLibKernel_stub -lSceShaccCgExt \
 	-lSceNet_stub -lSceNetCtl_stub -lpng -lz -lSceDisplay_stub -lSceGxm_stub \
-	-lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm \
+	-lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -ltaihen_stub \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub -lcurl \
 	-lssl -lcrypto -lSceSsl_stub -lmathneon -lSceShaccCg_stub -lSceKernelDmacMgr_stub
 
@@ -48,19 +48,19 @@ $(TARGET).vpk: $(TARGET).velf
 	make -C code/ui
 	cp -f code/ui/ui.suprx ./uiarm.suprx
 	make -C code/game
-	cp -f code/game/qagame.suprx ./qagamearm_team.suprx
+	cp -f code/game/qagame.suprx ./qagamearm.suprx
 	make -C code/cgame2
 	cp -f code/cgame2/cgame.suprx ./cgamearm_team.suprx
 	make -C code/ui2
 	cp -f code/ui2/ui.suprx ./uiarm_team.suprx
 	make -C code/game2
-	cp -f code/game2/qagame.suprx ./qagamearm_oa.suprx
+	cp -f code/game2/qagame.suprx ./qagamearm_team.suprx
 	make -C oa-0.8.8/code/game
 	cp -f oa-0.8.8/code/game/qagame.suprx ./qagamearm_oa.suprx
 	make -C oa-0.8.8/code/cgame
 	cp -f oa-0.8.8/code/cgame/cgame.suprx ./cgamearm_oa.suprx
 	make -C oa-0.8.8/code/ui
-	cp -f oa-0.8.8/code/ui/ui.suprx ./uiarm3.suprx
+	cp -f oa-0.8.8/code/ui/ui.suprx ./uiarm_oa.suprx
 	vita-make-fself -c -s $< build/eboot.bin
 	vita-mksfoex -s TITLE_ID=$(TITLE) -d ATTRIBUTE2=12 "$(TARGET)" param.sfo
 	cp -f param.sfo build/sce_sys/param.sfo
