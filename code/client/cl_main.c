@@ -104,6 +104,10 @@ cvar_t	*j_forward_axis;
 cvar_t	*j_side_axis;
 cvar_t	*j_up_axis;
 
+cvar_t *cl_gyroscope;
+cvar_t *cl_gyro_h_sensitivity;
+cvar_t *cl_gyro_v_sensitivity;
+
 cvar_t	*cl_activeAction;
 
 cvar_t	*cl_motdString;
@@ -3492,6 +3496,9 @@ CL_Init
 ====================
 */
 void CL_Init( void ) {
+	sceMotionReset();
+	sceMotionStartSampling();
+	
 	Com_Printf( "----- Client Initialization -----\n" );
 
 	Con_Init ();
@@ -3597,6 +3604,10 @@ void CL_Init( void ) {
 	j_forward_axis = Cvar_Get ("j_forward_axis", "1", CVAR_ARCHIVE);
 	j_side_axis =    Cvar_Get ("j_side_axis",    "0", CVAR_ARCHIVE);
 	j_up_axis =      Cvar_Get ("j_up_axis",      "4", CVAR_ARCHIVE);
+	
+	cl_gyroscope = Cvar_Get ("cl_gyroscope",      "1", CVAR_ARCHIVE);
+	cl_gyro_h_sensitivity = Cvar_Get ("cl_gyro_h_sensitivity", "0.5", CVAR_ARCHIVE);
+	cl_gyro_v_sensitivity = Cvar_Get ("cl_gyro_w_sensitivity", "0.5", CVAR_ARCHIVE);
 
 	Cvar_CheckRange(j_pitch_axis, 0, MAX_JOYSTICK_AXIS-1, qtrue);
 	Cvar_CheckRange(j_yaw_axis, 0, MAX_JOYSTICK_AXIS-1, qtrue);
