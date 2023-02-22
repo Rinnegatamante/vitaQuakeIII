@@ -429,6 +429,7 @@ extern	cvar_t	*cl_consoleKeys;
 extern cvar_t *cl_gyroscope;
 extern cvar_t *cl_gyro_h_sensitivity;
 extern cvar_t *cl_gyro_v_sensitivity;
+extern cvar_t *cl_analog_slowdown;
 
 #ifdef USE_MUMBLE
 extern	cvar_t	*cl_useMumble;

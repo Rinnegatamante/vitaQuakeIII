@@ -117,11 +117,10 @@ void IN_Frame( void )
 	hires_x += right_x;
 	hires_y += right_y;
 	if (hires_x != 0 || hires_y != 0) {
-		// increase slowdown variable to slow down aiming, could be made user-adjustable
-		int slowdown = 1024;
-		Com_QueueEvent(time, SE_MOUSE, hires_x / slowdown, hires_y / slowdown, 0, NULL);
-		hires_x %= slowdown;
-		hires_y %= slowdown;
+		// increase slowdown variable to slow down aiming
+		Com_QueueEvent(time, SE_MOUSE, hires_x / (int)cl_analog_slowdown->value, hires_y / (int)cl_analog_slowdown->value, 0, NULL);
+		hires_x %= (int)cl_analog_slowdown->value;
+		hires_y %= (int)cl_analog_slowdown->value;
 	}
 	
 	// Gyroscope aiming
