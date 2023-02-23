@@ -3605,7 +3605,7 @@ void CL_Init( void ) {
 	
 	cl_gyroscope = Cvar_Get ("cl_gyroscope",      "1", CVAR_ARCHIVE);
 	cl_gyro_h_sensitivity = Cvar_Get ("cl_gyro_h_sensitivity", "0.5", CVAR_ARCHIVE);
-	cl_gyro_v_sensitivity = Cvar_Get ("cl_gyro_w_sensitivity", "0.5", CVAR_ARCHIVE);
+	cl_gyro_v_sensitivity = Cvar_Get ("cl_gyro_v_sensitivity", "0.5", CVAR_ARCHIVE);
 	cl_analog_slowdown = Cvar_Get ("cl_analog_slowdown", "1024", CVAR_ARCHIVE);
 
 	Cvar_CheckRange(j_pitch_axis, 0, MAX_JOYSTICK_AXIS-1, qtrue);
