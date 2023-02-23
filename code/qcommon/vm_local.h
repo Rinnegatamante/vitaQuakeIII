@@ -185,7 +185,6 @@ struct vm_s {
 
 	byte		*jumpTableTargets;
 	int			numJumpTableTargets;
-	SceUID		memblock;
 };
 
 

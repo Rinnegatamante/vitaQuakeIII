@@ -31,10 +31,10 @@ ARMv7-A_ARMv7-R_DDI0406_2007.pdf
 */
 
 #include <sys/types.h>
+#include <vitasdk.h>
 #include <sys/time.h>
 #include <time.h>
 #include <stddef.h>
-#include <vitasdk.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -69,6 +69,10 @@ ARMv7-A_ARMv7-R_DDI0406_2007.pdf
 #define bit(x) (1<<x)
 
 #define ALIGN(x, a) (((x) + ((a) - 1)) & ~((a) - 1))
+
+SceUID vm_memblock = 0xDEADBEEF;
+void *vm_addr[3] = {NULL, NULL, NULL};
+uint8_t vm_used[3] = {0, 0, 0};
 
 /* arm eabi, builtin gcc functions */
 int __aeabi_idiv (int, int);
@@ -204,8 +208,12 @@ static const char *opnames[256] = {
 static void VM_Destroy_Compiled(vm_t *vm)
 {
 	if (vm->codeBase) {
-		if (sceKernelFreeMemBlock(vm->memblock) < 0)
-			Com_Printf(S_COLOR_RED "Memory unmap failed, possible memory leak\n");
+		for (int i = 0; i < 3; i++) {
+			if (vm->codeBase == vm_addr[i]) {
+				vm_used[i] = 0;
+				break;
+			}
+		}
 	}
 	vm->codeBase = NULL;
 }
@@ -612,13 +620,29 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 
 //	int offsidx = 0;
 
+#ifdef CONST_OPTIMIZE
+	// const optimization
+	unsigned got_const = 0, const_value = 0;
+#endif
+
 	if(pass)
 	{
-		vm->memblock = sceKernelAllocMemBlockForVM("code", ALIGN(ALIGN(vm->codeLength, 4 * 1024), 1 * 1024 * 1024));
-		sceKernelGetMemBlockBase(vm->memblock, &vm->codeBase);
-		if(vm->memblock < 0)
-			Com_Error(ERR_FATAL, "VM_CompileARM: can't mmap memory");
-		sceKernelOpenVMDomain();
+		if (vm_memblock == 0xDEADBEEF) {
+			vm_memblock = sceKernelAllocMemBlockForVM("vm block", 12 * 1024 * 1024);
+			if(vm_memblock < 0)
+				Com_Error(ERR_FATAL, "VM_CompileARM: can't mmap memory");
+			sceKernelGetMemBlockBase(vm_memblock, &vm_addr[0]);
+			sceKernelOpenVMDomain();
+			vm_addr[1] = vm_addr[0] + 4 * 1024 * 1024;
+			vm_addr[2] = vm_addr[1] + 4 * 1024 * 1024;
+		}
+		for (int i = 0; i < 3; i++) {
+			if (!vm_used[i]) {
+				vm_used[i] = 1;
+				vm->codeBase = vm_addr[i];
+				break;
+			}	
+		}
 		vm->codeLength = 0;
 	}
 
@@ -732,6 +756,13 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 				break;
 
 			case OP_CALL:
+#ifdef CONST_OPTIMIZE
+				if (got_const)
+				{
+					NOTIMPL(op);
+				}
+				else
+#endif
 				{
 					static int bytes_to_skip = -1;
 					static unsigned start_block = -1;
@@ -789,6 +820,13 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 				break;
 
 			case OP_JUMP:
+#ifdef CONST_OPTIMIZE
+				if (got_const)
+				{
+					NOTIMPL(op);
+				}
+				else
+#endif
 				{
 					emit(LDRTxi(R0, rOPSTACK, 4));  // r0 = *opstack; rOPSTACK -= 4
 					CHECK_JUMP;
@@ -1125,12 +1163,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 	emit(BKPT(0));
 	} // pass
 
-	/*if (sceKernelCloseVMDomain() < 0) {
-		VM_Destroy_Compiled(vm);
-		DIE("mprotect failed");
-	}*/
-
-	sceKernelSyncVMDomain(vm->memblock, vm->codeBase, vm->codeLength);
+	sceKernelSyncVMDomain(vm_memblock, vm->codeBase, vm->codeLength);
 
 	vm->destroy = VM_Destroy_Compiled;
 	vm->compiled = qtrue;
