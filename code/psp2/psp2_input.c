@@ -162,6 +162,8 @@ IN_Init
 */
 void IN_Init( void *windowData )
 {
+	sceMotionReset();
+	sceMotionStartSampling();
 	sceCtrlSetSamplingMode(SCE_CTRL_MODE_ANALOG_WIDE);
 	sceTouchSetSamplingState(SCE_TOUCH_PORT_FRONT, SCE_TOUCH_SAMPLING_STATE_START);
 }
