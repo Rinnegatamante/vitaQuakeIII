@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "client.h"
 
+#include <vitasdk.h>
 /*
 
 key up events are sent even if in console mode
@@ -786,8 +787,15 @@ void Message_Key( int key ) {
 
 //============================================================================
 
-
+uint8_t is_ime_up = 0;
 qboolean Key_GetOverstrikeMode( void ) {
+	// When this function is called, we have an editable text selected, so make sceIme present at Cross pressing
+	SceCtrlData pad;
+	sceCtrlPeekBufferPositive(0, &pad, 1);
+	if ((pad.buttons & SCE_CTRL_CROSS) && !is_ime_up) {
+		is_ime_up = 1;
+	}
+	
 	return key_overstrikeMode;
 }
 

@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <errno.h>
 
 #include <vitasdk.h>
+#include <vitaGL.h>
 
 #include "sys_local.h"
 #include "sys_loadlib.h"
@@ -534,7 +535,7 @@ int main(int argc, char **argv) {
 		param.userMsgParam = &msg_param;
 		sceMsgDialogInit(&param);
 		while (sceMsgDialogGetStatus() != SCE_COMMON_DIALOG_STATUS_FINISHED) {
-			vglSwapBuffers(1);
+			vglSwapBuffers(GL_TRUE);
 		}
 		sceKernelExitProcess(0);
 	}

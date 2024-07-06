@@ -27,9 +27,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "../renderercommon/tr_common.h"
 #include "../sys/sys_local.h"
+#include "../client/keycodes.h"
 
 #include <vitasdk.h>
-#include "vitaGL.h"
+#include <vitaGL.h>
 
 /*
 ===============
@@ -168,9 +169,70 @@ GLimp_EndFrame
 Responsible for doing a swapbuffers
 ===============
 */
+extern uint8_t is_ime_up;
+
+static uint16_t title[SCE_IME_DIALOG_MAX_TITLE_LENGTH];
+static uint16_t initial_text[SCE_IME_DIALOG_MAX_TEXT_LENGTH];
+static uint16_t input_text[SCE_IME_DIALOG_MAX_TEXT_LENGTH + 1];
+char title_keyboard[256];
+
+void ascii2utf(uint16_t* dst, char* src){
+	if(!src || !dst)return;
+	while(*src)*(dst++)=(*src++);
+	*dst=0x00;
+}
+
+void utf2ascii(char* dst, uint16_t* src){
+	if(!src || !dst)return;
+	while(*src)*(dst++)=(*(src++))&0xFF;
+	*dst=0x00;
+}
+
 void GLimp_EndFrame( void )
 {
-	vglSwapBuffers(GL_FALSE);
+	switch (is_ime_up) {
+	case 1: // New IME request
+		{
+			memset(input_text, 0, (SCE_IME_DIALOG_MAX_TEXT_LENGTH + 1) << 1);
+			memset(initial_text, 0, (SCE_IME_DIALOG_MAX_TEXT_LENGTH) << 1);
+			sprintf(title_keyboard, "Keyboard Input");
+			ascii2utf(title, title_keyboard);
+			SceImeDialogParam param;
+			sceImeDialogParamInit(&param);
+			param.supportedLanguages = 0x0001FFFF;
+			param.languagesForced = SCE_TRUE;
+			param.type = SCE_IME_TYPE_BASIC_LATIN;
+			param.title = title;
+			param.maxTextLength = SCE_IME_DIALOG_MAX_TEXT_LENGTH;
+			param.initialText = initial_text;
+			param.inputTextBuffer = input_text;
+			sceImeDialogInit(&param);
+			is_ime_up = 2;
+			vglSwapBuffers(GL_TRUE);
+		}
+		break;
+	case 2: // IME running
+		{
+			SceCommonDialogStatus status = sceImeDialogGetStatus();
+			if (status == SCE_COMMON_DIALOG_STATUS_FINISHED) {
+				SceImeDialogResult result;
+				memset(&result, 0, sizeof(SceImeDialogResult));
+				sceImeDialogGetResult(&result);
+				if (result.button == SCE_IME_DIALOG_BUTTON_ENTER) {
+					utf2ascii(title_keyboard, input_text);
+				} else {
+					title_keyboard[0] = 0;
+				}
+				sceImeDialogTerm();
+				is_ime_up = 0;
+			}
+			vglSwapBuffers(GL_TRUE);
+		}
+		break;
+	default:
+		vglSwapBuffers(GL_FALSE);
+		break;
+	}
 	vglIndexPointerMapped(indices);
 	gVertexBuffer = gVertexBufferPtr;
 	gColorBuffer = gColorBufferPtr;

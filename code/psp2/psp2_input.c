@@ -92,8 +92,61 @@ void IN_RescaleAnalog(int *x, int *y, int dead) {
 
 int old_x = - 1, old_y;
 
+extern char title_keyboard[256];
+extern uint8_t is_ime_up;
+static uint8_t is_ime_up_old = 0;
+
+void simulateKeyPress(char *c) {
+	if (c[0] == 0)
+		return;
+	
+	int time = Sys_Milliseconds();
+	
+	//We first delete the current text
+	for (int i = 0; i < 100; i++) {
+		Com_QueueEvent(time, SE_CHAR, 0x08, 0, 0, NULL );
+	}
+	
+	while (*c) {
+		int utf32 = 0;
+
+		if( ( *c & 0x80 ) == 0 )
+			utf32 = *c++;
+		else if( ( *c & 0xE0 ) == 0xC0 ) // 110x xxxx
+		{
+			utf32 |= ( *c++ & 0x1F ) << 6;
+			utf32 |= ( *c++ & 0x3F );
+		}
+		else if( ( *c & 0xF0 ) == 0xE0 ) // 1110 xxxx
+		{
+			utf32 |= ( *c++ & 0x0F ) << 12;
+			utf32 |= ( *c++ & 0x3F ) << 6;
+			utf32 |= ( *c++ & 0x3F );
+		}
+		else if( ( *c & 0xF8 ) == 0xF0 ) // 1111 0xxx
+		{
+			utf32 |= ( *c++ & 0x07 ) << 18;
+			utf32 |= ( *c++ & 0x3F ) << 12;
+			utf32 |= ( *c++ & 0x3F ) << 6;
+			utf32 |= ( *c++ & 0x3F );
+		}
+		else
+		{
+			Com_DPrintf( "Unrecognised UTF-8 lead byte: 0x%x\n", (unsigned int)*c );
+			c++;
+		}
+		
+		Com_QueueEvent(time, SE_CHAR, utf32, 0, 0, NULL );
+	}
+}
+
 void IN_Frame( void )
 {
+	if (is_ime_up_old && !is_ime_up) {
+		simulateKeyPress(title_keyboard);
+	}
+	is_ime_up_old = is_ime_up;
+	
 	SceCtrlData keys;
 	sceCtrlPeekBufferPositive(0, &keys, 1);
 	int time = Sys_Milliseconds();
