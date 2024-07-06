@@ -8,7 +8,7 @@ INCLUDES := code/renderercommon code/qcommon code/botlib code/client code/server
 LIBS = -lvitaGL -lvitashark -lSceAppMgr_stub -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
 	-lc -lSceCommonDialog_stub -lSceAudio_stub -lSceLibKernel_stub -lSceShaccCgExt \
 	-lSceNet_stub -lSceNetCtl_stub -lpng -lz -lSceDisplay_stub -lSceGxm_stub \
-	-lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -ltaihen_stub \
+	-Wl,--whole-archive -lSceSysmodule_stub -Wl,--no-whole-archive -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -ltaihen_stub \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub -lcurl \
 	-lssl -lcrypto -lSceSsl_stub -lmathneon -lSceShaccCg_stub -lSceKernelDmacMgr_stub
 
@@ -62,11 +62,16 @@ $(TARGET).vpk: $(TARGET).velf
 	cp -f oa-0.8.8/code/ui/ui.suprx ./uiarm_oa.suprx
 	vita-make-fself -c -s $< build/eboot.bin
 	vita-mksfoex -s TITLE_ID=$(TITLE) -d ATTRIBUTE2=12 "$(TARGET)" param.sfo
-	cp -f param.sfo build/sce_sys/param.sfo
 
-	#------------ Comment this if you don't have 7zip ------------------
-	7z a -tzip ./$(TARGET).vpk -r ./build/sce_sys ./build/eboot.bin ./build/openarena.bin ./build/downloader.bin
-	#-------------------------------------------------------------------
+	vita-pack-vpk -s param.sfo -b build/eboot.bin $(TARGET).vpk \
+		-a build/openarena.bin=openarena.bin \
+		-a build/downloader.bin=downloader.bin \
+		-a build/sce_sys/icon0.png=sce_sys/icon0.png \
+		-a build/sce_sys/livearea/contents/bg.png=sce_sys/livearea/contents/bg.png \
+		-a build/sce_sys/livearea/contents/openarena.png=sce_sys/livearea/contents/openarena.png \
+		-a build/sce_sys/livearea/contents/startup.png=sce_sys/livearea/contents/startup.png \
+		-a build/sce_sys/livearea/contents/teamarena.png=sce_sys/livearea/contents/teamarena.png \
+		-a build/sce_sys/livearea/contents/template.xml=sce_sys/livearea/contents/template.xml
 
 eboot.bin: $(TARGET).velf
 	vita-make-fself -s $< eboot.bin
@@ -89,4 +94,4 @@ clean:
 	@make -C oa-0.8.8/code/cgame clean
 	@make -C oa-0.8.8/code/ui clean
 	@make -C oa-0.8.8/code/game clean
-	@rm -rf $(TARGET).velf $(TARGET).elf $(OBJS) $(TARGET).elf.unstripped.elf $(TARGET).vpk build/sce_sys/param.sfo ./param.sfo
+	@rm -rf $(TARGET).velf $(TARGET).elf $(OBJS) $(TARGET).elf.unstripped.elf $(TARGET).vpk param.sfo
