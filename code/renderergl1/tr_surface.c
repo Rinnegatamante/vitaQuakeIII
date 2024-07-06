@@ -332,7 +332,7 @@ static void RB_SurfaceBeam( void )
 		sceClibMemcpy(gVertexBuffer, end_points[ i % NUM_BEAM_SEGS], sizeof(vec3_t));
 		gVertexBuffer+=3;
 	}
-	vglVertexPointerMapped(pPos);
+	vglVertexPointerMapped(3, pPos);
 	vglDrawObjects(GL_TRIANGLE_STRIP, (NUM_BEAM_SEGS + 1) * 2, GL_TRUE);
 }
 
