@@ -457,7 +457,7 @@ int quake_main (unsigned int argc, void* argv){
 #ifdef URBANTERROR
 	sprintf(commandLine, "+set fs_game q3ut4");
 #else
-# ifndef OPENARENA
+#ifndef OPENARENA
 	sceAppUtilInit(&(SceAppUtilInitParam){}, &(SceAppUtilBootParam){});
 	SceAppUtilAppEventParam eventParam;
 	memset(&eventParam, 0, sizeof(SceAppUtilAppEventParam));
@@ -470,7 +470,7 @@ int quake_main (unsigned int argc, void* argv){
 		else if (strstr(buffer, "terror") != NULL) sceAppMgrLoadExec("app0:/urbanterror.bin", NULL, NULL);
 		else sprintf(commandLine, "+set fs_game missionpack");
 	}
-# endif
+#endif
 #endif
 	CON_Init();
 	Com_Init(commandLine);
@@ -503,9 +503,8 @@ int main(int argc, char **argv) {
 	SceUID main_thread = sceKernelCreateThread("Quake III", quake_main, 0x40, 0x200000, 0, 0, NULL);
 	if (main_thread >= 0){
 		sceKernelStartThread(main_thread, 0, NULL);
-		sceKernelWaitThreadEnd(main_thread, NULL, NULL);
 	}
-	return 0;
 	
+	return sceKernelExitDeleteThread(0);
 }
 
