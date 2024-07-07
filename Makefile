@@ -8,7 +8,8 @@ INCLUDES := code/renderercommon code/qcommon code/botlib code/client code/server
 LIBS = -lvitaGL -lvitashark -lSceAppMgr_stub -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
 	-lc -lSceCommonDialog_stub -lSceAudio_stub -lSceLibKernel_stub -lSceShaccCgExt \
 	-lSceNet_stub -lSceNetCtl_stub -lpng -lz -lSceDisplay_stub -lSceGxm_stub \
-	-Wl,--whole-archive -lSceSysmodule_stub -Wl,--no-whole-archive -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -ltaihen_stub \
+	-Wl,--whole-archive -lSceSysmodule_stub -Wl,--no-whole-archive -lSceCtrl_stub \
+	-lSceTouch_stub -lSceMotion_stub -lm -ltaihen_stub \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub -lcurl \
 	-lssl -lcrypto -lSceSsl_stub -lmathneon -lSceShaccCg_stub -lSceKernelDmacMgr_stub
 

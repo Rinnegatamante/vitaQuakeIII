@@ -43,14 +43,11 @@ typedef int	ioctlarg_t;
 #include <psp2/net/net.h>
 #include <sys/select.h>
 
-#define INADDR_BROADCAST SCE_NET_INADDR_BROADCAST
-#define INADDR_ANY SCE_NET_INADDR_ANY
 /*
 const char *gai_strerror(int errcode) {
     return "";
 }
 */
-#define NI_NUMERICHOST 0
 
 static qboolean usingSocks = qfalse;
 static int networkingEnabled = 0;
