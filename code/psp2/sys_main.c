@@ -50,7 +50,7 @@ static char binaryPath[MAX_OSPATH] = {0};
 static char installPath[MAX_OSPATH] = {0};
 
 mode_t umask(mode_t mask) {
-    return 0;
+	return 0;
 }
 
 /*
@@ -59,7 +59,7 @@ Sys_SetBinaryPath
 =================
 */
 void Sys_SetBinaryPath(const char *path) {
-    Q_strncpyz(binaryPath, path, sizeof(binaryPath));
+	Q_strncpyz(binaryPath, path, sizeof(binaryPath));
 }
 
 /*
@@ -68,7 +68,7 @@ Sys_BinaryPath
 =================
 */
 char *Sys_BinaryPath(void) {
-    return binaryPath;
+	return binaryPath;
 }
 
 /*
@@ -77,7 +77,7 @@ Sys_SetDefaultInstallPath
 =================
 */
 void Sys_SetDefaultInstallPath(const char *path) {
-    Q_strncpyz(installPath, path, sizeof(installPath));
+	Q_strncpyz(installPath, path, sizeof(installPath));
 }
 
 /*
@@ -86,10 +86,10 @@ Sys_DefaultInstallPath
 =================
 */
 char *Sys_DefaultInstallPath(void) {
-    if (*installPath)
-        return installPath;
-    else
-        return Sys_Cwd();
+	if (*installPath)
+		return installPath;
+	else
+		return Sys_Cwd();
 }
 
 /*
@@ -98,7 +98,7 @@ Sys_DefaultAppPath
 =================
 */
 char *Sys_DefaultAppPath(void) {
-    return Sys_BinaryPath();
+	return Sys_BinaryPath();
 }
 
 /*
@@ -109,7 +109,7 @@ Restart the input subsystem
 =================
 */
 void Sys_In_Restart_f(void) {
-    IN_Restart();
+	IN_Restart();
 }
 
 /*
@@ -120,7 +120,7 @@ Handle new console input
 =================
 */
 char *Sys_ConsoleInput(void) {
-    return CON_Input();
+	return CON_Input();
 }
 
 /*
@@ -130,24 +130,24 @@ Sys_GetClipboardData
 */
 char *Sys_GetClipboardData(void) {
 #ifdef DEDICATED
-    return NULL;
+	return NULL;
 #else
-    char *data = NULL;
-    char *cliptext;
+	char *data = NULL;
+	char *cliptext;
 
    /* if ((cliptext = SDL_GetClipboardText()) != NULL) {
-        if (cliptext[0] != '\0') {
-            size_t bufsize = strlen(cliptext) + 1;
+		if (cliptext[0] != '\0') {
+			size_t bufsize = strlen(cliptext) + 1;
 
-            data = Z_Malloc(bufsize);
-            Q_strncpyz(data, cliptext, bufsize);
+			data = Z_Malloc(bufsize);
+			Q_strncpyz(data, cliptext, bufsize);
 
-            // find first listed char and set to '\0'
-            strtok(data, "\n\r\b");
-        }
-        SDL_free(cliptext);
-    }*/
-    return data;
+			// find first listed char and set to '\0'
+			strtok(data, "\n\r\b");
+		}
+		SDL_free(cliptext);
+	}*/
+	return data;
 #endif
 }
 
@@ -163,13 +163,13 @@ Single exit point (regular exit or in case of error)
 =================
 */
 static __attribute__ ((noreturn)) void Sys_Exit(int exitCode) {
-    CON_Shutdown();
+	CON_Shutdown();
 
-    NET_Shutdown();
+	NET_Shutdown();
 
-    Sys_PlatformExit();
+	Sys_PlatformExit();
 
-    exit(exitCode);
+	exit(exitCode);
 }
 
 /*
@@ -178,7 +178,7 @@ Sys_Quit
 =================
 */
 void Sys_Quit(void) {
-    Sys_Exit(0);
+	Sys_Exit(0);
 }
 
 /*
@@ -187,7 +187,7 @@ Sys_GetProcessorFeatures
 =================
 */
 cpuFeatures_t Sys_GetProcessorFeatures(void) {
-    return (cpuFeatures_t) 0;
+	return (cpuFeatures_t) 0;
 }
 
 /*
@@ -196,9 +196,9 @@ Sys_Init
 =================
 */
 void Sys_Init(void) {
-    Cmd_AddCommand("in_restart", Sys_In_Restart_f);
-    Cvar_Set("arch", OS_STRING " " ARCH_STRING);
-    Cvar_Set("username", Sys_GetCurrentUser());
+	Cmd_AddCommand("in_restart", Sys_In_Restart_f);
+	Cvar_Set("arch", OS_STRING " " ARCH_STRING);
+	Cvar_Set("username", Sys_GetCurrentUser());
 }
 
 /*
@@ -207,7 +207,7 @@ Sys_Print
 =================
 */
 void Sys_Print(const char *msg) {
-    CON_Print(msg);
+	CON_Print(msg);
 }
 
 /*
@@ -216,16 +216,16 @@ Sys_Error
 =================
 */
 void Sys_Error(const char *error, ...) {
-    va_list argptr;
-    char string[1024];
+	va_list argptr;
+	char string[1024];
 
-    va_start (argptr, error);
-    Q_vsnprintf(string, sizeof(string), error, argptr);
-    va_end (argptr);
+	va_start (argptr, error);
+	Q_vsnprintf(string, sizeof(string), error, argptr);
+	va_end (argptr);
 
-    Sys_ErrorDialog(string);
+	Sys_ErrorDialog(string);
 
-    Sys_Exit(3);
+	Sys_Exit(3);
 }
 
 /*
@@ -236,12 +236,12 @@ returns -1 if not present
 ============
 */
 int Sys_FileTime(char *path) {
-    struct stat buf;
+	struct stat buf;
 
-    if (stat(path, &buf) == -1)
-        return -1;
+	if (stat(path, &buf) == -1)
+		return -1;
 
-    return buf.st_mtime;
+	return buf.st_mtime;
 }
 
 /*
@@ -390,18 +390,18 @@ Sys_ParseArgs
 =================
 */
 void Sys_ParseArgs(int argc, char **argv) {
-    if (argc == 2) {
-        if (!strcmp(argv[1], "--version") ||
-            !strcmp(argv[1], "-v")) {
-            const char *date = PRODUCT_DATE;
+	if (argc == 2) {
+		if (!strcmp(argv[1], "--version") ||
+			!strcmp(argv[1], "-v")) {
+			const char *date = PRODUCT_DATE;
 #ifdef DEDICATED
-            fprintf( stdout, Q3_VERSION " dedicated server (%s)\n", date );
+			fprintf( stdout, Q3_VERSION " dedicated server (%s)\n", date );
 #else
-            fprintf(stdout, Q3_VERSION " client (%s)\n", date);
+			fprintf(stdout, Q3_VERSION " client (%s)\n", date);
 #endif
-            Sys_Exit(0);
-        }
-    }
+			Sys_Exit(0);
+		}
+	}
 }
 
 #ifndef DEFAULT_BASEDIR
@@ -414,31 +414,31 @@ Sys_SigHandler
 =================
 */
 void Sys_SigHandler(int signal) {
-    static qboolean signalcaught = qfalse;
+	static qboolean signalcaught = qfalse;
 
-    if (signalcaught) {
-        fprintf(stderr, "DOUBLE SIGNAL FAULT: Received signal %d, exiting...\n",
-                signal);
-    } else {
-        signalcaught = qtrue;
-        VM_Forced_Unload_Start();
+	if (signalcaught) {
+		fprintf(stderr, "DOUBLE SIGNAL FAULT: Received signal %d, exiting...\n",
+				signal);
+	} else {
+		signalcaught = qtrue;
+		VM_Forced_Unload_Start();
 #ifndef DEDICATED
-        CL_Shutdown(va("Received signal %d", signal), qtrue, qtrue);
+		CL_Shutdown(va("Received signal %d", signal), qtrue, qtrue);
 #endif
-        SV_Shutdown(va("Received signal %d", signal));
-        VM_Forced_Unload_Done();
-    }
+		SV_Shutdown(va("Received signal %d", signal));
+		VM_Forced_Unload_Done();
+	}
 
-    if (signal == SIGTERM || signal == SIGINT)
-        Sys_Exit(1);
-    else
-        Sys_Exit(2);
+	if (signal == SIGTERM || signal == SIGINT)
+		Sys_Exit(1);
+	else
+		Sys_Exit(2);
 }
 
 #define Q3A   0
 #define Q3TA  1
 #define Q3TAS 2
-#define OA    3
+#define OA	3
 #define URT4  4
 
 char commandLine[MAX_STRING_CHARS] = {0};
@@ -463,17 +463,17 @@ void redirect(uint32_t idx, const char *fname, const char *executable) {
 main
 =================
 */
-int quake_main (unsigned int argc, void* argv){
+int quake_main (unsigned int argc, void* argv) {
 	int i;
 
-    Sys_PlatformInit();
+	Sys_PlatformInit();
 
-    // Set the initial time base
-    Sys_Milliseconds();
+	// Set the initial time base
+	Sys_Milliseconds();
 
-    sceIoMkdir(DEFAULT_BASEDIR, 777);
-    Sys_SetBinaryPath(DEFAULT_BASEDIR);
-    Sys_SetDefaultInstallPath(DEFAULT_BASEDIR);
+	sceIoMkdir(DEFAULT_BASEDIR, 777);
+	Sys_SetBinaryPath(DEFAULT_BASEDIR);
+	Sys_SetDefaultInstallPath(DEFAULT_BASEDIR);
 	
 	// Quake III: Team Arena, Urban Terror & OpenArena support
 #ifdef URBANTERROR
@@ -497,18 +497,18 @@ int quake_main (unsigned int argc, void* argv){
 	} else redirect(Q3A, "ux0:data/ioq3/baseq3/uiarm.suprx", NULL);
 #endif
 #endif
-    CON_Init();
-    Com_Init(commandLine);
-    NET_Init();
+	CON_Init();
+	Com_Init(commandLine);
+	NET_Init();
 
 	while (1) {
 		// Prevent screen power-off
 		sceKernelPowerTick(0);
 		
-        Com_Frame();
-    }
+		Com_Frame();
+	}
 
-    return 0;
+	return 0;
 }
 
 extern void IN_Init( void *windowData );
@@ -545,11 +545,10 @@ int main(int argc, char **argv) {
 	
 	// We need a bigger stack to run Quake 3, so we create a new thread with a proper stack size
 	SceUID main_thread = sceKernelCreateThread("Quake III", quake_main, 0x40, 0x200000, 0, 0, NULL);
-	if (main_thread >= 0){
+	if (main_thread >= 0) {
 		sceKernelStartThread(main_thread, 0, NULL);
-		sceKernelWaitThreadEnd(main_thread, NULL, NULL);
 	}
-	return 0;
+	return sceKernelExitDeleteThread(0);
 	
 }
 

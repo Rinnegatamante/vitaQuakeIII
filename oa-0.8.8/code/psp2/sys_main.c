@@ -439,7 +439,7 @@ void Sys_SigHandler(int signal) {
 main
 =================
 */
-int quake_main (unsigned int argc, void* argv){
+int quake_main (unsigned int argc, void* argv) {
 	int i;
 	
 	char commandLine[MAX_STRING_CHARS] = {0};
