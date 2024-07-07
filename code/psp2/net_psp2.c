@@ -1043,7 +1043,7 @@ NET_Init
 ====================
 */
 static void *net_memory = NULL;
-#define NET_INIT_SIZE 1*1024*1024
+#define NET_INIT_SIZE 141 * 1024
 void NET_Init( void ) {
 	
 	sceSysmoduleLoadModule(SCE_SYSMODULE_NET);
