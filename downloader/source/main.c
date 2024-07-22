@@ -229,7 +229,7 @@ static int downloader_main(unsigned int args, void* arg) {
 		switch (core_idx) {
 		case Q3A:
 			vita2d_pgf_draw_textf(pgf, 20, 120, RGBA8(0,255,0,255), 1.0f, "Found shareware data files pack for %s!", cores[core_idx]);
-			launchDownload("https://rinnegatamante.it/ioq3.zip");
+			launchDownload("https://www.rinnegatamante.eu/ioq3.zip");
 			break;
 		case Q3TA:
 			vita2d_pgf_draw_text(pgf, 20, 120, RGBA8(255,0,0,255), 1.0f, "No data files available for download.");
@@ -237,15 +237,15 @@ static int downloader_main(unsigned int args, void* arg) {
 			break;
 		case Q3TAS:
 			vita2d_pgf_draw_textf(pgf, 20, 120, RGBA8(0,255,0,255), 1.0f, "Found dynamic libraries pack for %s!", cores[core_idx]);
-			launchDownload("https://rinnegatamante.it/missionpack.zip");
+			launchDownload("https://www.rinnegatamante.eu/missionpack.zip");
 			break;
 		case OA:
 			vita2d_pgf_draw_textf(pgf, 20, 120, RGBA8(0,255,0,255), 1.0f, "Found game data files (v.0.8.8) pack for %s!", cores[core_idx]);
-			launchDownload("https://rinnegatamante.it/openarena.zip");
+			launchDownload("https://www.rinnegatamante.eu/openarena.zip");
 			break;
 		case URT4:
 			vita2d_pgf_draw_textf(pgf, 20, 120, RGBA8(0,255,0,255), 1.0f, "Found game data files (v.4.3.4) pack for %s!", cores[core_idx]);
-			launchDownload("https://rinnegatamante.it/urbanterror.zip");
+			launchDownload("https://www.rinnegatamante.eu/urbanterror.zip");
 			break;
 		}
 		
