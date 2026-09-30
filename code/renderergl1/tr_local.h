@@ -1579,6 +1579,7 @@ void RB_RenderThread( void );
 
 void *R_GetCommandBuffer( int bytes );
 void RB_ExecuteRenderCommands( const void *data );
+void R_InitCommandBuffers( void );
 
 void R_IssuePendingRenderCommands( void );
 

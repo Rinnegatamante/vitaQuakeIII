@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 // tr_sky.c
 #include "tr_local.h"
+#ifdef __PSP2__
+#include <psp2/kernel/clib.h>
+#endif
 
 #define SKY_SUBDIVISIONS		8
 #define HALF_SKY_SUBDIVISIONS	(SKY_SUBDIVISIONS/2)
@@ -387,7 +390,7 @@ static void DrawSkySide( struct image_s *image, const int mins[2], const int max
 		}
 		vglVertexPointerMapped(3, vertices);
 		vglTexCoordPointerMapped(texcoord);
-		vglDrawObjects(GL_TRIANGLE_STRIP, numindices, GL_TRUE);
+		vglDrawObjects(GL_TRIANGLE_STRIP, numindices);
 	}
 	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);

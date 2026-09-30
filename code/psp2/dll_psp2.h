@@ -42,8 +42,8 @@ typedef struct sysfuncs_s
 	size_t (*pfnSysFwrite)(const void*, size_t, size_t, FILE*);
 	// sprintf
 	int (*pfnSprintf)(char*, const char*, ...);
-	int (*pfnSnprintf)(char*, int, const char*, ...);
-	int (*pfnVsnprintf)(char*, int, const char*, va_list);
+	int (*pfnSnprintf)(char*, size_t, const char*, ...);
+	int (*pfnVsnprintf)(char*, size_t, const char*, va_list);
 } sysfuncs_t;
 
 void *dlsym(void *handle, const char *symbol );

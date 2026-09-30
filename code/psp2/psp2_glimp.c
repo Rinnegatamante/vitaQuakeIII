@@ -124,7 +124,7 @@ void GLimp_Init( qboolean coreContext)
 #else
 		vglInitExtended(0, glConfig.vidWidth, glConfig.vidHeight, 0x1800000, SCE_GXM_MULTISAMPLE_4X);
 #endif
-		vglUseVram(GL_TRUE);
+		/* Current vitaGL selects VRAM first for GPU-owned allocations. */
 
 		inited = 1;
 		cur_width = glConfig.vidWidth;
