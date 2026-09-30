@@ -103,7 +103,7 @@ void R_RenderShadowEdges( void ) {
 					shadowXyz[i2][0], shadowXyz[i2][1], shadowXyz[i2][2]
 				};
 				vglVertexPointer( 3, GL_FLOAT, 0, 4, vertices );
-				vglDrawObjects(GL_TRIANGLE_STRIP, 4, GL_TRUE);
+				vglDrawObjects(GL_TRIANGLE_STRIP, 4);
 				c_edges++;
 			} else {
 				c_rejected++;
@@ -248,7 +248,7 @@ void RB_ShadowFinish( void ) {
 		-100, -100, -10
 	};
 	vglVertexPointer( 3, GL_FLOAT, 0, 4, vertices );
-	vglDrawObjects(GL_TRIANGLE_FAN, 4, GL_TRUE);
+	vglDrawObjects(GL_TRIANGLE_FAN, 4);
 
 	qglColor4f(1,1,1,1);
 	qglDisable( GL_STENCIL_TEST );

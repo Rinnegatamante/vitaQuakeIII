@@ -150,7 +150,7 @@ static void DrawNormals (shaderCommands_t *input) {
 		gVertexBuffer += 3;
 	}
 	vglVertexPointerMapped(3, vertices);
-	vglDrawObjects(GL_LINES, input->numVertexes * 2, GL_TRUE);
+	vglDrawObjects(GL_LINES, input->numVertexes * 2);
 
 	qglDepthRange( 0, 1 );
 }

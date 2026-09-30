@@ -159,6 +159,13 @@ void		GLimp_Init( qboolean );
 void		GLimp_Shutdown( void );
 void		GLimp_EndFrame( void );
 
+#ifdef __PSP2__
+qboolean GLimp_SpawnRenderThread( void (*function)(void) );
+void *GLimp_RendererSleep( void );
+void GLimp_FrontEndSleep( void );
+void GLimp_WakeRenderer( void *data );
+#endif
+
 void		GLimp_LogComment( char *comment );
 void		GLimp_Minimize(void);
 

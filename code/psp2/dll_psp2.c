@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "dll_psp2.h"
+#include <string.h>
 #include <vitasdk.h>
 
 #define MAX_DLNAMELEN 256

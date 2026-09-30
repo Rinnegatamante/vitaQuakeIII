@@ -19,6 +19,8 @@ CXX      = $(PREFIX)-g++
 CFLAGS  = -fno-lto -g -Wl,-q -O2
 CXXFLAGS  = $(CFLAGS) -fno-exceptions -std=gnu++11 -fpermissive
 ASFLAGS = $(CFLAGS)
+LDFLAGS += -pthread
+LIBS += $(shell arm-vita-eabi-pkg-config --static --libs libcurl)
 
 all: $(TARGET).velf
 
@@ -29,7 +31,7 @@ all: $(TARGET).velf
 	vita-make-fself -c -s $@ $(TARGET).bin
 
 $(TARGET).elf: $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ $(LIBS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
 
 clean:
 	@rm -rf $(TARGET).velf $(TARGET).elf $(OBJS)
